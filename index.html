@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="./" />
+    <title>KJ Codex Usage Dashboard</title>
+    <link rel="stylesheet" href="./vendor/flatpickr/flatpickr.min.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Local Codex Telemetry</p>
+          <h1>KJ Codex Usage Dashboard</h1>
+          <p class="hero-note">
+            Shareable Codex usage snapshot from local session logs, with GitHub-style daily activity, session-level drilldown, and public-rate equivalents that make the work feel tangible.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-card">
+            <span class="meta-label">Last refresh</span>
+            <strong id="last-refresh">Loading...</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Source</span>
+            <strong id="source-note">~/.codex</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="controls-panel">
+        <div class="toolbar-group toolbar-group-range">
+          <div class="toolbar-field">
+            <span class="toolbar-label">Range</span>
+            <div class="range-controls">
+              <div class="range-chips" id="range-chips" aria-label="Date range"></div>
+              <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
+              <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
+            </div>
+          </div>
+          <div class="toolbar-field toolbar-field-selection">
+            <span class="toolbar-label">Selection</span>
+            <strong id="active-range-pill" class="active-range-pill">Last 365 days</strong>
+          </div>
+        </div>
+
+        <div class="toolbar-group toolbar-group-filters">
+          <label class="control control-stacked">
+            <span>Workspace</span>
+            <select id="workspace-filter">
+              <option value="all">All workspaces</option>
+            </select>
+          </label>
+
+          <label class="toggle toggle-stacked">
+            <span>Subagents</span>
+            <span class="toggle-row">
+              <input id="subagent-toggle" type="checkbox" checked />
+              <span>Include subagents</span>
+            </span>
+          </label>
+        </div>
+        <button id="refresh-button" class="refresh-button" type="button">Refresh</button>
+      </section>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span class="card-label">Total tokens</span>
+          <strong class="card-value" id="summary-total">-</strong>
+          <span class="card-foot" id="summary-total-foot">Across selected range</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Public API equivalent</span>
+          <strong class="card-value" id="summary-cost">-</strong>
+          <span class="card-foot" id="summary-cost-foot">Standard public rates, not your internal bill</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Peak day</span>
+          <strong class="card-value" id="summary-peak">-</strong>
+          <span class="card-foot" id="summary-peak-foot">Highest token day in range</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Active days</span>
+          <strong class="card-value" id="summary-days">-</strong>
+          <span class="card-foot">Days with token activity</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Sessions</span>
+          <strong class="card-value" id="summary-sessions">-</strong>
+          <span class="card-foot">Sessions contributing in range</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Current burst</span>
+          <strong class="card-value" id="summary-burst">-</strong>
+          <span class="card-foot" id="summary-burst-foot">Last 72 hours</span>
+        </article>
+      </section>
+
+      <p class="section-note" id="cost-note">
+        Public-rate equivalent from published OpenAI API pricing.
+      </p>
+
+      <section class="panel cost-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-eyebrow">Public rate lens</p>
+            <h2>Public API rate breakdown</h2>
+          </div>
+        </div>
+        <div class="cost-table-shell">
+          <table class="cost-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Sessions</th>
+                <th>Uncached input</th>
+                <th>Cached input</th>
+                <th>Billed output</th>
+                <th>Input rate</th>
+                <th>Cached rate</th>
+                <th>Output rate</th>
+                <th>API equiv.</th>
+                <th>Share</th>
+              </tr>
+            </thead>
+            <tbody id="cost-breakdown-body"></tbody>
+            <tfoot id="cost-breakdown-foot"></tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel heatmap-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-eyebrow">Daily activity</p>
+            <h2>Usage heatmap</h2>
+            <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
+          </div>
+          <div class="legend" aria-label="Heatmap legend">
+            <span>Less</span>
+            <div class="legend-swatches">
+              <span class="swatch level-0"></span>
+              <span class="swatch level-1"></span>
+              <span class="swatch level-2"></span>
+              <span class="swatch level-3"></span>
+              <span class="swatch level-4"></span>
+            </div>
+            <span>More</span>
+          </div>
+        </div>
+
+        <div class="heatmap-chart">
+          <div id="heatmap-weekdays" class="heatmap-weekdays" aria-hidden="true"></div>
+          <div class="heatmap-shell">
+            <div id="heatmap-months" class="heatmap-months"></div>
+            <div id="heatmap-grid" class="heatmap-grid" role="grid" aria-label="Codex token activity by day"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lower-grid">
+        <article class="panel trend-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-eyebrow">Recent velocity</p>
+              <h2>Last 14 days</h2>
+            </div>
+            <div class="panel-stat">
+              <span class="panel-stat-label">14d API equiv.</span>
+              <strong id="trend-cost">-</strong>
+            </div>
+          </div>
+          <div id="trend-sparkline" class="sparkline"></div>
+        </article>
+
+        <article class="panel ranking-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-eyebrow">Current focus</p>
+              <h2>What I'm working on</h2>
+              <p class="ranking-note" id="current-work-note">Most active sessions over the last 72 hours</p>
+            </div>
+          </div>
+          <div id="current-work-table" class="rank-table"></div>
+        </article>
+
+        <article class="panel ranking-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-eyebrow">Heavy threads</p>
+              <h2>Top sessions</h2>
+            </div>
+          </div>
+          <div id="thread-table" class="rank-table"></div>
+        </article>
+      </section>
+
+      <aside class="panel day-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-eyebrow">Day drilldown</p>
+            <h2 id="day-title">Select a day</h2>
+          </div>
+        </div>
+
+        <div class="day-summary-grid">
+          <div class="mini-stat">
+            <span>Total</span>
+            <strong id="day-total">-</strong>
+          </div>
+          <div class="mini-stat">
+            <span>API equiv.</span>
+            <strong id="day-cost">-</strong>
+          </div>
+          <div class="mini-stat">
+            <span>Input</span>
+            <strong id="day-input">-</strong>
+          </div>
+          <div class="mini-stat">
+            <span>Cached input</span>
+            <strong id="day-cached">-</strong>
+          </div>
+          <div class="mini-stat">
+            <span>Output</span>
+            <strong id="day-output">-</strong>
+          </div>
+          <div class="mini-stat">
+            <span>Reasoning</span>
+            <strong id="day-reasoning">-</strong>
+          </div>
+          <div class="mini-stat">
+            <span>Sessions</span>
+            <strong id="day-sessions">-</strong>
+          </div>
+        </div>
+
+        <p class="day-explainer">
+          Detailed token buckets come straight from local logs if you want the mechanics behind the usage.
+        </p>
+        <p class="day-explainer" id="day-cost-note">
+          Public-rate equivalent from published OpenAI API pricing.
+        </p>
+
+        <div id="day-session-list" class="session-list"></div>
+      </aside>
+    </div>
+
+    <script src="./vendor/flatpickr/flatpickr.min.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
