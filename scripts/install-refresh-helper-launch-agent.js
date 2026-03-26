@@ -54,6 +54,11 @@ export async function installRefreshHelperLaunchAgent() {
   }
 
   await execFileAsync("launchctl", ["load", plistPath]);
+
+  if (typeof process.getuid === "function") {
+    await execFileAsync("launchctl", ["kickstart", "-k", `gui/${process.getuid()}/${label}`]);
+  }
+
   return {
     plist_path: plistPath,
     label
