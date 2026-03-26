@@ -99,6 +99,14 @@ function formatRate(value) {
   return `${formatUsd(value)}/1M`;
 }
 
+function formatCompactUsd(value) {
+  if ((value || 0) >= 100) {
+    return `$${Math.round(value || 0)}`;
+  }
+
+  return formatUsd(value || 0);
+}
+
 function formatDate(value) {
   return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
     month: "short",
@@ -109,6 +117,26 @@ function formatDate(value) {
 
 function formatCountLabel(value, singular, plural = `${singular}s`) {
   return `${value} ${value === 1 ? singular : plural}`;
+}
+
+function formatAxisTokens(value) {
+  if (value >= 1000000000) {
+    return `${(value / 1000000000).toFixed(1)}B`;
+  }
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(value >= 100000000 ? 0 : 1)}M`;
+  }
+  if (value >= 1000) {
+    return `${Math.round(value / 1000)}K`;
+  }
+  return String(Math.round(value));
+}
+
+function formatTrendDate(value) {
+  return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
 }
 
 function buildPeakDaySummary(dashboard) {
@@ -407,32 +435,118 @@ function renderHeatmap(dashboard) {
 }
 
 function renderTrend(dashboard) {
-  const values = dashboard.trend_days.map((day) => day.total_tokens);
-  const trendCost = dashboard.trend_days.reduce((total, day) => total + (day.estimated_cost_usd || 0), 0);
-  const width = 520;
-  const height = 140;
-  const max = Math.max(...values, 0);
+  const trendDays = dashboard.trend_days || [];
+  const tokenValues = trendDays.map((day) => day.total_tokens || 0);
+  const costValues = trendDays.map((day) => day.estimated_cost_usd || 0);
+  const trendCost = costValues.reduce((total, value) => total + value, 0);
+  const width = 560;
+  const height = 220;
+  const margin = {
+    top: 18,
+    right: 62,
+    bottom: 34,
+    left: 58
+  };
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
+  const maxTokens = Math.max(...tokenValues, 0);
+  const maxCost = Math.max(...costValues, 0);
+  const tokenScaleMax = maxTokens || 1;
+  const costScaleMax = maxCost || 1;
 
   elements.trendCost.textContent = formatUsd(trendCost);
   elements.trendCost.title = formatUsd(trendCost);
 
-  if (!values.length) {
+  if (!trendDays.length) {
     elements.trendSparkline.innerHTML = '<div class="empty-state">No trend data for this range.</div>';
     return;
   }
 
-  const points = values.map((value, index) => {
-    const x = values.length === 1 ? width / 2 : (index / (values.length - 1)) * width;
-    const y = max === 0 ? height - 18 : height - 18 - ((value / max) * (height - 36));
-    return `${x},${y}`;
+  const tickRatios = [1, 0.5, 0];
+  const tokenTicks = tickRatios.map((ratio) => tokenScaleMax * ratio);
+  const costTicks = tickRatios.map((ratio) => costScaleMax * ratio);
+
+  const chartPoints = trendDays.map((day, index) => {
+    const x = trendDays.length === 1
+      ? margin.left + (plotWidth / 2)
+      : margin.left + ((index / (trendDays.length - 1)) * plotWidth);
+    const tokenY = margin.top + plotHeight - ((day.total_tokens || 0) / tokenScaleMax) * plotHeight;
+    const costHeight = ((day.estimated_cost_usd || 0) / costScaleMax) * plotHeight;
+    const barWidth = Math.min(24, plotWidth / Math.max(trendDays.length, 1) * 0.58);
+    const barX = x - (barWidth / 2);
+    const barY = margin.top + plotHeight - costHeight;
+
+    return {
+      date: day.date,
+      x,
+      tokenY,
+      tokenValue: day.total_tokens || 0,
+      costValue: day.estimated_cost_usd || 0,
+      barWidth,
+      barX,
+      barY,
+      costHeight
+    };
   });
-  const areaPoints = [`0,${height}`, ...points, `${width},${height}`].join(" ");
+
+  const linePoints = chartPoints.map((point) => `${point.x},${point.tokenY}`);
+  const areaPoints = [
+    `${margin.left},${margin.top + plotHeight}`,
+    ...linePoints,
+    `${margin.left + plotWidth},${margin.top + plotHeight}`
+  ].join(" ");
+  const xLabelIndexes = [...new Set([
+    0,
+    Math.floor((trendDays.length - 1) / 2),
+    trendDays.length - 1
+  ])];
 
   elements.trendSparkline.innerHTML = `
-    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token trend">
+    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token and API equivalent trend">
+      ${tokenTicks.map((tickValue, index) => {
+        const y = margin.top + (plotHeight * (index / (tokenTicks.length - 1)));
+        const matchingCost = costTicks[index];
+        return `
+          <line class="trend-grid-line" x1="${margin.left}" y1="${y}" x2="${margin.left + plotWidth}" y2="${y}"></line>
+          <text class="trend-axis-label" x="${margin.left - 10}" y="${y + 4}">${formatAxisTokens(tickValue)}</text>
+          <text class="trend-axis-label is-right" x="${width - 6}" y="${y + 4}">${formatCompactUsd(matchingCost)}</text>
+        `;
+      }).join("")}
+      <line class="trend-axis-line" x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotHeight}"></line>
+      <line class="trend-axis-line" x1="${margin.left + plotWidth}" y1="${margin.top}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}"></line>
+      <line class="trend-axis-line" x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}"></line>
+      ${chartPoints.map((point) => `
+        <rect
+          class="trend-bar"
+          x="${point.barX}"
+          y="${point.barY}"
+          width="${point.barWidth}"
+          height="${Math.max(point.costHeight, 1)}"
+          rx="4"
+        >
+          <title>${formatTrendDate(point.date)}: ${formatUsd(point.costValue)} API equivalent</title>
+        </rect>
+      `).join("")}
       <polyline class="sparkline-area" points="${areaPoints}"></polyline>
-      <polyline class="sparkline-line" points="${points.join(" ")}"></polyline>
+      <polyline class="sparkline-line" points="${linePoints.join(" ")}"></polyline>
+      ${chartPoints.map((point) => `
+        <circle class="trend-point" cx="${point.x}" cy="${point.tokenY}" r="3.8">
+          <title>${formatTrendDate(point.date)}: ${formatFullNumber(point.tokenValue)} tokens</title>
+        </circle>
+      `).join("")}
+      ${xLabelIndexes.map((index) => {
+        const point = chartPoints[index];
+        return `
+          <text class="trend-axis-label is-x" x="${point.x}" y="${height - 8}">${formatTrendDate(point.date)}</text>
+        `;
+      }).join("")}
+      <text class="trend-axis-label" x="${margin.left}" y="${12}">Tokens / day</text>
+      <text class="trend-axis-label is-right" x="${width - 6}" y="${12}">API equiv. / day</text>
     </svg>
+    <div class="trend-legend" aria-hidden="true">
+      <span class="trend-legend-item"><span class="trend-legend-line"></span>Tokens / day</span>
+      <span class="trend-legend-item"><span class="trend-legend-bar"></span>API equiv. / day</span>
+    </div>
   `;
 }
 
