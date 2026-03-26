@@ -143,43 +143,49 @@
             <h2>Usage heatmap</h2>
             <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
           </div>
-          <div class="legend" aria-label="Heatmap legend">
-            <span>Less</span>
-            <div class="legend-swatches">
-              <span class="swatch level-0"></span>
-              <span class="swatch level-1"></span>
-              <span class="swatch level-2"></span>
-              <span class="swatch level-3"></span>
-              <span class="swatch level-4"></span>
-            </div>
-            <span>More</span>
-          </div>
         </div>
+        <div class="activity-layout">
+          <section class="activity-block activity-block-heatmap">
+            <div class="activity-block-head">
+              <h3>GitHub-flex view</h3>
+              <div class="legend" aria-label="Heatmap legend">
+                <span>Less</span>
+                <div class="legend-swatches">
+                  <span class="swatch level-0"></span>
+                  <span class="swatch level-1"></span>
+                  <span class="swatch level-2"></span>
+                  <span class="swatch level-3"></span>
+                  <span class="swatch level-4"></span>
+                </div>
+                <span>More</span>
+              </div>
+            </div>
+            <div class="heatmap-chart">
+              <div id="heatmap-weekdays" class="heatmap-weekdays" aria-hidden="true"></div>
+              <div class="heatmap-shell">
+                <div id="heatmap-months" class="heatmap-months"></div>
+                <div id="heatmap-grid" class="heatmap-grid" role="grid" aria-label="Codex token activity by day"></div>
+              </div>
+            </div>
+          </section>
 
-        <div class="heatmap-chart">
-          <div id="heatmap-weekdays" class="heatmap-weekdays" aria-hidden="true"></div>
-          <div class="heatmap-shell">
-            <div id="heatmap-months" class="heatmap-months"></div>
-            <div id="heatmap-grid" class="heatmap-grid" role="grid" aria-label="Codex token activity by day"></div>
-          </div>
+          <section class="activity-block activity-block-trend">
+            <div class="activity-block-head">
+              <div>
+                <h3>Last 14 days</h3>
+                <p class="activity-note">Line shows tokens/day. Bars show rough public API equivalent/day.</p>
+              </div>
+              <div class="panel-stat">
+                <span class="panel-stat-label">14d API equiv.</span>
+                <strong id="trend-cost">-</strong>
+              </div>
+            </div>
+            <div id="trend-sparkline" class="sparkline"></div>
+          </section>
         </div>
       </section>
 
       <section class="lower-grid">
-        <article class="panel trend-panel">
-          <div class="panel-head">
-            <div>
-              <p class="panel-eyebrow">Recent velocity</p>
-              <h2>Last 14 days</h2>
-            </div>
-            <div class="panel-stat">
-              <span class="panel-stat-label">14d API equiv.</span>
-              <strong id="trend-cost">-</strong>
-            </div>
-          </div>
-          <div id="trend-sparkline" class="sparkline"></div>
-        </article>
-
         <article class="panel ranking-panel">
           <div class="panel-head">
             <div>
