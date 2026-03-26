@@ -805,6 +805,46 @@ select {
   line-height: 1.5;
 }
 
+.day-details {
+  border: 1px solid rgba(35, 49, 39, 0.08);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+}
+
+.day-details-toggle {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.day-details-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.day-details-toggle::after {
+  content: "+";
+  margin-left: auto;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--ink-muted);
+}
+
+.day-details[open] .day-details-toggle::after {
+  content: "−";
+}
+
+.day-details-body {
+  display: grid;
+  gap: 14px;
+  padding: 0 16px 16px;
+}
+
 .session-card {
   display: grid;
   gap: 12px;

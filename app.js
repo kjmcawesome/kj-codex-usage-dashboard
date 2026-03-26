@@ -12,6 +12,13 @@ const RANGE_OPTIONS = [
 
 const DEFAULT_DAYS = 365;
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
+const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
+const REFRESH_CHECK_LABEL = "Check for updates";
+const REFRESH_FORCE_LABEL = "Force rebuild";
+const REFRESH_REBUILDING_LABEL = "Rebuilding...";
+const REFRESH_WAITING_LABEL = "Waiting for publish...";
+const REFRESH_POLL_INTERVAL_MS = 2500;
+const REFRESH_POLL_TIMEOUT_MS = 60000;
 
 const state = {
   rangeMode: "preset",
@@ -25,7 +32,9 @@ const state = {
   snapshotNow: null,
   dashboard: null,
   datePicker: null,
-  shouldResetHeatmapViewport: true
+  shouldResetHeatmapViewport: true,
+  refreshHelperAvailable: false,
+  refreshHelperUrl: null
 };
 
 const elements = {
@@ -69,6 +78,8 @@ const elements = {
   dayOutput: document.querySelector("#day-output"),
   dayReasoning: document.querySelector("#day-reasoning"),
   daySessions: document.querySelector("#day-sessions"),
+  dayDetails: document.querySelector("#day-details"),
+  dayDetailsLabel: document.querySelector("#day-details-label"),
   dayCostNote: document.querySelector("#day-cost-note"),
   daySessionList: document.querySelector("#day-session-list")
 };
@@ -150,6 +161,12 @@ function formatTrendDate(value) {
   });
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
 function buildTrendLabelIndexes(length) {
   if (length <= 0) {
     return [];
@@ -221,6 +238,114 @@ function buildCurrentBurstSummary(dashboard) {
     title: formatFullNumber(totals.total_tokens),
     foot: `Last 72 hours · ${formatCountLabel(sessionCount, "session")} · ${formatUsd(totals.estimated_cost_usd)} API equiv.`
   };
+}
+
+function setRefreshButtonLabel(label, title) {
+  elements.refreshButton.textContent = label;
+  elements.refreshButton.title = title;
+}
+
+function syncRefreshButtonMode() {
+  if (elements.refreshButton.disabled) {
+    return;
+  }
+
+  if (state.refreshHelperAvailable) {
+    setRefreshButtonLabel(
+      REFRESH_FORCE_LABEL,
+      "Rebuild the snapshot from local ~/.codex logs and publish it if anything changed"
+    );
+    return;
+  }
+
+  setRefreshButtonLabel(
+    REFRESH_CHECK_LABEL,
+    "Fetch the latest published snapshot from the static site"
+  );
+}
+
+async function probeRefreshHelper() {
+  try {
+    const response = await fetch(`${REFRESH_HELPER_URL}/status`, {
+      cache: "no-store",
+      mode: "cors"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Refresh helper probe failed: ${response.status}`);
+    }
+
+    state.refreshHelperAvailable = true;
+    state.refreshHelperUrl = REFRESH_HELPER_URL;
+  } catch {
+    state.refreshHelperAvailable = false;
+    state.refreshHelperUrl = null;
+  } finally {
+    syncRefreshButtonMode();
+  }
+}
+
+function setDayDetailsOpen(open) {
+  elements.dayDetails.open = open;
+  elements.dayDetailsLabel.textContent = open ? "Hide details" : "Expand details";
+}
+
+async function waitForSnapshotGeneration(targetGeneratedAt, timeoutMs) {
+  const targetTime = new Date(targetGeneratedAt).getTime();
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() <= deadline) {
+    await loadDashboard(true, { suppressButtonToggle: true });
+    const currentTime = new Date(state.dashboard?.generated_at || 0).getTime();
+    if (currentTime >= targetTime) {
+      return true;
+    }
+
+    await sleep(REFRESH_POLL_INTERVAL_MS);
+  }
+
+  return false;
+}
+
+async function forceRefreshViaHelper() {
+  if (!state.refreshHelperAvailable || !state.refreshHelperUrl) {
+    state.shouldResetHeatmapViewport = true;
+    await loadDashboard(true, { suppressButtonToggle: true });
+    return;
+  }
+
+  setRefreshButtonLabel(
+    REFRESH_REBUILDING_LABEL,
+    "Running a fresh local rebuild from ~/.codex and publishing the result"
+  );
+
+  const response = await fetch(`${state.refreshHelperUrl}/refresh`, {
+    method: "POST",
+    mode: "cors",
+    cache: "no-store"
+  });
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.detail || payload.error || `Refresh helper failed: ${response.status}`);
+  }
+
+  const payload = await response.json();
+  setRefreshButtonLabel(
+    REFRESH_WAITING_LABEL,
+    payload.pushed
+      ? "Waiting for the published snapshot to become visible on the static site"
+      : "Waiting for the rebuilt snapshot to be visible"
+  );
+
+  const observed = await waitForSnapshotGeneration(
+    payload.generated_at,
+    payload.pushed ? REFRESH_POLL_TIMEOUT_MS : 10000
+  );
+
+  if (!observed) {
+    await loadDashboard(true, { suppressButtonToggle: true });
+  }
 }
 
 function isDateKey(value) {
@@ -699,6 +824,7 @@ function renderTopThreads(dashboard) {
 }
 
 function renderDayPanel(dayPayload) {
+  setDayDetailsOpen(false);
   elements.dayTitle.textContent = formatDate(dayPayload.date);
   elements.dayTotal.textContent = formatCompactNumber(dayPayload.summary.total_tokens);
   elements.dayTotal.title = formatFullNumber(dayPayload.summary.total_tokens);
@@ -754,6 +880,7 @@ async function loadDay(date) {
     });
     renderDayPanel(payload);
   } catch (error) {
+    setDayDetailsOpen(false);
     elements.daySessionList.innerHTML = `<div class="empty-state">${error.message}</div>`;
   }
 }
@@ -805,8 +932,10 @@ function syncDatePicker(dashboard) {
   }
 }
 
-async function loadDashboard(forceReloadSnapshot = false) {
-  elements.refreshButton.disabled = true;
+async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle = false } = {}) {
+  if (!suppressButtonToggle) {
+    elements.refreshButton.disabled = true;
+  }
   syncUrl();
 
   try {
@@ -851,13 +980,33 @@ async function loadDashboard(forceReloadSnapshot = false) {
     elements.heatmapGrid.innerHTML = "";
     elements.heatmapMonths.innerHTML = "";
   } finally {
-    elements.refreshButton.disabled = false;
+    if (!suppressButtonToggle) {
+      elements.refreshButton.disabled = false;
+    }
   }
 }
 
 async function refreshDashboard() {
-  state.shouldResetHeatmapViewport = true;
-  await loadDashboard(true);
+  elements.refreshButton.disabled = true;
+
+  try {
+    if (state.refreshHelperAvailable && state.refreshHelperUrl) {
+      await forceRefreshViaHelper();
+      return;
+    }
+
+    state.shouldResetHeatmapViewport = true;
+    await loadDashboard(true, { suppressButtonToggle: true });
+  } catch (error) {
+    state.refreshHelperAvailable = false;
+    state.refreshHelperUrl = null;
+    await loadDashboard(true, { suppressButtonToggle: true });
+    window.alert(error instanceof Error ? error.message : String(error));
+  } finally {
+    elements.refreshButton.disabled = false;
+    syncRefreshButtonMode();
+    probeRefreshHelper();
+  }
 }
 
 elements.customRangeButton.addEventListener("click", () => {
@@ -878,9 +1027,16 @@ elements.subagentToggle.addEventListener("change", () => {
 });
 
 elements.refreshButton.addEventListener("click", refreshDashboard);
+elements.dayDetails.addEventListener("toggle", () => {
+  elements.dayDetailsLabel.textContent = elements.dayDetails.open ? "Hide details" : "Expand details";
+});
 
 initializeStateFromUrl();
 renderRangeControls();
 renderWeekdayLabels();
 syncDatePicker(null);
+setDayDetailsOpen(false);
+syncRefreshButtonMode();
 loadDashboard(true);
+probeRefreshHelper();
+window.addEventListener("focus", probeRefreshHelper);

@@ -62,7 +62,7 @@
             </span>
           </label>
         </div>
-        <button id="refresh-button" class="refresh-button" type="button">Refresh</button>
+        <button id="refresh-button" class="refresh-button" type="button">Check for updates</button>
       </section>
 
       <section class="summary-grid">
@@ -247,14 +247,20 @@
           </div>
         </div>
 
-        <p class="day-explainer">
-          Detailed token buckets come straight from local logs if you want the mechanics behind the usage.
-        </p>
-        <p class="day-explainer" id="day-cost-note">
-          Public-rate equivalent from published OpenAI API pricing.
-        </p>
-
-        <div id="day-session-list" class="session-list"></div>
+        <details id="day-details" class="day-details">
+          <summary class="day-details-toggle">
+            <span id="day-details-label">Expand details</span>
+          </summary>
+          <div class="day-details-body">
+            <p class="day-explainer">
+              Detailed token buckets come straight from local logs if you want the mechanics behind the usage.
+            </p>
+            <p class="day-explainer" id="day-cost-note">
+              Public-rate equivalent from published OpenAI API pricing.
+            </p>
+            <div id="day-session-list" class="session-list"></div>
+          </div>
+        </details>
       </aside>
     </div>
 
