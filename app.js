@@ -24,7 +24,8 @@ const state = {
   snapshot: null,
   snapshotNow: null,
   dashboard: null,
-  datePicker: null
+  datePicker: null,
+  shouldResetHeatmapViewport: true
 };
 
 const elements = {
@@ -52,6 +53,7 @@ const elements = {
   costBreakdownFoot: document.querySelector("#cost-breakdown-foot"),
   heatmapSummary: document.querySelector("#heatmap-summary"),
   heatmapWeekdays: document.querySelector("#heatmap-weekdays"),
+  heatmapShell: document.querySelector(".heatmap-shell"),
   heatmapMonths: document.querySelector("#heatmap-months"),
   heatmapGrid: document.querySelector("#heatmap-grid"),
   trendSparkline: document.querySelector("#trend-sparkline"),
@@ -107,6 +109,15 @@ function formatCompactUsd(value) {
   return formatUsd(value || 0);
 }
 
+function formatAxisUsd(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(value || 0);
+}
+
 function formatDate(value) {
   return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
     month: "short",
@@ -137,6 +148,22 @@ function formatTrendDate(value) {
     month: "short",
     day: "numeric"
   });
+}
+
+function buildTrendLabelIndexes(length) {
+  if (length <= 0) {
+    return [];
+  }
+
+  if (length <= 3) {
+    return [...Array(length).keys()];
+  }
+
+  return [...new Set([
+    0,
+    Math.floor((length - 1) / 2),
+    length - 1
+  ])];
 }
 
 function buildPeakDaySummary(dashboard) {
@@ -316,6 +343,7 @@ function renderRangeControls() {
       state.days = option.value;
       state.startDate = null;
       state.endDate = null;
+      state.shouldResetHeatmapViewport = true;
       syncUrl();
       syncDatePicker(null);
       renderRangeControls();
@@ -389,6 +417,26 @@ function buildHeatmapHeadline(dashboard) {
   return `${formatFullNumber(dashboard.summary.total_tokens)} total tokens from ${formatDate(dashboard.range.start_date)} to ${formatDate(dashboard.range.end_date)}`;
 }
 
+function resetHeatmapViewportIfNeeded() {
+  if (!state.shouldResetHeatmapViewport) {
+    return;
+  }
+
+  state.shouldResetHeatmapViewport = false;
+  const applyViewport = () => {
+    const shell = elements.heatmapShell;
+    if (!shell) {
+      return;
+    }
+
+    const maxScrollLeft = Math.max(shell.scrollWidth - shell.clientWidth, 0);
+    shell.scrollLeft = maxScrollLeft;
+  };
+
+  applyViewport();
+  window.requestAnimationFrame(applyViewport);
+}
+
 function renderHeatmap(dashboard) {
   const weekWidth = 18;
   const totalWeeks = (dashboard.heatmap_days.at(-1)?.week_index || 0) + 1;
@@ -410,6 +458,8 @@ function renderHeatmap(dashboard) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `day-cell level-${day.level}`;
+    button.style.setProperty("--day-fill", `var(--level-${day.level})`);
+    button.dataset.date = day.date;
     if (!day.in_range) {
       button.classList.add("is-outside");
       button.disabled = true;
@@ -427,11 +477,14 @@ function renderHeatmap(dashboard) {
         return;
       }
       state.selectedDate = day.date;
-      renderHeatmap(dashboard);
+      elements.heatmapGrid.querySelector(".day-cell.is-selected")?.classList.remove("is-selected");
+      button.classList.add("is-selected");
       loadDay(day.date);
     });
     elements.heatmapGrid.append(button);
   }
+
+  resetHeatmapViewportIfNeeded();
 }
 
 function renderTrend(dashboard) {
@@ -490,16 +543,7 @@ function renderTrend(dashboard) {
   });
 
   const linePoints = chartPoints.map((point) => `${point.x},${point.tokenY}`);
-  const areaPoints = [
-    `${margin.left},${margin.top + plotHeight}`,
-    ...linePoints,
-    `${margin.left + plotWidth},${margin.top + plotHeight}`
-  ].join(" ");
-  const xLabelIndexes = [...new Set([
-    0,
-    Math.floor((trendDays.length - 1) / 2),
-    trendDays.length - 1
-  ])];
+  const xLabelIndexes = buildTrendLabelIndexes(trendDays.length);
 
   elements.trendSparkline.innerHTML = `
     <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token and API equivalent trend">
@@ -509,7 +553,7 @@ function renderTrend(dashboard) {
         return `
           <line class="trend-grid-line" x1="${margin.left}" y1="${y}" x2="${margin.left + plotWidth}" y2="${y}"></line>
           <text class="trend-axis-label" x="${margin.left - 10}" y="${y + 4}">${formatAxisTokens(tickValue)}</text>
-          <text class="trend-axis-label is-right" x="${width - 6}" y="${y + 4}">${formatCompactUsd(matchingCost)}</text>
+          <text class="trend-axis-label is-right" x="${width - 6}" y="${y + 4}">${formatAxisUsd(matchingCost)}</text>
         `;
       }).join("")}
       <line class="trend-axis-line" x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotHeight}"></line>
@@ -527,7 +571,6 @@ function renderTrend(dashboard) {
           <title>${formatTrendDate(point.date)}: ${formatUsd(point.costValue)} API equivalent</title>
         </rect>
       `).join("")}
-      <polyline class="sparkline-area" points="${areaPoints}"></polyline>
       <polyline class="sparkline-line" points="${linePoints.join(" ")}"></polyline>
       ${chartPoints.map((point) => `
         <circle class="trend-point" cx="${point.x}" cy="${point.tokenY}" r="3.8">
@@ -540,8 +583,6 @@ function renderTrend(dashboard) {
           <text class="trend-axis-label is-x" x="${point.x}" y="${height - 8}">${formatTrendDate(point.date)}</text>
         `;
       }).join("")}
-      <text class="trend-axis-label" x="${margin.left}" y="${12}">Tokens / day</text>
-      <text class="trend-axis-label is-right" x="${width - 6}" y="${12}">API equiv. / day</text>
     </svg>
     <div class="trend-legend" aria-hidden="true">
       <span class="trend-legend-item"><span class="trend-legend-line"></span>Tokens / day</span>
@@ -743,6 +784,7 @@ function syncDatePicker(dashboard) {
         state.rangeMode = "custom";
         state.startDate = dateKeyFromDate(selectedDates[0]);
         state.endDate = dateKeyFromDate(selectedDates[1]);
+        state.shouldResetHeatmapViewport = true;
         syncUrl();
         renderRangeControls();
         loadDashboard();
@@ -780,6 +822,11 @@ async function loadDashboard(forceReloadSnapshot = false) {
       includeSubagents: state.includeSubagents,
       now: state.snapshotNow
     });
+    const validDates = new Set(dashboard.heatmap_days.filter((day) => day.in_range).map((day) => day.date));
+    if (!state.selectedDate || !validDates.has(state.selectedDate)) {
+      state.selectedDate = chooseDefaultDay(dashboard);
+    }
+
     state.dashboard = dashboard;
     renderSummary(dashboard);
     renderWorkspaceFilter(dashboard);
@@ -789,13 +836,6 @@ async function loadDashboard(forceReloadSnapshot = false) {
     renderCurrentWork(dashboard);
     renderTopThreads(dashboard);
     syncDatePicker(dashboard);
-
-    const validDates = new Set(dashboard.heatmap_days.filter((day) => day.in_range).map((day) => day.date));
-    if (!state.selectedDate || !validDates.has(state.selectedDate)) {
-      state.selectedDate = chooseDefaultDay(dashboard);
-    }
-
-    renderHeatmap(dashboard);
     await loadDay(state.selectedDate);
   } catch (error) {
     const detail = error?.message?.includes("404")
@@ -816,6 +856,7 @@ async function loadDashboard(forceReloadSnapshot = false) {
 }
 
 async function refreshDashboard() {
+  state.shouldResetHeatmapViewport = true;
   await loadDashboard(true);
 }
 
@@ -826,11 +867,13 @@ elements.customRangeButton.addEventListener("click", () => {
 
 elements.workspaceFilter.addEventListener("change", () => {
   state.workspace = elements.workspaceFilter.value;
+  state.shouldResetHeatmapViewport = true;
   loadDashboard();
 });
 
 elements.subagentToggle.addEventListener("change", () => {
   state.includeSubagents = elements.subagentToggle.checked;
+  state.shouldResetHeatmapViewport = true;
   loadDashboard();
 });
 
