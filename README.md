@@ -2,10 +2,13 @@
 
 Shareable Codex usage dashboard built from local `~/.codex` session logs.
 
+- Public repo: `https://github.com/kjmcawesome/kj-codex-usage-dashboard`
+- Public site: `https://kjmcawesome.github.io/kj-codex-usage-dashboard/`
+
 ## Local preview
 
 ```bash
-git clone <your-repo-url>
+git clone git@github.com:kjmcawesome/kj-codex-usage-dashboard.git
 cd codex-usage-dashboard
 npm test
 npm start
@@ -29,12 +32,6 @@ This writes:
 ```bash
 npm run publish:pages
 ```
-
-Expected repo setup:
-
-- source branch: `main`
-- Pages branch: `gh-pages`
-- public site served from the root of `gh-pages`
 
 `publish:pages` only pushes when the generated snapshot changed.
 
