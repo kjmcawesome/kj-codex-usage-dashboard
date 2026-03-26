@@ -1,0 +1,13 @@
+{
+  "name": "codex-usage-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:site": "node scripts/export-static-site.js",
+    "start": "node scripts/export-static-site.js && node server.js",
+    "publish:pages": "node scripts/publish-pages.js",
+    "schedule:install": "node scripts/install-launch-agent.js",
+    "test": "TZ=UTC node --test"
+  }
+}
