@@ -167,6 +167,10 @@ function sleep(ms) {
   });
 }
 
+function isPublicPagesSite() {
+  return window.location.hostname === "kjmcawesome.github.io";
+}
+
 function buildTrendLabelIndexes(length) {
   if (length <= 0) {
     return [];
@@ -250,6 +254,14 @@ function syncRefreshButtonMode() {
     return;
   }
 
+  if (isPublicPagesSite()) {
+    setRefreshButtonLabel(
+      REFRESH_FORCE_LABEL,
+      "Open the local helper on this machine to rebuild from ~/.codex and republish the snapshot"
+    );
+    return;
+  }
+
   if (state.refreshHelperAvailable) {
     setRefreshButtonLabel(
       REFRESH_FORCE_LABEL,
@@ -262,6 +274,21 @@ function syncRefreshButtonMode() {
     REFRESH_CHECK_LABEL,
     "Fetch the latest published snapshot from the static site"
   );
+}
+
+function launchRefreshBridge() {
+  const bridgeUrl = new URL("/bridge", `${REFRESH_HELPER_URL}/`);
+  bridgeUrl.searchParams.set("return_to", window.location.href);
+
+  const bridgeWindow = window.open(
+    bridgeUrl.toString(),
+    "kj-codex-usage-refresh",
+    "popup,width=540,height=720"
+  );
+
+  if (!bridgeWindow) {
+    window.location.assign(bridgeUrl.toString());
+  }
 }
 
 async function probeRefreshHelper() {
@@ -982,6 +1009,7 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
   } finally {
     if (!suppressButtonToggle) {
       elements.refreshButton.disabled = false;
+      syncRefreshButtonMode();
     }
   }
 }
@@ -990,6 +1018,11 @@ async function refreshDashboard() {
   elements.refreshButton.disabled = true;
 
   try {
+    if (isPublicPagesSite()) {
+      launchRefreshBridge();
+      return;
+    }
+
     if (state.refreshHelperAvailable && state.refreshHelperUrl) {
       await forceRefreshViaHelper();
       return;
