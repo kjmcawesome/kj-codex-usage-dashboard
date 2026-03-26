@@ -281,6 +281,16 @@ test("server returns 200 for GET and HEAD on /", async () => {
   });
 });
 
+test("server serves static snapshot files even with cache-busting query params", async () => {
+  await withTestServer(async ({ baseUrl }) => {
+    const response = await fetch(`${baseUrl}/data/usage-snapshot.json?ts=12345`);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type") || "", /application\/json/);
+    const payload = await response.json();
+    assert.equal(payload.snapshot_version, 1);
+  });
+});
+
 test("server returns 200 for GET and HEAD on dashboard API", async () => {
   await withTestServer(async ({ baseUrl }) => {
     const url = `${baseUrl}/api/dashboard?days=30&workspace=all&include_subagents=1`;

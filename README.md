@@ -15,6 +15,24 @@ npm start
 ```
 
 `npm start` exports a fresh local snapshot, then serves the static site at `http://localhost:3184`.
+It also starts a local refresh helper on `http://127.0.0.1:3185` so the dashboard can force a rebuild from your machine.
+
+## Force rebuild helper
+
+```bash
+npm run helper:start
+```
+
+This runs the loopback helper that can rebuild the snapshot from `~/.codex` and publish `gh-pages` on demand.
+When the helper is reachable, the dashboard button switches from `Check for updates` to `Force rebuild`.
+
+## Install the force rebuild helper
+
+```bash
+npm run helper:install
+```
+
+This installs a macOS LaunchAgent that keeps the local refresh helper running on `127.0.0.1:3185`.
 
 ## Static export
 
@@ -60,3 +78,5 @@ This installs a macOS LaunchAgent that runs the Pages publish script every 30 mi
 - Cost uses uncached input at the model input rate, cached input at the cached-input rate, and `output_tokens + reasoning_output_tokens` at the model output rate.
 - Exact billed credits are not available from local Codex logs, so the dashboard shows credits as unavailable.
 - Range state is encoded in the page URL using either preset `days` or explicit `start_date` / `end_date`.
+- `Check for updates` fetches the latest published snapshot.
+- `Force rebuild` only appears when the loopback helper is reachable; it rebuilds from local logs and republishes if anything changed.

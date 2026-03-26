@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build:site": "node scripts/export-static-site.js",
-    "start": "node scripts/export-static-site.js && node server.js",
+    "start": "node scripts/start-local.js",
+    "helper:start": "node refresh-helper.js",
+    "helper:install": "node scripts/install-refresh-helper-launch-agent.js",
     "publish:pages": "node scripts/publish-pages.js",
     "schedule:install": "node scripts/install-launch-agent.js",
     "test": "TZ=UTC node --test"

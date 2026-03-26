@@ -89,8 +89,8 @@ function parseDashboardParams(url) {
   };
 }
 
-async function serveStaticFile(req, res, staticRoot) {
-  const requestPath = req.url === "/" ? "/index.html" : req.url || "/index.html";
+async function serveStaticFile(req, res, staticRoot, requestPathname) {
+  const requestPath = requestPathname === "/" ? "/index.html" : requestPathname || "/index.html";
   const normalizedPath = normalize(requestPath).replace(/^(\.\.[/\\])+/, "");
   const filePath = join(staticRoot, normalizedPath);
 
@@ -136,7 +136,7 @@ export function createAppServer({
         return;
       }
 
-      await serveStaticFile(req, res, staticRoot);
+      await serveStaticFile(req, res, staticRoot, url.pathname);
     } catch (error) {
       if (error instanceof BadRequestError) {
         sendJson(res, req.method || "GET", 400, {
