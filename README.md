@@ -15,7 +15,8 @@ npm start
 ```
 
 `npm start` exports a fresh local snapshot, then serves the static site at `http://localhost:3184`.
-It also starts a local refresh helper on `http://127.0.0.1:3185` so the dashboard can force a rebuild from your machine.
+It also ensures a local refresh helper is available on `http://127.0.0.1:3185` so the dashboard can force a rebuild from your machine.
+If the helper LaunchAgent is already running, `npm start` now reuses it instead of failing on a port collision.
 
 ## Force rebuild helper
 
