@@ -54,7 +54,9 @@ const elements = {
   summaryPeak: document.querySelector("#summary-peak"),
   summaryPeakFoot: document.querySelector("#summary-peak-foot"),
   summaryDays: document.querySelector("#summary-days"),
+  summaryDaysFoot: document.querySelector("#summary-days-foot"),
   summarySessions: document.querySelector("#summary-sessions"),
+  summarySessionsFoot: document.querySelector("#summary-sessions-foot"),
   summaryBurst: document.querySelector("#summary-burst"),
   summaryBurstFoot: document.querySelector("#summary-burst-foot"),
   costNote: document.querySelector("#cost-note"),
@@ -65,6 +67,15 @@ const elements = {
   heatmapShell: document.querySelector(".heatmap-shell"),
   heatmapMonths: document.querySelector("#heatmap-months"),
   heatmapGrid: document.querySelector("#heatmap-grid"),
+  todayStatusPill: document.querySelector("#today-status-pill"),
+  todayStatusHeadline: document.querySelector("#today-status-headline"),
+  todayStatusNote: document.querySelector("#today-status-note"),
+  heroStreak: document.querySelector("#hero-streak"),
+  heroStreakNote: document.querySelector("#hero-streak-note"),
+  heroActiveDays: document.querySelector("#hero-active-days"),
+  heroActiveNote: document.querySelector("#hero-active-note"),
+  heroPeakDay: document.querySelector("#hero-peak-day"),
+  heroPeakNote: document.querySelector("#hero-peak-note"),
   trendSparkline: document.querySelector("#trend-sparkline"),
   trendCost: document.querySelector("#trend-cost"),
   currentWorkNote: document.querySelector("#current-work-note"),
@@ -161,6 +172,150 @@ function formatTrendDate(value) {
   });
 }
 
+function formatMonthSpan(startDateKey, endDateKey) {
+  return `${formatDate(startDateKey)} to ${formatDate(endDateKey)}`;
+}
+
+function buildEstimatedValueNote(unpricedTotalTokens) {
+  if (unpricedTotalTokens > 0) {
+    return `Estimated value uses published OpenAI API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view did not match a priced model.`;
+  }
+
+  return "Estimated value uses published OpenAI API pricing as a directional planning lens, not billed spend.";
+}
+
+function startOfMonth(date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function daysInMonth(date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}
+
+function buildCurrentMonthRange(now) {
+  return {
+    startDate: dateKeyFromDate(startOfMonth(now)),
+    endDate: dateKeyFromDate(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+  };
+}
+
+function findRangeDay(dashboard, dateKey) {
+  return dashboard.heatmap_days.find((day) => day.in_range && day.date === dateKey) || null;
+}
+
+function findPeakDay(days) {
+  return days.reduce((peak, day) => {
+    if (!peak) {
+      return day;
+    }
+    if (day.total_tokens > peak.total_tokens) {
+      return day;
+    }
+    if (day.total_tokens === peak.total_tokens && day.date > peak.date) {
+      return day;
+    }
+    return peak;
+  }, null);
+}
+
+function computeCurrentStreak(lifetimeDashboard, todayKey) {
+  const inRangeDays = lifetimeDashboard.heatmap_days
+    .filter((day) => day.in_range && day.date <= todayKey)
+    .sort((left, right) => left.date.localeCompare(right.date));
+  let count = 0;
+  let startDate = null;
+
+  for (let index = inRangeDays.length - 1; index >= 0; index -= 1) {
+    const day = inRangeDays[index];
+    if ((day.total_tokens || 0) <= 0) {
+      break;
+    }
+    count += 1;
+    startDate = day.date;
+  }
+
+  return {
+    count,
+    startDate
+  };
+}
+
+function buildContextDashboards() {
+  const commonOptions = {
+    workspace: state.workspace,
+    includeSubagents: state.includeSubagents,
+    now: state.snapshotNow
+  };
+  const currentMonthRange = buildCurrentMonthRange(state.snapshotNow);
+
+  return {
+    currentMonth: buildDashboardPayload(state.snapshot, {
+      ...commonOptions,
+      startDate: currentMonthRange.startDate,
+      endDate: currentMonthRange.endDate
+    }),
+    lifetime: buildDashboardPayload(state.snapshot, {
+      ...commonOptions,
+      days: "all"
+    })
+  };
+}
+
+function buildMomentumMetrics(monthDashboard, lifetimeDashboard) {
+  const today = new Date(state.snapshotNow);
+  const todayKey = dateKeyFromDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+  const todayDay = findRangeDay(lifetimeDashboard, todayKey) || {
+    date: todayKey,
+    total_tokens: 0,
+    estimated_cost_usd: 0
+  };
+  const streak = computeCurrentStreak(lifetimeDashboard, todayKey);
+  const monthDays = monthDashboard.heatmap_days.filter((day) => day.in_range);
+  const peakDay = findPeakDay(monthDays);
+  const elapsedDays = Math.max(today.getDate(), 1);
+  const totalDays = daysInMonth(today);
+  const estimatedValue = monthDashboard.summary.estimated_cost_usd || 0;
+  const forecastedMonthEnd = elapsedDays > 0
+    ? (estimatedValue / elapsedDays) * totalDays
+    : 0;
+
+  return {
+    today: {
+      date: todayKey,
+      total_tokens: todayDay.total_tokens || 0,
+      estimated_cost_usd: todayDay.estimated_cost_usd || 0,
+      has_usage: (todayDay.total_tokens || 0) > 0
+    },
+    streak,
+    month: {
+      start_date: monthDashboard.range.start_date,
+      end_date: monthDashboard.range.end_date,
+      total_tokens: monthDashboard.summary.total_tokens || 0,
+      estimated_cost_usd: estimatedValue,
+      active_days: monthDashboard.summary.active_days || 0,
+      elapsed_days: elapsedDays,
+      total_days: totalDays,
+      forecasted_month_end: forecastedMonthEnd,
+      peak_day: peakDay
+    }
+  };
+}
+
+function formatWorkflowName(item) {
+  return item.thread_name || "Untitled workflow";
+}
+
+function formatWorkflowContext(item) {
+  const parts = [];
+  if (item.workspace_label) {
+    parts.push(item.workspace_label);
+  }
+  if (item.is_subagent) {
+    parts.push("Helper run");
+  }
+  return parts.join(" · ") || "Workflow";
+}
+
 function sleep(ms) {
   return new Promise((resolve) => {
     window.setTimeout(resolve, ms);
@@ -185,63 +340,6 @@ function buildTrendLabelIndexes(length) {
     Math.floor((length - 1) / 2),
     length - 1
   ])];
-}
-
-function buildPeakDaySummary(dashboard) {
-  const peakDay = dashboard.heatmap_days
-    .filter((day) => day.in_range)
-    .reduce((peak, day) => {
-      if (!peak) {
-        return day;
-      }
-      if (day.total_tokens > peak.total_tokens) {
-        return day;
-      }
-      if (day.total_tokens === peak.total_tokens && day.date > peak.date) {
-        return day;
-      }
-      return peak;
-    }, null);
-
-  if (!peakDay || peakDay.total_tokens <= 0) {
-    return {
-      value: "0",
-      title: "0",
-      foot: "No token activity in this range"
-    };
-  }
-
-  return {
-    value: formatCompactNumber(peakDay.total_tokens),
-    title: formatFullNumber(peakDay.total_tokens),
-    foot: `${formatDate(peakDay.date)} · ${formatUsd(peakDay.estimated_cost_usd)} API equiv.`
-  };
-}
-
-function buildCurrentBurstSummary(dashboard) {
-  const totals = (dashboard.current_work_sessions || []).reduce((accumulator, session) => {
-    accumulator.total_tokens += session.total_tokens || 0;
-    accumulator.estimated_cost_usd += session.estimated_cost_usd || 0;
-    return accumulator;
-  }, {
-    total_tokens: 0,
-    estimated_cost_usd: 0
-  });
-
-  const sessionCount = dashboard.current_work_sessions?.length || 0;
-  if (totals.total_tokens <= 0) {
-    return {
-      value: "0",
-      title: "0",
-      foot: "No session activity in the last 72 hours"
-    };
-  }
-
-  return {
-    value: formatCompactNumber(totals.total_tokens),
-    title: formatFullNumber(totals.total_tokens),
-    foot: `Last 72 hours · ${formatCountLabel(sessionCount, "session")} · ${formatUsd(totals.estimated_cost_usd)} API equiv.`
-  };
 }
 
 function setRefreshButtonLabel(label, title) {
@@ -507,26 +605,63 @@ function renderRangeControls() {
   elements.customRangeButton.classList.toggle("is-active", state.rangeMode === "custom");
 }
 
-function renderSummary(dashboard) {
-  const peakDay = buildPeakDaySummary(dashboard);
-  const currentBurst = buildCurrentBurstSummary(dashboard);
+function renderHeroMomentum(momentum) {
+  const todayStatusLabel = momentum.today.has_usage ? "Green today" : "No usage yet today";
+  elements.todayStatusPill.textContent = todayStatusLabel;
+  elements.todayStatusPill.classList.toggle("is-live", momentum.today.has_usage);
+  elements.todayStatusPill.classList.toggle("is-idle", !momentum.today.has_usage);
+
+  if (momentum.today.has_usage) {
+    elements.todayStatusHeadline.textContent = `${formatCompactNumber(momentum.today.total_tokens)} tokens so far today`;
+    elements.todayStatusNote.textContent = `${formatCompactUsd(momentum.today.estimated_cost_usd)} estimated value today${momentum.streak.count > 0 ? ` · ${formatCountLabel(momentum.streak.count, "day")} streak alive` : ""}`;
+  } else {
+    elements.todayStatusHeadline.textContent = "Today’s square is still open";
+    elements.todayStatusNote.textContent = "No usage yet today. One more workflow keeps the streak alive.";
+  }
+
+  elements.heroStreak.textContent = momentum.streak.count > 0
+    ? formatCountLabel(momentum.streak.count, "day")
+    : "0 days";
+  elements.heroStreakNote.textContent = momentum.streak.startDate
+    ? `Live since ${formatDate(momentum.streak.startDate)}`
+    : "Starts when today turns green";
+
+  elements.heroActiveDays.textContent = formatFullNumber(momentum.month.active_days);
+  elements.heroActiveNote.textContent = `${momentum.month.elapsed_days} days into the month`;
+
+  if (momentum.month.peak_day && momentum.month.peak_day.total_tokens > 0) {
+    elements.heroPeakDay.textContent = formatCompactNumber(momentum.month.peak_day.total_tokens);
+    elements.heroPeakNote.textContent = `${formatDate(momentum.month.peak_day.date)} · ${formatCompactUsd(momentum.month.peak_day.estimated_cost_usd)}`;
+  } else {
+    elements.heroPeakDay.textContent = "0";
+    elements.heroPeakNote.textContent = "No active peak day yet";
+  }
+}
+
+function renderSummary(dashboard, momentum) {
   elements.lastRefresh.textContent = new Date(dashboard.generated_at).toLocaleString();
-  elements.sourceNote.textContent = `${dashboard.source.log_files} logs · ${dashboard.timezone} snapshot`;
-  elements.summaryTotal.textContent = formatCompactNumber(dashboard.summary.total_tokens);
-  elements.summaryTotal.title = formatFullNumber(dashboard.summary.total_tokens);
-  elements.summaryTotalFoot.textContent = `${formatDate(dashboard.range.start_date)} to ${formatDate(dashboard.range.end_date)}`;
-  elements.summaryCost.textContent = formatUsd(dashboard.summary.estimated_cost_usd);
-  elements.summaryCost.title = formatUsd(dashboard.summary.estimated_cost_usd);
-  elements.summaryCostFoot.textContent = `Standard public rates · published ${formatDate(dashboard.rate_card.published_at)}`;
-  elements.summaryPeak.textContent = peakDay.value;
-  elements.summaryPeak.title = peakDay.title;
-  elements.summaryPeakFoot.textContent = peakDay.foot;
-  elements.summaryDays.textContent = formatFullNumber(dashboard.summary.active_days);
-  elements.summarySessions.textContent = formatFullNumber(dashboard.summary.sessions);
-  elements.summaryBurst.textContent = currentBurst.value;
-  elements.summaryBurst.title = currentBurst.title;
-  elements.summaryBurstFoot.textContent = currentBurst.foot;
-  elements.costNote.textContent = dashboard.estimated_cost_note;
+  elements.sourceNote.textContent = dashboard.selection.label;
+  elements.summaryTotal.textContent = formatCompactNumber(momentum.month.total_tokens);
+  elements.summaryTotal.title = formatFullNumber(momentum.month.total_tokens);
+  elements.summaryTotalFoot.textContent = formatMonthSpan(momentum.month.start_date, momentum.month.end_date);
+  elements.summaryCost.textContent = formatUsd(momentum.month.estimated_cost_usd);
+  elements.summaryCost.title = formatUsd(momentum.month.estimated_cost_usd);
+  elements.summaryCostFoot.textContent = `Month to date · ${momentum.month.elapsed_days} of ${momentum.month.total_days} days`;
+  elements.summaryPeak.textContent = formatUsd(momentum.month.forecasted_month_end);
+  elements.summaryPeak.title = formatUsd(momentum.month.forecasted_month_end);
+  elements.summaryPeakFoot.textContent = "Projected from this month’s pace";
+  elements.summaryDays.textContent = formatFullNumber(momentum.streak.count);
+  elements.summaryDaysFoot.textContent = momentum.streak.startDate
+    ? `Live since ${formatDate(momentum.streak.startDate)}`
+    : "No streak until today turns green";
+  elements.summarySessions.textContent = formatFullNumber(momentum.month.active_days);
+  elements.summarySessionsFoot.textContent = `Of ${momentum.month.elapsed_days} days so far`;
+  elements.summaryBurst.textContent = formatCompactNumber(momentum.today.total_tokens);
+  elements.summaryBurst.title = formatFullNumber(momentum.today.total_tokens);
+  elements.summaryBurstFoot.textContent = momentum.today.has_usage
+    ? `Green today · ${formatCompactUsd(momentum.today.estimated_cost_usd)} estimated value`
+    : "No usage yet today";
+  elements.costNote.textContent = buildEstimatedValueNote(dashboard.summary.unpriced_total_tokens);
   updateRangeSelectionLabel(dashboard.selection.label);
 }
 
@@ -560,13 +695,13 @@ function renderWeekdayLabels() {
 function buildHeatmapHeadline(dashboard) {
   if (dashboard.selection.mode === "preset") {
     if (dashboard.selection.days === "all") {
-      return `${formatFullNumber(dashboard.summary.total_tokens)} total tokens across all time`;
+      return `${formatFullNumber(dashboard.summary.total_tokens)} tokens across all time`;
     }
 
-    return `${formatFullNumber(dashboard.summary.total_tokens)} total tokens in the last ${dashboard.selection.days} days`;
+    return `${formatFullNumber(dashboard.summary.total_tokens)} tokens across the last ${dashboard.selection.days} days`;
   }
 
-  return `${formatFullNumber(dashboard.summary.total_tokens)} total tokens from ${formatDate(dashboard.range.start_date)} to ${formatDate(dashboard.range.end_date)}`;
+  return `${formatFullNumber(dashboard.summary.total_tokens)} tokens from ${formatDate(dashboard.range.start_date)} to ${formatDate(dashboard.range.end_date)}`;
 }
 
 function resetHeatmapViewportIfNeeded() {
@@ -592,6 +727,7 @@ function resetHeatmapViewportIfNeeded() {
 function renderHeatmap(dashboard) {
   const weekWidth = 18;
   const totalWeeks = (dashboard.heatmap_days.at(-1)?.week_index || 0) + 1;
+  const todayKey = state.snapshotNow ? dateKeyFromDate(state.snapshotNow) : null;
 
   elements.heatmapSummary.textContent = buildHeatmapHeadline(dashboard);
   elements.heatmapMonths.innerHTML = "";
@@ -616,13 +752,16 @@ function renderHeatmap(dashboard) {
       button.classList.add("is-outside");
       button.disabled = true;
     }
+    if (todayKey && day.in_range && day.date === todayKey) {
+      button.classList.add("is-today");
+    }
     if (state.selectedDate === day.date) {
       button.classList.add("is-selected");
     }
-    button.title = `${formatDate(day.date)}\n${formatFullNumber(day.total_tokens)} total tokens\n${formatUsd(day.estimated_cost_usd)} API equivalent`;
+    button.title = `${formatDate(day.date)}\n${formatFullNumber(day.total_tokens)} total tokens\n${formatUsd(day.estimated_cost_usd)} estimated value`;
     button.setAttribute(
       "aria-label",
-      `${formatDate(day.date)}: ${formatFullNumber(day.total_tokens)} total tokens and ${formatUsd(day.estimated_cost_usd)} public API equivalent`
+      `${formatDate(day.date)}: ${formatFullNumber(day.total_tokens)} total tokens and ${formatUsd(day.estimated_cost_usd)} estimated value`
     );
     button.addEventListener("click", () => {
       if (!day.in_range) {
@@ -698,7 +837,7 @@ function renderTrend(dashboard) {
   const xLabelIndexes = buildTrendLabelIndexes(trendDays.length);
 
   elements.trendSparkline.innerHTML = `
-    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token and API equivalent trend">
+    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token and estimated value trend">
       ${tokenTicks.map((tickValue, index) => {
         const y = margin.top + (plotHeight * (index / (tokenTicks.length - 1)));
         const matchingCost = costTicks[index];
@@ -720,7 +859,7 @@ function renderTrend(dashboard) {
           height="${Math.max(point.costHeight, 1)}"
           rx="4"
         >
-          <title>${formatTrendDate(point.date)}: ${formatUsd(point.costValue)} API equivalent</title>
+          <title>${formatTrendDate(point.date)}: ${formatUsd(point.costValue)} estimated value</title>
         </rect>
       `).join("")}
       <polyline class="sparkline-line" points="${linePoints.join(" ")}"></polyline>
@@ -738,7 +877,7 @@ function renderTrend(dashboard) {
     </svg>
     <div class="trend-legend" aria-hidden="true">
       <span class="trend-legend-item"><span class="trend-legend-line"></span>Tokens / day</span>
-      <span class="trend-legend-item"><span class="trend-legend-bar"></span>API equiv. / day</span>
+      <span class="trend-legend-item"><span class="trend-legend-bar"></span>Est. value / day</span>
     </div>
   `;
 }
@@ -809,23 +948,22 @@ function renderRankRows(container, rows, formatter) {
 function renderCurrentWork(dashboard) {
   const currentWorkRange = dashboard.current_work_range;
   const windowHours = currentWorkRange?.hours || 72;
-  elements.currentWorkNote.textContent = `Most active sessions over the last ${windowHours} hours`;
+  elements.currentWorkNote.textContent = `Most-used workflows over the last ${windowHours} hours`;
 
   renderRankRows(elements.currentWorkTable, dashboard.current_work_sessions, (session) => {
     const row = document.createElement("div");
     row.className = "rank-row";
-    const badge = session.is_subagent ? " · subagent" : "";
     row.innerHTML = `
       <div class="rank-main">
-        <span class="rank-title">${session.thread_name || session.session_id}</span>
-        <span class="rank-sub">${session.workspace_label}${badge} · ${formatCountLabel(session.active_days, "active day")}</span>
+        <span class="rank-title">${formatWorkflowName(session)}</span>
+        <span class="rank-sub">${formatWorkflowContext(session)} · ${formatCountLabel(session.active_days, "active day")}</span>
       </div>
       <div class="rank-metrics">
         <span class="rank-value">${formatUsd(session.estimated_cost_usd)}</span>
         <span class="rank-value-sub">${formatCompactNumber(session.total_tokens)} tokens</span>
       </div>
     `;
-    row.title = `${session.thread_name || session.session_id}: ${formatFullNumber(session.total_tokens)} total tokens in the last ${windowHours} hours · ${formatUsd(session.estimated_cost_usd)} public API equivalent`;
+    row.title = `${formatWorkflowName(session)}: ${formatFullNumber(session.total_tokens)} total tokens in the last ${windowHours} hours · ${formatUsd(session.estimated_cost_usd)} estimated value`;
     return row;
   });
 }
@@ -834,18 +972,17 @@ function renderTopThreads(dashboard) {
   renderRankRows(elements.threadTable, dashboard.top_threads, (thread) => {
     const row = document.createElement("div");
     row.className = "rank-row";
-    const badge = thread.is_subagent ? " · subagent" : "";
     row.innerHTML = `
       <div class="rank-main">
-        <span class="rank-title">${thread.thread_name || thread.session_id}</span>
-        <span class="rank-sub">${thread.workspace_label}${badge}</span>
+        <span class="rank-title">${formatWorkflowName(thread)}</span>
+        <span class="rank-sub">${formatWorkflowContext(thread)}</span>
       </div>
       <div class="rank-metrics">
         <span class="rank-value">${formatUsd(thread.estimated_cost_usd)}</span>
         <span class="rank-value-sub">${formatCompactNumber(thread.total_tokens)} tokens</span>
       </div>
     `;
-    row.title = `${thread.thread_name || thread.session_id}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} public API equivalent`;
+    row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated value`;
     return row;
   });
 }
@@ -862,10 +999,10 @@ function renderDayPanel(dayPayload) {
   elements.dayOutput.textContent = formatCompactNumber(dayPayload.summary.output_tokens);
   elements.dayReasoning.textContent = formatCompactNumber(dayPayload.summary.reasoning_output_tokens);
   elements.daySessions.textContent = formatFullNumber(dayPayload.sessions.length);
-  elements.dayCostNote.textContent = dayPayload.estimated_cost_note;
+  elements.dayCostNote.textContent = buildEstimatedValueNote(dayPayload.summary.unpriced_total_tokens);
 
   if (!dayPayload.sessions.length) {
-    elements.daySessionList.innerHTML = '<div class="empty-state">No sessions contributed tokens on this day.</div>';
+    elements.daySessionList.innerHTML = '<div class="empty-state">No workflows contributed usage on this day.</div>';
     return;
   }
 
@@ -876,16 +1013,16 @@ function renderDayPanel(dayPayload) {
     card.innerHTML = `
       <div class="session-head">
         <div class="session-main">
-          <span class="session-title">${session.thread_name || session.session_id}</span>
-          <span class="session-sub">${session.workspace_label} · ${session.cwd || "Unknown cwd"}</span>
+          <span class="session-title">${formatWorkflowName(session)}</span>
+          <span class="session-sub">${formatWorkflowContext(session)}</span>
         </div>
-        ${session.is_subagent ? '<span class="session-badge">Subagent</span>' : ""}
+        ${session.is_subagent ? '<span class="session-badge">Helper run</span>' : ""}
       </div>
       <div class="session-metrics">
         <div class="metric-pair"><span>Total</span><strong>${formatFullNumber(session.total_tokens)}</strong></div>
-        <div class="metric-pair"><span>API equiv.</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
+        <div class="metric-pair"><span>Est. value</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
         <div class="metric-pair"><span>Input</span><strong>${formatFullNumber(session.input_tokens)}</strong></div>
-        <div class="metric-pair"><span>Cached</span><strong>${formatFullNumber(session.cached_input_tokens)}</strong></div>
+        <div class="metric-pair"><span>Reused input</span><strong>${formatFullNumber(session.cached_input_tokens)}</strong></div>
         <div class="metric-pair"><span>Output</span><strong>${formatFullNumber(session.output_tokens)}</strong></div>
         <div class="metric-pair"><span>Reasoning</span><strong>${formatFullNumber(session.reasoning_output_tokens)}</strong></div>
         <div class="metric-pair"><span>Started</span><strong>${session.session_started_at ? new Date(session.session_started_at).toLocaleString() : "-"}</strong></div>
@@ -984,7 +1121,10 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     }
 
     state.dashboard = dashboard;
-    renderSummary(dashboard);
+    const contextDashboards = buildContextDashboards();
+    const momentum = buildMomentumMetrics(contextDashboards.currentMonth, contextDashboards.lifetime);
+    renderHeroMomentum(momentum);
+    renderSummary(dashboard, momentum);
     renderWorkspaceFilter(dashboard);
     renderHeatmap(dashboard);
     renderTrend(dashboard);
@@ -1003,6 +1143,8 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.currentWorkTable.innerHTML = message;
     elements.threadTable.innerHTML = message;
     elements.daySessionList.innerHTML = message;
+    elements.todayStatusHeadline.textContent = detail;
+    elements.todayStatusNote.textContent = "A fresh snapshot is required before the momentum view can load.";
     elements.heatmapSummary.textContent = detail;
     elements.heatmapGrid.innerHTML = "";
     elements.heatmapMonths.innerHTML = "";
