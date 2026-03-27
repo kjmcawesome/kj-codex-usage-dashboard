@@ -16,55 +16,43 @@
             <p class="eyebrow">Your usage</p>
             <h1>KJ Codex Usage Dashboard</h1>
             <p class="hero-note">
-              Fast read on token usage, estimated value, and whether you kept today green.
+              Fast read on token usage, estimated cost, and whether you kept today green.
             </p>
           </div>
           <div class="hero-meta">
             <div class="meta-card">
-              <span class="meta-label">Last updated</span>
+              <span class="meta-label">Updated</span>
               <strong id="last-refresh">Loading...</strong>
             </div>
             <div class="meta-card">
-              <span class="meta-label">Selected view</span>
+              <span class="meta-label">Range</span>
               <strong id="source-note">Momentum-first snapshot</strong>
             </div>
           </div>
         </div>
         <section class="summary-grid hero-summary-grid">
         <article class="summary-card">
-          <span class="card-label">Usage this month</span>
+          <span class="card-label">Usage</span>
           <strong class="card-value" id="summary-total">-</strong>
-          <span class="card-foot" id="summary-total-foot">This calendar month</span>
+          <span class="card-foot" id="summary-total-foot">Selected range</span>
         </article>
 
         <article class="summary-card">
-          <span class="card-label">Estimated value</span>
+          <span class="card-label">Estimated cost</span>
           <strong class="card-value" id="summary-cost">-</strong>
           <span class="card-foot" id="summary-cost-foot">Directional planning lens</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Forecasted month-end</span>
-          <strong class="card-value" id="summary-peak">-</strong>
-          <span class="card-foot" id="summary-peak-foot">Based on current month pace</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Current streak</span>
-          <strong class="card-value" id="summary-days">-</strong>
-          <span class="card-foot" id="summary-days-foot">Consecutive active days ending today</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Active days</span>
-          <strong class="card-value" id="summary-sessions">-</strong>
-          <span class="card-foot" id="summary-sessions-foot">Days active this month</span>
         </article>
 
         <article class="summary-card">
           <span class="card-label">Today</span>
           <strong class="card-value" id="summary-burst">-</strong>
           <span class="card-foot" id="summary-burst-foot">Today’s square status</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Current streak</span>
+          <strong class="card-value" id="summary-days">-</strong>
+          <span class="card-foot" id="summary-days-foot">Consecutive active days ending today</span>
         </article>
       </section>
       </header>
@@ -112,7 +100,7 @@
             <span id="today-status-pill" class="status-pill">Checking today</span>
             <div class="momentum-status-copy">
               <strong id="today-status-headline">Loading today’s momentum...</strong>
-              <span id="today-status-note">Pulling current token usage and estimated value.</span>
+              <span id="today-status-note">Pulling current token usage and estimated cost.</span>
             </div>
           </div>
         </div>
@@ -146,7 +134,7 @@
             <div class="activity-block-head">
               <div>
                 <h3>Last 14 days</h3>
-                <p class="activity-note">Recent tokens and estimated value by day.</p>
+                <p class="activity-note">Recent tokens and estimated cost by day.</p>
               </div>
               <div class="trend-summary">
                 <div class="panel-stat">
@@ -154,7 +142,7 @@
                   <strong id="trend-tokens">-</strong>
                 </div>
                 <div class="panel-stat">
-                  <span class="panel-stat-label">14-day est. value</span>
+                  <span class="panel-stat-label">14-day est. cost</span>
                   <strong id="trend-cost">-</strong>
                 </div>
               </div>
@@ -201,7 +189,7 @@
             <strong id="day-total">-</strong>
           </div>
           <div class="mini-stat">
-            <span>Estimated value</span>
+            <span>Estimated cost</span>
             <strong id="day-cost">-</strong>
           </div>
           <div class="mini-stat">
@@ -235,7 +223,7 @@
               Expand details to see the workflows and token buckets that drove this day.
             </p>
             <p class="day-explainer" id="day-cost-note">
-              Estimated value uses published OpenAI API pricing as a directional planning lens.
+              Estimated cost uses published OpenAI API pricing as a directional planning lens.
             </p>
             <div id="day-session-list" class="session-list"></div>
           </div>
@@ -246,13 +234,13 @@
         <summary class="budget-toggle">
           <div>
             <p class="panel-eyebrow">Budget details</p>
-            <h2>Estimated value breakdown</h2>
+            <h2>Estimated cost breakdown</h2>
             <p class="ranking-note">Model-level pricing detail for the planning lens behind this snapshot.</p>
           </div>
         </summary>
         <div class="budget-details-body">
           <p class="section-note" id="cost-note">
-            Estimated usage value uses published OpenAI API pricing as a directional planning lens.
+            Estimated cost uses published OpenAI API pricing as a directional planning lens.
           </p>
           <div class="cost-table-shell">
             <table class="cost-table">
@@ -266,7 +254,7 @@
                   <th>Input rate</th>
                   <th>Reused rate</th>
                   <th>Output rate</th>
-                  <th>Est. value</th>
+                  <th>Est. cost</th>
                   <th>Share</th>
                 </tr>
               </thead>

@@ -51,12 +51,8 @@ const elements = {
   summaryTotalFoot: document.querySelector("#summary-total-foot"),
   summaryCost: document.querySelector("#summary-cost"),
   summaryCostFoot: document.querySelector("#summary-cost-foot"),
-  summaryPeak: document.querySelector("#summary-peak"),
-  summaryPeakFoot: document.querySelector("#summary-peak-foot"),
   summaryDays: document.querySelector("#summary-days"),
   summaryDaysFoot: document.querySelector("#summary-days-foot"),
-  summarySessions: document.querySelector("#summary-sessions"),
-  summarySessionsFoot: document.querySelector("#summary-sessions-foot"),
   summaryBurst: document.querySelector("#summary-burst"),
   summaryBurstFoot: document.querySelector("#summary-burst-foot"),
   costNote: document.querySelector("#cost-note"),
@@ -167,31 +163,12 @@ function formatTrendDate(value) {
   });
 }
 
-function formatMonthSpan(startDateKey, endDateKey) {
-  return `${formatDate(startDateKey)} to ${formatDate(endDateKey)}`;
-}
-
-function buildEstimatedValueNote(unpricedTotalTokens) {
+function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated value uses published OpenAI API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view did not match a priced model.`;
+    return `Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view did not match a priced model.`;
   }
 
-  return "Estimated value uses published OpenAI API pricing as a directional planning lens, not billed spend.";
-}
-
-function startOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-function daysInMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-}
-
-function buildCurrentMonthRange(now) {
-  return {
-    startDate: dateKeyFromDate(startOfMonth(now)),
-    endDate: dateKeyFromDate(new Date(now.getFullYear(), now.getMonth(), now.getDate()))
-  };
+  return "Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend.";
 }
 
 function findRangeDay(dashboard, dateKey) {
@@ -235,28 +212,16 @@ function computeCurrentStreak(lifetimeDashboard, todayKey) {
   };
 }
 
-function buildContextDashboards() {
-  const commonOptions = {
+function buildLifetimeDashboard() {
+  return buildDashboardPayload(state.snapshot, {
     workspace: state.workspace,
     includeSubagents: state.includeSubagents,
-    now: state.snapshotNow
-  };
-  const currentMonthRange = buildCurrentMonthRange(state.snapshotNow);
-
-  return {
-    currentMonth: buildDashboardPayload(state.snapshot, {
-      ...commonOptions,
-      startDate: currentMonthRange.startDate,
-      endDate: currentMonthRange.endDate
-    }),
-    lifetime: buildDashboardPayload(state.snapshot, {
-      ...commonOptions,
-      days: "all"
-    })
-  };
+    now: state.snapshotNow,
+    days: "all"
+  });
 }
 
-function buildMomentumMetrics(monthDashboard, lifetimeDashboard) {
+function buildMomentumMetrics(lifetimeDashboard) {
   const today = new Date(state.snapshotNow);
   const todayKey = dateKeyFromDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
   const todayDay = findRangeDay(lifetimeDashboard, todayKey) || {
@@ -265,14 +230,6 @@ function buildMomentumMetrics(monthDashboard, lifetimeDashboard) {
     estimated_cost_usd: 0
   };
   const streak = computeCurrentStreak(lifetimeDashboard, todayKey);
-  const monthDays = monthDashboard.heatmap_days.filter((day) => day.in_range);
-  const peakDay = findPeakDay(monthDays);
-  const elapsedDays = Math.max(today.getDate(), 1);
-  const totalDays = daysInMonth(today);
-  const estimatedValue = monthDashboard.summary.estimated_cost_usd || 0;
-  const forecastedMonthEnd = elapsedDays > 0
-    ? (estimatedValue / elapsedDays) * totalDays
-    : 0;
 
   return {
     today: {
@@ -281,18 +238,7 @@ function buildMomentumMetrics(monthDashboard, lifetimeDashboard) {
       estimated_cost_usd: todayDay.estimated_cost_usd || 0,
       has_usage: (todayDay.total_tokens || 0) > 0
     },
-    streak,
-    month: {
-      start_date: monthDashboard.range.start_date,
-      end_date: monthDashboard.range.end_date,
-      total_tokens: monthDashboard.summary.total_tokens || 0,
-      estimated_cost_usd: estimatedValue,
-      active_days: monthDashboard.summary.active_days || 0,
-      elapsed_days: elapsedDays,
-      total_days: totalDays,
-      forecasted_month_end: forecastedMonthEnd,
-      peak_day: peakDay
-    }
+    streak
   };
 }
 
@@ -608,7 +554,7 @@ function renderHeroMomentum(momentum) {
 
   if (momentum.today.has_usage) {
     elements.todayStatusHeadline.textContent = `${formatCompactNumber(momentum.today.total_tokens)} tokens so far today`;
-    elements.todayStatusNote.textContent = `${formatCompactUsd(momentum.today.estimated_cost_usd)} estimated value today${momentum.streak.count > 0 ? ` · ${formatCountLabel(momentum.streak.count, "day")} streak alive` : ""}`;
+    elements.todayStatusNote.textContent = `${formatCompactUsd(momentum.today.estimated_cost_usd)} estimated cost today${momentum.streak.count > 0 ? ` · ${formatCountLabel(momentum.streak.count, "day")} streak alive` : ""}`;
   } else {
     elements.todayStatusHeadline.textContent = "Today’s square is still open";
     elements.todayStatusNote.textContent = "No usage yet today. One more workflow keeps the streak alive.";
@@ -618,27 +564,22 @@ function renderHeroMomentum(momentum) {
 function renderSummary(dashboard, momentum) {
   elements.lastRefresh.textContent = new Date(dashboard.generated_at).toLocaleString();
   elements.sourceNote.textContent = dashboard.selection.label;
-  elements.summaryTotal.textContent = formatCompactNumber(momentum.month.total_tokens);
-  elements.summaryTotal.title = formatFullNumber(momentum.month.total_tokens);
-  elements.summaryTotalFoot.textContent = formatMonthSpan(momentum.month.start_date, momentum.month.end_date);
-  elements.summaryCost.textContent = formatUsd(momentum.month.estimated_cost_usd);
-  elements.summaryCost.title = formatUsd(momentum.month.estimated_cost_usd);
-  elements.summaryCostFoot.textContent = `Month to date · ${momentum.month.elapsed_days} of ${momentum.month.total_days} days`;
-  elements.summaryPeak.textContent = formatUsd(momentum.month.forecasted_month_end);
-  elements.summaryPeak.title = formatUsd(momentum.month.forecasted_month_end);
-  elements.summaryPeakFoot.textContent = "Projected from this month’s pace";
+  elements.summaryTotal.textContent = formatCompactNumber(dashboard.summary.total_tokens);
+  elements.summaryTotal.title = formatFullNumber(dashboard.summary.total_tokens);
+  elements.summaryTotalFoot.textContent = `${dashboard.selection.label} · ${formatCountLabel(dashboard.summary.active_days, "active day")}`;
+  elements.summaryCost.textContent = formatUsd(dashboard.summary.estimated_cost_usd);
+  elements.summaryCost.title = formatUsd(dashboard.summary.estimated_cost_usd);
+  elements.summaryCostFoot.textContent = `${formatCountLabel(dashboard.summary.sessions, "workflow")} in range`;
   elements.summaryDays.textContent = formatFullNumber(momentum.streak.count);
   elements.summaryDaysFoot.textContent = momentum.streak.startDate
     ? `Live since ${formatDate(momentum.streak.startDate)}`
     : "No streak until today turns green";
-  elements.summarySessions.textContent = formatFullNumber(momentum.month.active_days);
-  elements.summarySessionsFoot.textContent = `Of ${momentum.month.elapsed_days} days so far`;
   elements.summaryBurst.textContent = formatCompactNumber(momentum.today.total_tokens);
   elements.summaryBurst.title = formatFullNumber(momentum.today.total_tokens);
   elements.summaryBurstFoot.textContent = momentum.today.has_usage
-    ? `Green today · ${formatCompactUsd(momentum.today.estimated_cost_usd)} estimated value`
+    ? `Green today · ${formatCompactUsd(momentum.today.estimated_cost_usd)} estimated cost`
     : "No usage yet today";
-  elements.costNote.textContent = buildEstimatedValueNote(dashboard.summary.unpriced_total_tokens);
+  elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
   updateRangeSelectionLabel(dashboard.selection.label);
 }
 
@@ -735,10 +676,10 @@ function renderHeatmap(dashboard) {
     if (state.selectedDate === day.date) {
       button.classList.add("is-selected");
     }
-    button.title = `${formatDate(day.date)}\n${formatFullNumber(day.total_tokens)} total tokens\n${formatUsd(day.estimated_cost_usd)} estimated value`;
+    button.title = `${formatDate(day.date)}\n${formatFullNumber(day.total_tokens)} total tokens\n${formatUsd(day.estimated_cost_usd)} estimated cost`;
     button.setAttribute(
       "aria-label",
-      `${formatDate(day.date)}: ${formatFullNumber(day.total_tokens)} total tokens and ${formatUsd(day.estimated_cost_usd)} estimated value`
+      `${formatDate(day.date)}: ${formatFullNumber(day.total_tokens)} total tokens and ${formatUsd(day.estimated_cost_usd)} estimated cost`
     );
     button.addEventListener("click", () => {
       if (!day.in_range) {
@@ -817,7 +758,7 @@ function renderTrend(dashboard) {
   const xLabelIndexes = buildTrendLabelIndexes(trendDays.length);
 
   elements.trendSparkline.innerHTML = `
-    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token and estimated value trend">
+    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token and estimated cost trend">
       ${tokenTicks.map((tickValue, index) => {
         const y = margin.top + (plotHeight * (index / (tokenTicks.length - 1)));
         const matchingCost = costTicks[index];
@@ -832,7 +773,7 @@ function renderTrend(dashboard) {
       <line class="trend-axis-line" x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}"></line>
       ${chartPoints.map((point) => `
         <rect class="trend-bar" x="${point.barX}" y="${point.barY}" width="${point.barWidth}" height="${Math.max(point.costHeight, 1)}" rx="4">
-          <title>${formatTrendDate(point.date)}: ${formatUsd(point.costValue)} estimated value</title>
+          <title>${formatTrendDate(point.date)}: ${formatUsd(point.costValue)} estimated cost</title>
         </rect>
       `).join("")}
       <polyline class="sparkline-line" points="${linePoints.join(" ")}"></polyline>
@@ -850,7 +791,7 @@ function renderTrend(dashboard) {
     </svg>
     <div class="trend-legend" aria-hidden="true">
       <span class="trend-legend-item"><span class="trend-legend-line"></span>Tokens / day</span>
-      <span class="trend-legend-item"><span class="trend-legend-bar"></span>Est. value / day</span>
+      <span class="trend-legend-item"><span class="trend-legend-bar"></span>Est. cost / day</span>
     </div>
   `;
 }
@@ -936,7 +877,7 @@ function renderCurrentWork(dashboard) {
         <span class="rank-value-sub">${formatCompactNumber(session.total_tokens)} tokens</span>
       </div>
     `;
-    row.title = `${formatWorkflowName(session)}: ${formatFullNumber(session.total_tokens)} total tokens in the last ${windowHours} hours · ${formatUsd(session.estimated_cost_usd)} estimated value`;
+    row.title = `${formatWorkflowName(session)}: ${formatFullNumber(session.total_tokens)} total tokens in the last ${windowHours} hours · ${formatUsd(session.estimated_cost_usd)} estimated cost`;
     return row;
   });
 }
@@ -955,7 +896,7 @@ function renderTopThreads(dashboard) {
         <span class="rank-value-sub">${formatCompactNumber(thread.total_tokens)} tokens</span>
       </div>
     `;
-    row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated value`;
+    row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated cost`;
     return row;
   });
 }
@@ -972,7 +913,7 @@ function renderDayPanel(dayPayload) {
   elements.dayOutput.textContent = formatCompactNumber(dayPayload.summary.output_tokens);
   elements.dayReasoning.textContent = formatCompactNumber(dayPayload.summary.reasoning_output_tokens);
   elements.daySessions.textContent = formatFullNumber(dayPayload.sessions.length);
-  elements.dayCostNote.textContent = buildEstimatedValueNote(dayPayload.summary.unpriced_total_tokens);
+  elements.dayCostNote.textContent = buildEstimatedCostNote(dayPayload.summary.unpriced_total_tokens);
 
   if (!dayPayload.sessions.length) {
     elements.daySessionList.innerHTML = '<div class="empty-state">No workflows contributed usage on this day.</div>';
@@ -993,7 +934,7 @@ function renderDayPanel(dayPayload) {
       </div>
       <div class="session-metrics">
         <div class="metric-pair"><span>Total</span><strong>${formatFullNumber(session.total_tokens)}</strong></div>
-        <div class="metric-pair"><span>Est. value</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
+        <div class="metric-pair"><span>Est. cost</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
         <div class="metric-pair"><span>Input</span><strong>${formatFullNumber(session.input_tokens)}</strong></div>
         <div class="metric-pair"><span>Reused input</span><strong>${formatFullNumber(session.cached_input_tokens)}</strong></div>
         <div class="metric-pair"><span>Output</span><strong>${formatFullNumber(session.output_tokens)}</strong></div>
@@ -1094,8 +1035,8 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     }
 
     state.dashboard = dashboard;
-    const contextDashboards = buildContextDashboards();
-    const momentum = buildMomentumMetrics(contextDashboards.currentMonth, contextDashboards.lifetime);
+    const lifetimeDashboard = buildLifetimeDashboard();
+    const momentum = buildMomentumMetrics(lifetimeDashboard);
     renderHeroMomentum(momentum);
     renderSummary(dashboard, momentum);
     renderWorkspaceFilter(dashboard);
