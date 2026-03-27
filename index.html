@@ -11,23 +11,67 @@
   <body>
     <div class="page-shell">
       <header class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">Your usage</p>
-          <h1>KJ Codex Usage Dashboard</h1>
-          <p class="hero-note">
-            Shareable view of how you are building with Codex, with daily momentum up top and estimated value kept in the background.
-          </p>
-        </div>
-        <div class="hero-meta">
-          <div class="meta-card">
-            <span class="meta-label">Last updated</span>
-            <strong id="last-refresh">Loading...</strong>
+        <div class="hero-top">
+          <div class="hero-copy">
+            <p class="eyebrow">Your usage</p>
+            <h1>KJ Codex Usage Dashboard</h1>
+            <p class="hero-note">
+              Fast read on token usage, estimated value, and whether you kept today green.
+            </p>
           </div>
-          <div class="meta-card">
-            <span class="meta-label">Selected view</span>
-            <strong id="source-note">Momentum-first snapshot</strong>
+          <div class="hero-meta">
+            <div class="meta-card">
+              <span class="meta-label">Last updated</span>
+              <strong id="last-refresh">Loading...</strong>
+            </div>
+            <div class="meta-card">
+              <span class="meta-label">Selected view</span>
+              <strong id="source-note">Momentum-first snapshot</strong>
+            </div>
+            <div class="meta-card meta-card-status">
+              <span class="meta-label">Today</span>
+              <strong id="today-status-headline">Loading today’s momentum...</strong>
+              <span id="today-status-note" class="meta-support">Pulling current token usage and estimated value.</span>
+            </div>
           </div>
         </div>
+        <section class="summary-grid hero-summary-grid">
+        <article class="summary-card">
+          <span class="card-label">Usage this month</span>
+          <strong class="card-value" id="summary-total">-</strong>
+          <span class="card-foot" id="summary-total-foot">This calendar month</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Estimated value</span>
+          <strong class="card-value" id="summary-cost">-</strong>
+          <span class="card-foot" id="summary-cost-foot">Directional planning lens</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Forecasted month-end</span>
+          <strong class="card-value" id="summary-peak">-</strong>
+          <span class="card-foot" id="summary-peak-foot">Based on current month pace</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Current streak</span>
+          <strong class="card-value" id="summary-days">-</strong>
+          <span class="card-foot" id="summary-days-foot">Consecutive active days ending today</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Active days</span>
+          <strong class="card-value" id="summary-sessions">-</strong>
+          <span class="card-foot" id="summary-sessions-foot">Days active this month</span>
+        </article>
+
+        <article class="summary-card">
+          <span class="card-label">Today</span>
+          <strong class="card-value" id="summary-burst">-</strong>
+          <span class="card-foot" id="summary-burst-foot">Today’s square status</span>
+        </article>
+      </section>
       </header>
 
       <section class="controls-panel">
@@ -66,14 +110,19 @@
       </section>
 
       <section class="panel momentum-panel">
-        <div class="momentum-top">
-          <section class="momentum-main">
-            <div class="panel-head momentum-panel-head">
-              <div>
-                <p class="panel-eyebrow">Daily momentum</p>
-                <h2>Keep the square green</h2>
-                <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
-              </div>
+        <div class="panel-head momentum-panel-head">
+          <div>
+            <p class="panel-eyebrow">Daily momentum</p>
+            <h2>Keep the square green</h2>
+            <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
+          </div>
+          <span id="today-status-pill" class="status-pill">Checking today</span>
+        </div>
+
+        <div class="activity-layout">
+          <section class="activity-block activity-block-heatmap">
+            <div class="activity-block-head">
+              <h3>Usage heatmap</h3>
               <div class="legend" aria-label="Heatmap legend">
                 <span>Less</span>
                 <div class="legend-swatches">
@@ -95,82 +144,26 @@
             </div>
           </section>
 
-          <aside class="momentum-side">
-            <span id="today-status-pill" class="status-pill">Checking today</span>
-            <h3 id="today-status-headline">Loading today’s momentum...</h3>
-            <p id="today-status-note" class="status-note">Pulling the latest daily streak and habit cues.</p>
-
-            <div class="hero-mini-grid">
-              <article class="hero-mini-stat">
-                <span>Current streak</span>
-                <strong id="hero-streak">-</strong>
-                <small id="hero-streak-note">-</small>
-              </article>
-              <article class="hero-mini-stat">
-                <span>Active days this month</span>
-                <strong id="hero-active-days">-</strong>
-                <small id="hero-active-note">-</small>
-              </article>
-              <article class="hero-mini-stat">
-                <span>Peak day this month</span>
-                <strong id="hero-peak-day">-</strong>
-                <small id="hero-peak-note">-</small>
-              </article>
+          <section class="activity-block activity-block-trend">
+            <div class="activity-block-head">
+              <div>
+                <h3>Last 14 days</h3>
+                <p class="activity-note">Recent tokens and estimated value by day.</p>
+              </div>
+              <div class="trend-summary">
+                <div class="panel-stat">
+                  <span class="panel-stat-label">14-day tokens</span>
+                  <strong id="trend-tokens">-</strong>
+                </div>
+                <div class="panel-stat">
+                  <span class="panel-stat-label">14-day est. value</span>
+                  <strong id="trend-cost">-</strong>
+                </div>
+              </div>
             </div>
-          </aside>
+            <div id="trend-sparkline" class="sparkline"></div>
+          </section>
         </div>
-
-        <div class="momentum-trend">
-          <div class="activity-block-head">
-            <div>
-              <h3>Last 14 days</h3>
-              <p class="activity-note">Your recent usage pace, with estimated value in the background.</p>
-            </div>
-            <div class="panel-stat">
-              <span class="panel-stat-label">14-day estimated value</span>
-              <strong id="trend-cost">-</strong>
-            </div>
-          </div>
-          <div id="trend-sparkline" class="sparkline"></div>
-        </div>
-      </section>
-
-      <section class="summary-grid">
-        <article class="summary-card">
-          <span class="card-label">Usage this month</span>
-          <strong class="card-value" id="summary-total">-</strong>
-          <span class="card-foot" id="summary-total-foot">This calendar month</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Estimated value</span>
-          <strong class="card-value" id="summary-cost">-</strong>
-          <span class="card-foot" id="summary-cost-foot">Directional planning lens</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Forecasted month-end</span>
-          <strong class="card-value" id="summary-peak">-</strong>
-          <span class="card-foot" id="summary-peak-foot">Based on current month pace</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Current streak</span>
-          <strong class="card-value" id="summary-days">-</strong>
-          <span class="card-foot" id="summary-days-foot">Consecutive active days ending today</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Active days</span>
-          <strong class="card-value" id="summary-sessions">-</strong>
-          <span class="card-foot" id="summary-sessions-foot">Days active this month</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Today</span>
-          <strong class="card-value" id="summary-burst">-</strong>
-          <span class="card-foot" id="summary-burst-foot">Today’s square status</span>
-        </article>
       </section>
 
       <section class="lower-grid">
