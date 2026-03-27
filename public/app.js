@@ -10,7 +10,7 @@ const RANGE_OPTIONS = [
   { label: "All", value: "all" }
 ];
 
-const DEFAULT_DAYS = 365;
+const DEFAULT_DAYS = 30;
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
 const REFRESH_CHECK_LABEL = "Check for updates";
@@ -70,13 +70,8 @@ const elements = {
   todayStatusPill: document.querySelector("#today-status-pill"),
   todayStatusHeadline: document.querySelector("#today-status-headline"),
   todayStatusNote: document.querySelector("#today-status-note"),
-  heroStreak: document.querySelector("#hero-streak"),
-  heroStreakNote: document.querySelector("#hero-streak-note"),
-  heroActiveDays: document.querySelector("#hero-active-days"),
-  heroActiveNote: document.querySelector("#hero-active-note"),
-  heroPeakDay: document.querySelector("#hero-peak-day"),
-  heroPeakNote: document.querySelector("#hero-peak-note"),
   trendSparkline: document.querySelector("#trend-sparkline"),
+  trendTokens: document.querySelector("#trend-tokens"),
   trendCost: document.querySelector("#trend-cost"),
   currentWorkNote: document.querySelector("#current-work-note"),
   currentWorkTable: document.querySelector("#current-work-table"),
@@ -618,24 +613,6 @@ function renderHeroMomentum(momentum) {
     elements.todayStatusHeadline.textContent = "Today’s square is still open";
     elements.todayStatusNote.textContent = "No usage yet today. One more workflow keeps the streak alive.";
   }
-
-  elements.heroStreak.textContent = momentum.streak.count > 0
-    ? formatCountLabel(momentum.streak.count, "day")
-    : "0 days";
-  elements.heroStreakNote.textContent = momentum.streak.startDate
-    ? `Live since ${formatDate(momentum.streak.startDate)}`
-    : "Starts when today turns green";
-
-  elements.heroActiveDays.textContent = formatFullNumber(momentum.month.active_days);
-  elements.heroActiveNote.textContent = `${momentum.month.elapsed_days} days into the month`;
-
-  if (momentum.month.peak_day && momentum.month.peak_day.total_tokens > 0) {
-    elements.heroPeakDay.textContent = formatCompactNumber(momentum.month.peak_day.total_tokens);
-    elements.heroPeakNote.textContent = `${formatDate(momentum.month.peak_day.date)} · ${formatCompactUsd(momentum.month.peak_day.estimated_cost_usd)}`;
-  } else {
-    elements.heroPeakDay.textContent = "0";
-    elements.heroPeakNote.textContent = "No active peak day yet";
-  }
 }
 
 function renderSummary(dashboard, momentum) {
@@ -782,14 +759,15 @@ function renderTrend(dashboard) {
   const trendDays = dashboard.trend_days || [];
   const tokenValues = trendDays.map((day) => day.total_tokens || 0);
   const costValues = trendDays.map((day) => day.estimated_cost_usd || 0);
+  const trendTokens = tokenValues.reduce((total, value) => total + value, 0);
   const trendCost = costValues.reduce((total, value) => total + value, 0);
-  const width = 560;
-  const height = 220;
+  const width = 520;
+  const height = 240;
   const margin = {
-    top: 18,
-    right: 62,
-    bottom: 34,
-    left: 58
+    top: 14,
+    right: 54,
+    bottom: 30,
+    left: 50
   };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
@@ -798,6 +776,8 @@ function renderTrend(dashboard) {
   const tokenScaleMax = maxTokens || 1;
   const costScaleMax = maxCost || 1;
 
+  elements.trendTokens.textContent = formatCompactNumber(trendTokens);
+  elements.trendTokens.title = formatFullNumber(trendTokens);
   elements.trendCost.textContent = formatUsd(trendCost);
   elements.trendCost.title = formatUsd(trendCost);
 
@@ -851,14 +831,7 @@ function renderTrend(dashboard) {
       <line class="trend-axis-line" x1="${margin.left + plotWidth}" y1="${margin.top}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}"></line>
       <line class="trend-axis-line" x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}"></line>
       ${chartPoints.map((point) => `
-        <rect
-          class="trend-bar"
-          x="${point.barX}"
-          y="${point.barY}"
-          width="${point.barWidth}"
-          height="${Math.max(point.costHeight, 1)}"
-          rx="4"
-        >
+        <rect class="trend-bar" x="${point.barX}" y="${point.barY}" width="${point.barWidth}" height="${Math.max(point.costHeight, 1)}" rx="4">
           <title>${formatTrendDate(point.date)}: ${formatUsd(point.costValue)} estimated value</title>
         </rect>
       `).join("")}
@@ -1143,6 +1116,8 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.currentWorkTable.innerHTML = message;
     elements.threadTable.innerHTML = message;
     elements.daySessionList.innerHTML = message;
+    elements.trendTokens.textContent = "-";
+    elements.trendCost.textContent = "-";
     elements.todayStatusHeadline.textContent = detail;
     elements.todayStatusNote.textContent = "A fresh snapshot is required before the momentum view can load.";
     elements.heatmapSummary.textContent = detail;
