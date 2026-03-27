@@ -28,11 +28,6 @@
               <span class="meta-label">Selected view</span>
               <strong id="source-note">Momentum-first snapshot</strong>
             </div>
-            <div class="meta-card meta-card-status">
-              <span class="meta-label">Today</span>
-              <strong id="today-status-headline">Loading today’s momentum...</strong>
-              <span id="today-status-note" class="meta-support">Pulling current token usage and estimated value.</span>
-            </div>
           </div>
         </div>
         <section class="summary-grid hero-summary-grid">
@@ -82,11 +77,8 @@
               <div class="range-chips" id="range-chips" aria-label="Date range"></div>
               <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
               <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
+              <strong id="active-range-pill" class="active-range-pill">Last 30 days</strong>
             </div>
-          </div>
-          <div class="toolbar-field toolbar-field-selection">
-            <span class="toolbar-label">Selection</span>
-            <strong id="active-range-pill" class="active-range-pill">Last 365 days</strong>
           </div>
         </div>
 
@@ -116,7 +108,13 @@
             <h2>Keep the square green</h2>
             <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
           </div>
-          <span id="today-status-pill" class="status-pill">Checking today</span>
+          <div class="momentum-head-status">
+            <span id="today-status-pill" class="status-pill">Checking today</span>
+            <div class="momentum-status-copy">
+              <strong id="today-status-headline">Loading today’s momentum...</strong>
+              <span id="today-status-note">Pulling current token usage and estimated value.</span>
+            </div>
+          </div>
         </div>
 
         <div class="activity-layout">

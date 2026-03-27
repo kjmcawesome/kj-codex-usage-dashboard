@@ -10,7 +10,7 @@ const RANGE_OPTIONS = [
   { label: "All", value: "all" }
 ];
 
-const DEFAULT_DAYS = 365;
+const DEFAULT_DAYS = 30;
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
 const REFRESH_CHECK_LABEL = "Check for updates";
