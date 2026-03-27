@@ -364,11 +364,18 @@ select {
 
 .momentum-panel {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .momentum-panel-head {
   margin-bottom: 0;
+}
+
+.habit-rail {
+  display: grid;
+  gap: 12px;
+  justify-items: end;
+  max-width: 460px;
 }
 
 .momentum-head-status {
@@ -436,30 +443,56 @@ select {
   color: var(--accent);
 }
 
-.activity-layout {
+.habit-stat-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.95fr);
-  gap: 14px;
-  align-items: start;
+  grid-template-columns: repeat(3, minmax(118px, 1fr));
+  gap: 10px;
+  width: 100%;
 }
 
-.activity-block {
+.habit-stat {
   border: 1px solid rgba(35, 49, 39, 0.08);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.58);
-  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.56);
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
   min-width: 0;
 }
 
-.activity-block-head {
+.habit-stat-label {
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.habit-stat strong {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 1.02rem;
+  color: var(--accent);
+}
+
+.habit-stat-foot {
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.habit-board {
+  display: grid;
+  gap: 10px;
+}
+
+.habit-board-head {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  align-items: flex-start;
-  margin-bottom: 10px;
+  align-items: center;
 }
 
-.activity-block-head h3 {
+.habit-board-head h3,
+.trend-strip-head h3 {
   margin: 0;
   font-size: 1.05rem;
   letter-spacing: -0.02em;
@@ -473,13 +506,22 @@ select {
   max-width: 28ch;
 }
 
-.activity-block-heatmap {
-  align-self: start;
+.heatmap-chart-board {
+  padding-top: 2px;
 }
 
-.activity-block-trend {
+.trend-strip {
   display: grid;
   gap: 10px;
+  border-top: 1px solid rgba(35, 49, 39, 0.08);
+  padding-top: 14px;
+}
+
+.trend-strip-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
 }
 
 .trend-summary {
@@ -723,6 +765,14 @@ select {
 .sparkline svg {
   width: 100%;
   height: 206px;
+}
+
+.sparkline-compact {
+  min-height: 164px;
+}
+
+.sparkline-compact svg {
+  height: 164px;
 }
 
 .sparkline-line {
@@ -1057,7 +1107,6 @@ select {
 }
 
 @media (max-width: 1180px) {
-  .activity-layout,
   .hero-top,
   .lower-grid {
     grid-template-columns: 1fr;
@@ -1074,6 +1123,16 @@ select {
   .momentum-head-status {
     justify-items: start;
     text-align: left;
+  }
+
+  .habit-rail {
+    justify-items: stretch;
+    max-width: none;
+    width: 100%;
+  }
+
+  .trend-strip-head {
+    flex-direction: column;
   }
 
   .toolbar-group-filters {
@@ -1130,8 +1189,14 @@ select {
     min-width: 32px;
   }
 
-  .activity-block-head {
+  .habit-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .habit-board-head,
+  .trend-strip-head {
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .budget-toggle {
