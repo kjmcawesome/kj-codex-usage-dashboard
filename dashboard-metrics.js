@@ -154,10 +154,10 @@ function buildRateCardPayload() {
 
 function buildCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Public-rate equivalent using published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a rough value proxy, not your billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view did not match a priced model and are excluded.`;
+    return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not your billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view did not match a priced model and are excluded.`;
   }
 
-  return `Public-rate equivalent using published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a rough value proxy, not your billed spend.`;
+  return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not your billed spend.`;
 }
 
 function formatDisplayDate(date) {
