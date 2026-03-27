@@ -32,6 +32,10 @@ function heatmapDayByDate(dashboard, date) {
   return dashboard.heatmap_days.find((day) => day.date === date);
 }
 
+function habitBoardDayByDate(dashboard, date) {
+  return dashboard.habit_board.days.find((day) => day.date === date);
+}
+
 async function withTestServer(callback) {
   const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-server-"));
   const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
@@ -163,6 +167,15 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.current_work_sessions[1].total_tokens, 60);
   assert.equal(allSessions.current_work_sessions[2].thread_name, "Null-info thread");
   assert.equal(allSessions.current_work_sessions[2].total_tokens, 50);
+  assert.equal(allSessions.habit_board.start_date, "2025-03-26");
+  assert.equal(allSessions.habit_board.end_date, "2026-03-25");
+  assert.equal(allSessions.habit_metrics.today_has_usage, false);
+  assert.equal(allSessions.habit_metrics.today_tokens, 0);
+  assert.equal(allSessions.habit_metrics.current_streak, 0);
+  assert.equal(allSessions.habit_metrics.best_streak, 5);
+  assert.equal(allSessions.habit_metrics.workweek_green_days, 2);
+  assert.equal(allSessions.habit_metrics.workweek_goal, 5);
+  assertClose(allSessions.habit_board.scale.max_total_tokens, 190);
   assertClose(allSessions.heatmap_scale.max_total_tokens, 190);
   assertClose(allSessions.heatmap_scale.thresholds[0], 47.5);
   assertClose(allSessions.heatmap_scale.thresholds[1], 95);
@@ -171,12 +184,14 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(heatmapDayByDate(allSessions, "2026-03-20").level, 4);
   assert.equal(heatmapDayByDate(allSessions, "2026-03-22").level, 2);
   assert.equal(heatmapDayByDate(allSessions, "2026-03-24").level, 2);
+  assert.equal(habitBoardDayByDate(allSessions, "2026-03-20").level, 4);
   assert.equal(allSessions.cost_breakdown_by_model.length, 3);
   assertClose(
     allSessions.cost_breakdown_by_model.reduce((sum, row) => sum + row.estimated_cost_usd, 0),
     allSessions.summary.estimated_cost_usd
   );
   assert.equal(allSessions.heatmap_days.filter((day) => day.in_range).length, 365);
+  assert.equal(allSessions.habit_board.days.filter((day) => day.in_range).length, 365);
 });
 
 test("buildDashboardPayload supports custom date ranges", async () => {
@@ -247,6 +262,25 @@ test("buildDayPayload returns per-day session drilldown", async () => {
   assert.equal(withoutSubagents.summary.total_tokens, 120);
   assert.equal(withoutSubagents.sessions.length, 1);
   assertClose(withoutSubagents.summary.estimated_cost_usd, 0.000616);
+});
+
+test("buildDayPayload still returns a clicked habit-board day outside the selected range", async () => {
+  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-day-outside-range-"));
+  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
+  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
+
+  const payload = buildDayPayload(index, "2026-03-20", {
+    startDate: "2026-03-23",
+    endDate: "2026-03-24",
+    includeSubagents: true,
+    workspace: "all",
+    now: fixedNow()
+  });
+
+  assert.equal(payload.selection.mode, "custom");
+  assert.equal(payload.summary.total_tokens, 150);
+  assert.equal(payload.sessions.length, 1);
+  assert.equal(payload.sessions[0].thread_name, "One snapshot thread");
 });
 
 test("createPublicSnapshot strips local source paths and keeps usage data", async () => {

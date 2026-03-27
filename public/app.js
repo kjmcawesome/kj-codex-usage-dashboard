@@ -66,6 +66,12 @@ const elements = {
   todayStatusPill: document.querySelector("#today-status-pill"),
   todayStatusHeadline: document.querySelector("#today-status-headline"),
   todayStatusNote: document.querySelector("#today-status-note"),
+  habitCurrentStreak: document.querySelector("#habit-current-streak"),
+  habitCurrentNote: document.querySelector("#habit-current-note"),
+  habitBestStreak: document.querySelector("#habit-best-streak"),
+  habitBestNote: document.querySelector("#habit-best-note"),
+  habitWorkweek: document.querySelector("#habit-workweek"),
+  habitWorkweekNote: document.querySelector("#habit-workweek-note"),
   trendSparkline: document.querySelector("#trend-sparkline"),
   trendTokens: document.querySelector("#trend-tokens"),
   trendCost: document.querySelector("#trend-cost"),
@@ -171,75 +177,22 @@ function buildEstimatedCostNote(unpricedTotalTokens) {
   return "Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend.";
 }
 
-function findRangeDay(dashboard, dateKey) {
-  return dashboard.heatmap_days.find((day) => day.in_range && day.date === dateKey) || null;
+function todayDate(now = new Date()) {
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
-function findPeakDay(days) {
-  return days.reduce((peak, day) => {
-    if (!peak) {
-      return day;
-    }
-    if (day.total_tokens > peak.total_tokens) {
-      return day;
-    }
-    if (day.total_tokens === peak.total_tokens && day.date > peak.date) {
-      return day;
-    }
-    return peak;
-  }, null);
+function addDays(date, days) {
+  const copy = new Date(date);
+  copy.setDate(copy.getDate() + days);
+  return copy;
 }
 
-function computeCurrentStreak(lifetimeDashboard, todayKey) {
-  const inRangeDays = lifetimeDashboard.heatmap_days
-    .filter((day) => day.in_range && day.date <= todayKey)
-    .sort((left, right) => left.date.localeCompare(right.date));
-  let count = 0;
-  let startDate = null;
-
-  for (let index = inRangeDays.length - 1; index >= 0; index -= 1) {
-    const day = inRangeDays[index];
-    if ((day.total_tokens || 0) <= 0) {
-      break;
-    }
-    count += 1;
-    startDate = day.date;
+function buildStreakStartDate(streakCount) {
+  if (!streakCount) {
+    return null;
   }
 
-  return {
-    count,
-    startDate
-  };
-}
-
-function buildLifetimeDashboard() {
-  return buildDashboardPayload(state.snapshot, {
-    workspace: state.workspace,
-    includeSubagents: state.includeSubagents,
-    now: state.snapshotNow,
-    days: "all"
-  });
-}
-
-function buildMomentumMetrics(lifetimeDashboard) {
-  const today = new Date(state.snapshotNow);
-  const todayKey = dateKeyFromDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
-  const todayDay = findRangeDay(lifetimeDashboard, todayKey) || {
-    date: todayKey,
-    total_tokens: 0,
-    estimated_cost_usd: 0
-  };
-  const streak = computeCurrentStreak(lifetimeDashboard, todayKey);
-
-  return {
-    today: {
-      date: todayKey,
-      total_tokens: todayDay.total_tokens || 0,
-      estimated_cost_usd: todayDay.estimated_cost_usd || 0,
-      has_usage: (todayDay.total_tokens || 0) > 0
-    },
-    streak
-  };
+  return dateKeyFromDate(addDays(todayDate(state.snapshotNow), -(streakCount - 1)));
 }
 
 function formatWorkflowName(item) {
@@ -534,7 +487,6 @@ function renderRangeControls() {
       state.days = option.value;
       state.startDate = null;
       state.endDate = null;
-      state.shouldResetHeatmapViewport = true;
       syncUrl();
       syncDatePicker(null);
       renderRangeControls();
@@ -546,22 +498,38 @@ function renderRangeControls() {
   elements.customRangeButton.classList.toggle("is-active", state.rangeMode === "custom");
 }
 
-function renderHeroMomentum(momentum) {
-  const todayStatusLabel = momentum.today.has_usage ? "Green today" : "No usage yet today";
+function renderHabitRail(dashboard) {
+  const metrics = dashboard.habit_metrics;
+  const todayStatusLabel = metrics.today_has_usage ? "Green today" : "Not green yet";
   elements.todayStatusPill.textContent = todayStatusLabel;
-  elements.todayStatusPill.classList.toggle("is-live", momentum.today.has_usage);
-  elements.todayStatusPill.classList.toggle("is-idle", !momentum.today.has_usage);
+  elements.todayStatusPill.classList.toggle("is-live", metrics.today_has_usage);
+  elements.todayStatusPill.classList.toggle("is-idle", !metrics.today_has_usage);
 
-  if (momentum.today.has_usage) {
-    elements.todayStatusHeadline.textContent = `${formatCompactNumber(momentum.today.total_tokens)} tokens so far today`;
-    elements.todayStatusNote.textContent = `${formatCompactUsd(momentum.today.estimated_cost_usd)} estimated cost today${momentum.streak.count > 0 ? ` · ${formatCountLabel(momentum.streak.count, "day")} streak alive` : ""}`;
+  if (metrics.today_has_usage) {
+    elements.todayStatusHeadline.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens so far today`;
+    elements.todayStatusNote.textContent = `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today`;
   } else {
-    elements.todayStatusHeadline.textContent = "Today’s square is still open";
-    elements.todayStatusNote.textContent = "No usage yet today. One more workflow keeps the streak alive.";
+    elements.todayStatusHeadline.textContent = "One workflow starts the streak";
+    elements.todayStatusNote.textContent = "No usage yet today. Get the square green.";
   }
+
+  const streakStartDate = buildStreakStartDate(metrics.current_streak);
+  elements.habitCurrentStreak.textContent = formatFullNumber(metrics.current_streak);
+  elements.habitCurrentNote.textContent = streakStartDate
+    ? `Live since ${formatDate(streakStartDate)}`
+    : "Start with one green day";
+  elements.habitBestStreak.textContent = formatFullNumber(metrics.best_streak);
+  elements.habitBestNote.textContent = metrics.best_streak > 0
+    ? "Best run in the last 365 days"
+    : "No streak on the board yet";
+  elements.habitWorkweek.textContent = `${metrics.workweek_green_days}/${metrics.workweek_goal}`;
+  const workweekRemaining = Math.max(metrics.workweek_goal - metrics.workweek_green_days, 0);
+  elements.habitWorkweekNote.textContent = workweekRemaining === 0
+    ? "Workweek goal hit"
+    : `${workweekRemaining} green day${workweekRemaining === 1 ? "" : "s"} to go`;
 }
 
-function renderSummary(dashboard, momentum) {
+function renderSummary(dashboard) {
   elements.lastRefresh.textContent = new Date(dashboard.generated_at).toLocaleString();
   elements.sourceNote.textContent = dashboard.selection.label;
   elements.summaryTotal.textContent = formatCompactNumber(dashboard.summary.total_tokens);
@@ -570,14 +538,15 @@ function renderSummary(dashboard, momentum) {
   elements.summaryCost.textContent = formatUsd(dashboard.summary.estimated_cost_usd);
   elements.summaryCost.title = formatUsd(dashboard.summary.estimated_cost_usd);
   elements.summaryCostFoot.textContent = `${formatCountLabel(dashboard.summary.sessions, "workflow")} in range`;
-  elements.summaryDays.textContent = formatFullNumber(momentum.streak.count);
-  elements.summaryDaysFoot.textContent = momentum.streak.startDate
-    ? `Live since ${formatDate(momentum.streak.startDate)}`
+  elements.summaryDays.textContent = formatFullNumber(dashboard.habit_metrics.current_streak);
+  const streakStartDate = buildStreakStartDate(dashboard.habit_metrics.current_streak);
+  elements.summaryDaysFoot.textContent = streakStartDate
+    ? `Live since ${formatDate(streakStartDate)}`
     : "No streak until today turns green";
-  elements.summaryBurst.textContent = formatCompactNumber(momentum.today.total_tokens);
-  elements.summaryBurst.title = formatFullNumber(momentum.today.total_tokens);
-  elements.summaryBurstFoot.textContent = momentum.today.has_usage
-    ? `Green today · ${formatCompactUsd(momentum.today.estimated_cost_usd)} estimated cost`
+  elements.summaryBurst.textContent = formatCompactNumber(dashboard.habit_metrics.today_tokens);
+  elements.summaryBurst.title = formatFullNumber(dashboard.habit_metrics.today_tokens);
+  elements.summaryBurstFoot.textContent = dashboard.habit_metrics.today_has_usage
+    ? `Green today · ${formatCompactUsd(dashboard.habit_metrics.today_estimated_cost_usd)} estimated cost`
     : "No usage yet today";
   elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
   updateRangeSelectionLabel(dashboard.selection.label);
@@ -611,15 +580,11 @@ function renderWeekdayLabels() {
 }
 
 function buildHeatmapHeadline(dashboard) {
-  if (dashboard.selection.mode === "preset") {
-    if (dashboard.selection.days === "all") {
-      return `${formatFullNumber(dashboard.summary.total_tokens)} tokens across all time`;
-    }
+  const totalTokens = dashboard.habit_board.days.reduce((sum, day) =>
+    sum + (day.in_range ? (day.total_tokens || 0) : 0), 0
+  );
 
-    return `${formatFullNumber(dashboard.summary.total_tokens)} tokens across the last ${dashboard.selection.days} days`;
-  }
-
-  return `${formatFullNumber(dashboard.summary.total_tokens)} tokens from ${formatDate(dashboard.range.start_date)} to ${formatDate(dashboard.range.end_date)}`;
+  return `${formatFullNumber(totalTokens)} tokens across the last 365 days`;
 }
 
 function resetHeatmapViewportIfNeeded() {
@@ -644,7 +609,8 @@ function resetHeatmapViewportIfNeeded() {
 
 function renderHeatmap(dashboard) {
   const weekWidth = 18;
-  const totalWeeks = (dashboard.heatmap_days.at(-1)?.week_index || 0) + 1;
+  const board = dashboard.habit_board;
+  const totalWeeks = (board.days.at(-1)?.week_index || 0) + 1;
   const todayKey = state.snapshotNow ? dateKeyFromDate(state.snapshotNow) : null;
 
   elements.heatmapSummary.textContent = buildHeatmapHeadline(dashboard);
@@ -652,7 +618,7 @@ function renderHeatmap(dashboard) {
   elements.heatmapGrid.innerHTML = "";
   elements.heatmapMonths.style.width = `${Math.max(weekWidth * totalWeeks, 120)}px`;
 
-  for (const label of dashboard.heatmap_month_labels) {
+  for (const label of board.month_labels) {
     const span = document.createElement("span");
     span.className = "month-label";
     span.style.left = `${label.week_index * weekWidth}px`;
@@ -660,7 +626,7 @@ function renderHeatmap(dashboard) {
     elements.heatmapMonths.append(span);
   }
 
-  for (const day of dashboard.heatmap_days) {
+  for (const day of board.days) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `day-cell level-${day.level}`;
@@ -703,12 +669,12 @@ function renderTrend(dashboard) {
   const trendTokens = tokenValues.reduce((total, value) => total + value, 0);
   const trendCost = costValues.reduce((total, value) => total + value, 0);
   const width = 520;
-  const height = 240;
+  const height = 184;
   const margin = {
-    top: 14,
-    right: 54,
-    bottom: 30,
-    left: 50
+    top: 12,
+    right: 50,
+    bottom: 26,
+    left: 44
   };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
@@ -989,7 +955,6 @@ function syncDatePicker(dashboard) {
         state.rangeMode = "custom";
         state.startDate = dateKeyFromDate(selectedDates[0]);
         state.endDate = dateKeyFromDate(selectedDates[1]);
-        state.shouldResetHeatmapViewport = true;
         syncUrl();
         renderRangeControls();
         loadDashboard();
@@ -1029,16 +994,14 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
       includeSubagents: state.includeSubagents,
       now: state.snapshotNow
     });
-    const validDates = new Set(dashboard.heatmap_days.filter((day) => day.in_range).map((day) => day.date));
+    const validDates = new Set(dashboard.habit_board.days.filter((day) => day.in_range).map((day) => day.date));
     if (!state.selectedDate || !validDates.has(state.selectedDate)) {
       state.selectedDate = chooseDefaultDay(dashboard);
     }
 
     state.dashboard = dashboard;
-    const lifetimeDashboard = buildLifetimeDashboard();
-    const momentum = buildMomentumMetrics(lifetimeDashboard);
-    renderHeroMomentum(momentum);
-    renderSummary(dashboard, momentum);
+    renderHabitRail(dashboard);
+    renderSummary(dashboard);
     renderWorkspaceFilter(dashboard);
     renderHeatmap(dashboard);
     renderTrend(dashboard);
@@ -1059,6 +1022,12 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.daySessionList.innerHTML = message;
     elements.trendTokens.textContent = "-";
     elements.trendCost.textContent = "-";
+    elements.habitCurrentStreak.textContent = "-";
+    elements.habitCurrentNote.textContent = "-";
+    elements.habitBestStreak.textContent = "-";
+    elements.habitBestNote.textContent = "-";
+    elements.habitWorkweek.textContent = "-";
+    elements.habitWorkweekNote.textContent = "-";
     elements.todayStatusHeadline.textContent = detail;
     elements.todayStatusNote.textContent = "A fresh snapshot is required before the momentum view can load.";
     elements.heatmapSummary.textContent = detail;

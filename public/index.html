@@ -96,60 +96,77 @@
             <h2>Keep the square green</h2>
             <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
           </div>
-          <div class="momentum-head-status">
-            <span id="today-status-pill" class="status-pill">Checking today</span>
-            <div class="momentum-status-copy">
-              <strong id="today-status-headline">Loading today’s momentum...</strong>
-              <span id="today-status-note">Pulling current token usage and estimated cost.</span>
+          <div class="habit-rail">
+            <div class="momentum-head-status">
+              <span id="today-status-pill" class="status-pill">Checking today</span>
+              <div class="momentum-status-copy">
+                <strong id="today-status-headline">Loading today’s momentum...</strong>
+                <span id="today-status-note">Pulling current token usage and estimated cost.</span>
+              </div>
+            </div>
+            <div class="habit-stat-grid">
+              <article class="habit-stat">
+                <span class="habit-stat-label">Current streak</span>
+                <strong id="habit-current-streak">-</strong>
+                <span id="habit-current-note" class="habit-stat-foot">-</span>
+              </article>
+              <article class="habit-stat">
+                <span class="habit-stat-label">Best streak</span>
+                <strong id="habit-best-streak">-</strong>
+                <span id="habit-best-note" class="habit-stat-foot">-</span>
+              </article>
+              <article class="habit-stat">
+                <span class="habit-stat-label">This workweek</span>
+                <strong id="habit-workweek">-</strong>
+                <span id="habit-workweek-note" class="habit-stat-foot">-</span>
+              </article>
             </div>
           </div>
         </div>
 
-        <div class="activity-layout">
-          <section class="activity-block activity-block-heatmap">
-            <div class="activity-block-head">
-              <h3>Usage heatmap</h3>
-              <div class="legend" aria-label="Heatmap legend">
-                <span>Less</span>
-                <div class="legend-swatches">
-                  <span class="swatch level-0"></span>
-                  <span class="swatch level-1"></span>
-                  <span class="swatch level-2"></span>
-                  <span class="swatch level-3"></span>
-                  <span class="swatch level-4"></span>
-                </div>
-                <span>More</span>
+        <section class="habit-board">
+          <div class="habit-board-head">
+            <h3>365-day habit board</h3>
+            <div class="legend" aria-label="Heatmap legend">
+              <span>Less</span>
+              <div class="legend-swatches">
+                <span class="swatch level-0"></span>
+                <span class="swatch level-1"></span>
+                <span class="swatch level-2"></span>
+                <span class="swatch level-3"></span>
+                <span class="swatch level-4"></span>
               </div>
+              <span>More</span>
             </div>
-            <div class="heatmap-chart">
-              <div id="heatmap-weekdays" class="heatmap-weekdays" aria-hidden="true"></div>
-              <div class="heatmap-shell">
-                <div id="heatmap-months" class="heatmap-months"></div>
-                <div id="heatmap-grid" class="heatmap-grid" role="grid" aria-label="Codex token activity by day"></div>
-              </div>
+          </div>
+          <div class="heatmap-chart heatmap-chart-board">
+            <div id="heatmap-weekdays" class="heatmap-weekdays" aria-hidden="true"></div>
+            <div class="heatmap-shell">
+              <div id="heatmap-months" class="heatmap-months"></div>
+              <div id="heatmap-grid" class="heatmap-grid" role="grid" aria-label="Codex token activity by day"></div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section class="activity-block activity-block-trend">
-            <div class="activity-block-head">
-              <div>
-                <h3>Last 14 days</h3>
-                <p class="activity-note">Recent tokens and estimated cost by day.</p>
+        <section class="trend-strip">
+          <div class="trend-strip-head">
+            <div>
+              <h3>Last 14 days</h3>
+              <p class="activity-note">Recent tokens and estimated cost by day.</p>
+            </div>
+            <div class="trend-summary">
+              <div class="panel-stat">
+                <span class="panel-stat-label">14-day tokens</span>
+                <strong id="trend-tokens">-</strong>
               </div>
-              <div class="trend-summary">
-                <div class="panel-stat">
-                  <span class="panel-stat-label">14-day tokens</span>
-                  <strong id="trend-tokens">-</strong>
-                </div>
-                <div class="panel-stat">
-                  <span class="panel-stat-label">14-day est. cost</span>
-                  <strong id="trend-cost">-</strong>
-                </div>
+              <div class="panel-stat">
+                <span class="panel-stat-label">14-day est. cost</span>
+                <strong id="trend-cost">-</strong>
               </div>
             </div>
-            <div id="trend-sparkline" class="sparkline"></div>
-          </section>
-        </div>
+          </div>
+          <div id="trend-sparkline" class="sparkline sparkline-compact"></div>
+        </section>
       </section>
 
       <section class="lower-grid">
