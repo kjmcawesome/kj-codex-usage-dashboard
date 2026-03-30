@@ -183,12 +183,20 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.habit_metrics.best_streak, 5);
   assert.equal(allSessions.habit_metrics.workweek_green_days, 2);
   assert.equal(allSessions.habit_metrics.workweek_goal, 5);
+  assert.equal(allSessions.snapshot_windows.today.total_tokens, 0);
+  assert.equal(allSessions.snapshot_windows.trailing_14d.total_tokens, 650);
+  assert.equal(allSessions.snapshot_windows.trailing_14d.token_change_pct, null);
+  assert.equal(allSessions.snapshot_windows.month_to_date.total_tokens, 650);
+  assert.equal(allSessions.snapshot_windows.month_to_date.cost_change_pct, null);
   assertClose(allSessions.efficiency_metrics.effective_cost_per_million, 4.970000000000001);
   assertClose(allSessions.efficiency_metrics.input_output_ratio, 3.0625);
   assertClose(allSessions.efficiency_metrics.peak_day_share, 190 / 650);
   assert.equal(allSessions.efficiency_metrics.month_to_date_token_growth_pct, null);
   assert.equal(allSessions.efficiency_metrics.last_7_day_change_pct, null);
   assert.ok(allSessions.efficiency_metrics.top_model);
+  assert.equal(allSessions.range_comparison.available, true);
+  assert.equal(allSessions.range_comparison.previous_total_tokens, 0);
+  assert.equal(allSessions.range_comparison.token_change_pct, null);
   assert.equal(allSessions.insights[0].title, "One day is driving the range");
   assertClose(allSessions.habit_board.scale.max_total_tokens, 190);
   assertClose(allSessions.heatmap_scale.max_total_tokens, 190);
@@ -201,10 +209,15 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(heatmapDayByDate(allSessions, "2026-03-24").level, 2);
   assert.equal(habitBoardDayByDate(allSessions, "2026-03-20").level, 4);
   assert.equal(allSessions.cost_breakdown_by_model.length, 3);
+  assert.ok("share_of_total_tokens" in allSessions.cost_breakdown_by_model[0]);
+  assert.ok("effective_cost_per_million" in allSessions.cost_breakdown_by_model[0]);
   assertClose(
     allSessions.cost_breakdown_by_model.reduce((sum, row) => sum + row.estimated_cost_usd, 0),
     allSessions.summary.estimated_cost_usd
   );
+  assert.ok("dominant_model_family" in allSessions.top_threads[0]);
+  assert.ok("token_share" in allSessions.top_threads[0]);
+  assert.ok("cost_share" in allSessions.top_threads[0]);
   assert.equal(allSessions.trend_days.length, 14);
   assert.equal(allSessions.trend_days[0].date, "2026-03-12");
   assert.equal(allSessions.trend_days.at(-1).date, "2026-03-25");
@@ -238,6 +251,12 @@ test("buildDashboardPayload supports custom date ranges", async () => {
   assertClose(dashboard.summary.estimated_cost_usd, 0.0023755);
   assertClose(dashboard.efficiency_metrics.effective_cost_per_million, 5.278888888888889);
   assertClose(dashboard.efficiency_metrics.peak_day_share, 190 / 450);
+  assert.equal(dashboard.range_comparison.available, true);
+  assert.equal(dashboard.range_comparison.previous_start_date, "2026-03-18");
+  assert.equal(dashboard.range_comparison.previous_end_date, "2026-03-20");
+  assert.equal(dashboard.range_comparison.previous_total_tokens, 150);
+  assert.equal(dashboard.range_comparison.previous_estimated_cost_usd > 0, true);
+  assertClose(dashboard.range_comparison.token_change_pct, 2);
   assertClose(dashboard.heatmap_scale.max_total_tokens, 190);
   assert.equal(dashboard.trend_days.length, 14);
   assert.equal(dashboard.trend_days[0].date, "2026-03-12");
@@ -286,6 +305,10 @@ test("buildDayPayload returns per-day session drilldown", async () => {
   assert.equal(withSubagents.summary.total_tokens, 180);
   assert.equal(withSubagents.sessions.length, 2);
   assertClose(withSubagents.summary.estimated_cost_usd, 0.00106475);
+  assert.equal(withSubagents.sessions[0].estimated_cost_usd >= withSubagents.sessions[1].estimated_cost_usd, true);
+  assert.ok("dominant_model_family" in withSubagents.sessions[0]);
+  assert.ok("token_share" in withSubagents.sessions[0]);
+  assert.ok("cost_share" in withSubagents.sessions[0]);
   assert.equal(withoutSubagents.summary.total_tokens, 120);
   assert.equal(withoutSubagents.sessions.length, 1);
   assertClose(withoutSubagents.summary.estimated_cost_usd, 0.000616);
@@ -308,6 +331,7 @@ test("buildDayPayload still returns a clicked habit-board day outside the select
   assert.equal(payload.summary.total_tokens, 150);
   assert.equal(payload.sessions.length, 1);
   assert.equal(payload.sessions[0].thread_name, "One snapshot thread");
+  assert.equal(payload.sessions[0].dominant_model_family, "gpt-5.4");
 });
 
 test("createPublicSnapshot strips local source paths and keeps usage data", async () => {

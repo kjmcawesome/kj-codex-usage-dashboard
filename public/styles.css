@@ -165,6 +165,15 @@ table {
   align-items: center;
 }
 
+.controls-panel-inline {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
 .toolbar-group {
   display: flex;
   flex-wrap: wrap;
@@ -313,6 +322,10 @@ select {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.range-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .summary-card {
   padding: 12px 14px;
   border-radius: var(--radius-md);
@@ -363,6 +376,11 @@ select {
 }
 
 .momentum-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.selected-range-panel {
   display: grid;
   gap: 14px;
 }
@@ -575,6 +593,10 @@ select {
   justify-content: space-between;
   gap: 10px;
   align-items: start;
+}
+
+.selected-range-panel .panel-head {
+  margin-bottom: 0;
 }
 
 .cost-table-shell {
@@ -918,6 +940,7 @@ select {
   color: var(--ink-muted);
   font-size: 0.78rem;
   font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  text-align: right;
 }
 
 .efficiency-grid {
@@ -996,6 +1019,29 @@ select {
   display: block;
   height: 100%;
   border-radius: 999px;
+}
+
+.mix-bars {
+  display: grid;
+  gap: 6px;
+}
+
+.mix-track {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 42px;
+  gap: 8px;
+  align-items: center;
+}
+
+.mix-track-label,
+.mix-track-value {
+  color: var(--ink-muted);
+  font-size: 0.76rem;
+}
+
+.mix-track-value {
+  text-align: right;
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
 }
 
 .insight-stack {
@@ -1281,6 +1327,10 @@ select {
 
   .summary-grid,
   .day-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .range-summary-grid {
     grid-template-columns: 1fr;
   }
 
