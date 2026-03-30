@@ -369,13 +369,21 @@ select {
 
 .momentum-panel-head {
   margin-bottom: 0;
+  justify-content: space-between;
+  align-items: start;
 }
 
-.habit-rail {
+.momentum-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(340px, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.insight-rail {
   display: grid;
   gap: 12px;
-  justify-items: end;
-  max-width: 460px;
+  align-content: start;
 }
 
 .momentum-head-status {
@@ -397,6 +405,45 @@ select {
 .momentum-status-copy span {
   color: var(--ink-muted);
   font-size: 0.8rem;
+}
+
+.insight-cost-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cost-window-card {
+  border: 1px solid rgba(35, 49, 39, 0.08);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.56);
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cost-window-card.is-featured {
+  grid-column: 1 / -1;
+}
+
+.cost-window-label {
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.cost-window-card strong {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 1.22rem;
+  color: var(--accent);
+}
+
+.cost-window-foot {
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .status-pill {
@@ -448,6 +495,10 @@ select {
   grid-template-columns: repeat(3, minmax(118px, 1fr));
   gap: 10px;
   width: 100%;
+}
+
+.habit-stat-grid-compact .habit-stat {
+  padding: 10px 11px;
 }
 
 .habit-stat {
@@ -513,31 +564,17 @@ select {
 .trend-strip {
   display: grid;
   gap: 8px;
-  border-top: 1px solid rgba(35, 49, 39, 0.08);
-  padding-top: 12px;
+  border: 1px solid rgba(35, 49, 39, 0.08);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.38);
+  padding: 12px;
 }
 
 .trend-strip-head {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  align-items: end;
-}
-
-.trend-summary {
-  display: grid;
-  gap: 6px;
-  min-width: 132px;
-  justify-items: end;
-}
-
-.trend-summary .panel-stat {
-  gap: 1px;
-  align-items: end;
-}
-
-.trend-summary .panel-stat strong {
-  font-size: 0.98rem;
+  gap: 10px;
+  align-items: start;
 }
 
 .cost-table-shell {
@@ -770,11 +807,11 @@ select {
 }
 
 .sparkline-compact {
-  min-height: 128px;
+  min-height: 116px;
 }
 
 .sparkline-compact svg {
-  height: 128px;
+  height: 116px;
 }
 
 .trend-axis-label {
@@ -1095,10 +1132,8 @@ select {
     text-align: left;
   }
 
-  .habit-rail {
-    justify-items: stretch;
-    max-width: none;
-    width: 100%;
+  .momentum-layout {
+    grid-template-columns: 1fr;
   }
 
   .trend-strip-head {
@@ -1160,6 +1195,10 @@ select {
   }
 
   .habit-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-cost-grid {
     grid-template-columns: 1fr;
   }
 

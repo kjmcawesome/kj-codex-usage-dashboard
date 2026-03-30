@@ -72,9 +72,13 @@ const elements = {
   habitBestNote: document.querySelector("#habit-best-note"),
   habitWorkweek: document.querySelector("#habit-workweek"),
   habitWorkweekNote: document.querySelector("#habit-workweek-note"),
+  costToday: document.querySelector("#cost-today"),
+  costTodayFoot: document.querySelector("#cost-today-foot"),
+  cost14d: document.querySelector("#cost-14d"),
+  cost14dFoot: document.querySelector("#cost-14d-foot"),
+  costMonth: document.querySelector("#cost-month"),
+  costMonthFoot: document.querySelector("#cost-month-foot"),
   trendSparkline: document.querySelector("#trend-sparkline"),
-  trendTokens: document.querySelector("#trend-tokens"),
-  trendCost: document.querySelector("#trend-cost"),
   currentWorkNote: document.querySelector("#current-work-note"),
   currentWorkTable: document.querySelector("#current-work-table"),
   threadTable: document.querySelector("#thread-table"),
@@ -507,7 +511,9 @@ function renderHabitRail(dashboard) {
 
   if (metrics.today_has_usage) {
     elements.todayStatusHeadline.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens so far today`;
-    elements.todayStatusNote.textContent = `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today`;
+    elements.todayStatusNote.textContent = metrics.current_streak > 1
+      ? `${formatCountLabel(metrics.current_streak, "day")} streak is live`
+      : "Streak is live";
   } else {
     elements.todayStatusHeadline.textContent = "One workflow starts the streak";
     elements.todayStatusNote.textContent = "No usage yet today. Get the square green.";
@@ -527,6 +533,25 @@ function renderHabitRail(dashboard) {
   elements.habitWorkweekNote.textContent = workweekRemaining === 0
     ? "Workweek goal hit"
     : `${workweekRemaining} green day${workweekRemaining === 1 ? "" : "s"} to go`;
+}
+
+function renderInsightCosts(dashboard) {
+  const metrics = dashboard.habit_metrics;
+
+  elements.costToday.textContent = formatUsd(metrics.today_estimated_cost_usd);
+  elements.costToday.title = formatUsd(metrics.today_estimated_cost_usd);
+  elements.costTodayFoot.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens today`;
+  elements.costTodayFoot.title = formatFullNumber(metrics.today_tokens);
+
+  elements.cost14d.textContent = formatUsd(metrics.last_14_days_estimated_cost_usd);
+  elements.cost14d.title = formatUsd(metrics.last_14_days_estimated_cost_usd);
+  elements.cost14dFoot.textContent = `${formatCompactNumber(metrics.last_14_days_tokens)} tokens`;
+  elements.cost14dFoot.title = formatFullNumber(metrics.last_14_days_tokens);
+
+  elements.costMonth.textContent = formatUsd(metrics.month_to_date_estimated_cost_usd);
+  elements.costMonth.title = formatUsd(metrics.month_to_date_estimated_cost_usd);
+  elements.costMonthFoot.textContent = `${formatCompactNumber(metrics.month_to_date_tokens)} tokens`;
+  elements.costMonthFoot.title = formatFullNumber(metrics.month_to_date_tokens);
 }
 
 function renderSummary(dashboard) {
@@ -665,9 +690,6 @@ function renderHeatmap(dashboard) {
 function renderTrend(dashboard) {
   const trendDays = dashboard.trend_days || [];
   const tokenValues = trendDays.map((day) => day.total_tokens || 0);
-  const costValues = trendDays.map((day) => day.estimated_cost_usd || 0);
-  const trendTokens = tokenValues.reduce((total, value) => total + value, 0);
-  const trendCost = costValues.reduce((total, value) => total + value, 0);
   const width = 520;
   const height = 128;
   const margin = {
@@ -680,11 +702,6 @@ function renderTrend(dashboard) {
   const plotHeight = height - margin.top - margin.bottom;
   const maxTokens = Math.max(...tokenValues, 0);
   const tokenScaleMax = maxTokens || 1;
-
-  elements.trendTokens.textContent = formatCompactNumber(trendTokens);
-  elements.trendTokens.title = formatFullNumber(trendTokens);
-  elements.trendCost.textContent = formatUsd(trendCost);
-  elements.trendCost.title = formatUsd(trendCost);
 
   if (!trendDays.length) {
     elements.trendSparkline.innerHTML = '<div class="empty-state">No trend data for this range.</div>';
@@ -994,6 +1011,7 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
 
     state.dashboard = dashboard;
     renderHabitRail(dashboard);
+    renderInsightCosts(dashboard);
     renderSummary(dashboard);
     renderWorkspaceFilter(dashboard);
     renderHeatmap(dashboard);
@@ -1013,8 +1031,12 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.currentWorkTable.innerHTML = message;
     elements.threadTable.innerHTML = message;
     elements.daySessionList.innerHTML = message;
-    elements.trendTokens.textContent = "-";
-    elements.trendCost.textContent = "-";
+    elements.costToday.textContent = "-";
+    elements.costTodayFoot.textContent = "-";
+    elements.cost14d.textContent = "-";
+    elements.cost14dFoot.textContent = "-";
+    elements.costMonth.textContent = "-";
+    elements.costMonthFoot.textContent = "-";
     elements.habitCurrentStreak.textContent = "-";
     elements.habitCurrentNote.textContent = "-";
     elements.habitBestStreak.textContent = "-";
