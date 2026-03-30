@@ -59,9 +59,9 @@ table {
 
 .page-shell {
   width: min(1360px, calc(100vw - 32px));
-  margin: 18px auto 36px;
+  margin: 14px auto 30px;
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .hero,
@@ -81,10 +81,10 @@ table {
 }
 
 .hero {
-  padding: 16px 18px;
+  padding: 14px 16px;
   border-radius: var(--radius-lg);
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .hero-top {
@@ -97,7 +97,7 @@ table {
 
 .eyebrow,
 .panel-eyebrow {
-  margin: 0 0 6px;
+  margin: 0 0 5px;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -112,15 +112,16 @@ table {
 }
 
 .hero h1 {
-  font-size: clamp(1.55rem, 2.6vw, 2.25rem);
-  line-height: 0.98;
+  font-size: clamp(1.45rem, 2.4vw, 2.05rem);
+  line-height: 1;
 }
 
 .hero-note {
-  margin: 6px 0 0;
+  margin: 5px 0 0;
   max-width: 52ch;
   color: var(--ink-muted);
-  line-height: 1.5;
+  line-height: 1.4;
+  font-size: 0.95rem;
 }
 
 .hero-meta {
@@ -135,10 +136,10 @@ table {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 7px 10px;
   border-radius: 999px;
-  background: var(--panel-strong);
-  border: 1px solid rgba(35, 49, 39, 0.08);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(35, 49, 39, 0.06);
   min-width: 0;
 }
 
@@ -153,7 +154,7 @@ table {
 
 .meta-card strong {
   display: inline;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
 }
 
 .controls-panel {
@@ -313,7 +314,7 @@ select {
 
 .summary-grid {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
@@ -327,11 +328,11 @@ select {
 }
 
 .summary-card {
-  padding: 12px 14px;
+  padding: 11px 13px;
   border-radius: var(--radius-md);
   display: grid;
-  gap: 6px;
-  min-height: 96px;
+  gap: 5px;
+  min-height: 84px;
 }
 
 .summary-card.is-disabled {
@@ -345,7 +346,7 @@ select {
 }
 
 .card-value {
-  font-size: clamp(1.3rem, 1.9vw, 1.82rem);
+  font-size: clamp(1.24rem, 1.8vw, 1.72rem);
   line-height: 1;
   letter-spacing: -0.04em;
 }
@@ -363,7 +364,7 @@ select {
 }
 
 .panel {
-  padding: 18px;
+  padding: 16px;
   border-radius: var(--radius-lg);
 }
 
@@ -372,17 +373,17 @@ select {
   justify-content: space-between;
   gap: 14px;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .momentum-panel {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .selected-range-panel {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .momentum-panel-head {
@@ -394,14 +395,18 @@ select {
 .momentum-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(340px, 0.95fr);
-  gap: 18px;
+  gap: 16px;
   align-items: start;
 }
 
 .insight-rail {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   align-content: start;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(35, 49, 39, 0.06);
 }
 
 .momentum-head-status {
@@ -428,16 +433,16 @@ select {
 .insight-cost-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .cost-window-card {
-  border: 1px solid rgba(35, 49, 39, 0.08);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.56);
-  padding: 12px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.58);
+  padding: 11px 12px;
   display: grid;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
 }
 
@@ -454,7 +459,7 @@ select {
 
 .cost-window-card strong {
   font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
-  font-size: 1.22rem;
+  font-size: 1.14rem;
   color: var(--accent);
 }
 
@@ -511,21 +516,21 @@ select {
 .habit-stat-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(118px, 1fr));
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
 .habit-stat-grid-compact .habit-stat {
-  padding: 10px 11px;
+  padding: 9px 10px;
 }
 
 .habit-stat {
-  border: 1px solid rgba(35, 49, 39, 0.08);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.56);
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.58);
   padding: 10px 12px;
   display: grid;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
 }
 
@@ -550,7 +555,7 @@ select {
 
 .habit-board {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .habit-board-head {
@@ -582,10 +587,10 @@ select {
 .trend-strip {
   display: grid;
   gap: 8px;
-  border: 1px solid rgba(35, 49, 39, 0.08);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.38);
-  padding: 12px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.42);
+  padding: 11px 12px 10px;
 }
 
 .trend-strip-head {
@@ -674,9 +679,9 @@ select {
 .legend {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: var(--ink-muted);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
 }
 
 .legend-swatches {
@@ -813,7 +818,7 @@ select {
 
 .lower-grid {
   display: grid;
-  gap: 18px;
+  gap: 12px;
   grid-template-columns: 1fr 1fr;
 }
 
@@ -884,21 +889,21 @@ select {
 .rank-table,
 .session-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .rank-row,
 .session-card {
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(35, 49, 39, 0.08);
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(35, 49, 39, 0.06);
+  background: rgba(255, 255, 255, 0.64);
 }
 
 .rank-row {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
   align-items: center;
 }
 
@@ -917,6 +922,7 @@ select {
 .session-title {
   display: block;
   font-weight: 700;
+  font-size: 0.96rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -925,9 +931,10 @@ select {
 .rank-sub,
 .session-sub {
   display: block;
-  margin-top: 4px;
+  margin-top: 3px;
   color: var(--ink-muted);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
 }
 
 .rank-value {
@@ -946,16 +953,16 @@ select {
 .efficiency-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .efficiency-stat {
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(35, 49, 39, 0.08);
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(35, 49, 39, 0.06);
+  background: rgba(255, 255, 255, 0.64);
   display: grid;
-  gap: 4px;
+  gap: 3px;
 }
 
 .efficiency-stat-label,
@@ -981,13 +988,16 @@ select {
 .model-mix-list,
 .insight-list {
   display: grid;
-  gap: 10px;
-  margin-top: 14px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .mix-row {
   display: grid;
-  gap: 8px;
+  gap: 7px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.44);
 }
 
 .mix-copy {
@@ -1046,14 +1056,14 @@ select {
 
 .insight-stack {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .insight-card {
-  padding: 12px 14px;
+  padding: 11px 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(35, 49, 39, 0.08);
-  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid rgba(35, 49, 39, 0.06);
+  background: rgba(255, 255, 255, 0.56);
 }
 
 .insight-card strong {
@@ -1070,20 +1080,20 @@ select {
 
 .day-panel {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .day-summary-grid {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
 .mini-stat {
-  padding: 12px 14px;
+  padding: 11px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(35, 49, 39, 0.08);
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid rgba(35, 49, 39, 0.06);
 }
 
 .mini-stat span {
@@ -1105,16 +1115,16 @@ select {
 }
 
 .day-details {
-  border: 1px solid rgba(35, 49, 39, 0.08);
+  border: 1px solid rgba(35, 49, 39, 0.06);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.42);
   overflow: hidden;
 }
 
 .day-details-toggle {
   list-style: none;
   cursor: pointer;
-  padding: 14px 16px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1140,8 +1150,8 @@ select {
 
 .day-details-body {
   display: grid;
-  gap: 14px;
-  padding: 0 16px 16px;
+  gap: 12px;
+  padding: 0 14px 14px;
 }
 
 .budget-panel {
@@ -1187,7 +1197,7 @@ select {
 
 .session-card {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .session-head {
@@ -1209,21 +1219,25 @@ select {
 
 .session-metrics {
   display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 7px 14px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  padding-top: 2px;
 }
 
 .metric-pair {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   color: var(--ink-muted);
+  align-items: baseline;
 }
 
 .metric-pair strong {
   color: var(--ink);
   font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 0.82rem;
+  text-align: right;
 }
 
 .empty-state {
@@ -1302,7 +1316,7 @@ select {
   .hero,
   .controls-panel,
   .panel {
-    padding: 16px;
+    padding: 14px;
   }
 
   .controls-panel {
