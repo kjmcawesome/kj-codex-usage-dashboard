@@ -55,6 +55,10 @@ const elements = {
   summaryDaysFoot: document.querySelector("#summary-days-foot"),
   summaryBurst: document.querySelector("#summary-burst"),
   summaryBurstFoot: document.querySelector("#summary-burst-foot"),
+  efficiencyNote: document.querySelector("#efficiency-note"),
+  efficiencyGrid: document.querySelector("#efficiency-grid"),
+  modelMixList: document.querySelector("#model-mix-list"),
+  insightList: document.querySelector("#insight-list"),
   costNote: document.querySelector("#cost-note"),
   costBreakdownBody: document.querySelector("#cost-breakdown-body"),
   costBreakdownFoot: document.querySelector("#cost-breakdown-foot"),
@@ -79,8 +83,6 @@ const elements = {
   costMonth: document.querySelector("#cost-month"),
   costMonthFoot: document.querySelector("#cost-month-foot"),
   trendSparkline: document.querySelector("#trend-sparkline"),
-  currentWorkNote: document.querySelector("#current-work-note"),
-  currentWorkTable: document.querySelector("#current-work-table"),
   threadTable: document.querySelector("#thread-table"),
   dayTitle: document.querySelector("#day-title"),
   dayTotal: document.querySelector("#day-total"),
@@ -109,6 +111,15 @@ function formatFullNumber(value) {
 
 function formatPercent(value) {
   return `${Math.round((value || 0) * 100)}%`;
+}
+
+function formatSignedPercent(value) {
+  if (value === null || Number.isNaN(value)) {
+    return "—";
+  }
+
+  const rounded = Math.round(value * 100);
+  return `${rounded > 0 ? "+" : ""}${rounded}%`;
 }
 
 function formatUsd(value) {
@@ -563,11 +574,15 @@ function renderSummary(dashboard) {
   elements.summaryCost.textContent = formatUsd(dashboard.summary.estimated_cost_usd);
   elements.summaryCost.title = formatUsd(dashboard.summary.estimated_cost_usd);
   elements.summaryCostFoot.textContent = `${formatCountLabel(dashboard.summary.sessions, "workflow")} in range`;
-  elements.summaryDays.textContent = formatFullNumber(dashboard.habit_metrics.current_streak);
-  const streakStartDate = buildStreakStartDate(dashboard.habit_metrics.current_streak);
-  elements.summaryDaysFoot.textContent = streakStartDate
-    ? `Live since ${formatDate(streakStartDate)}`
-    : "No streak until today turns green";
+  elements.summaryDays.textContent = dashboard.efficiency_metrics.effective_cost_per_million !== null
+    ? formatRate(dashboard.efficiency_metrics.effective_cost_per_million)
+    : "—";
+  elements.summaryDays.title = dashboard.efficiency_metrics.effective_cost_per_million !== null
+    ? formatRate(dashboard.efficiency_metrics.effective_cost_per_million)
+    : "No priced usage in range";
+  elements.summaryDaysFoot.textContent = dashboard.efficiency_metrics.input_output_ratio !== null
+    ? `Input/output ${dashboard.efficiency_metrics.input_output_ratio.toFixed(1)}x`
+    : "No output in range";
   elements.summaryBurst.textContent = formatCompactNumber(dashboard.habit_metrics.today_tokens);
   elements.summaryBurst.title = formatFullNumber(dashboard.habit_metrics.today_tokens);
   elements.summaryBurstFoot.textContent = dashboard.habit_metrics.today_has_usage
@@ -575,6 +590,78 @@ function renderSummary(dashboard) {
     : "No usage yet today";
   elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
   updateRangeSelectionLabel(dashboard.selection.label);
+}
+
+function renderEfficiencyPanel(dashboard) {
+  const metrics = dashboard.efficiency_metrics;
+  const selectedRangeLabel = dashboard.selection.label;
+  elements.efficiencyNote.textContent = `Signals for ${selectedRangeLabel.toLowerCase()}.`;
+
+  elements.efficiencyGrid.innerHTML = `
+    <div class="efficiency-stat">
+      <span class="efficiency-stat-label">Eff. cost / 1M</span>
+      <strong>${metrics.effective_cost_per_million !== null ? formatRate(metrics.effective_cost_per_million) : "—"}</strong>
+      <span class="efficiency-stat-foot">Selected range</span>
+    </div>
+    <div class="efficiency-stat">
+      <span class="efficiency-stat-label">Month pace</span>
+      <strong>${formatSignedPercent(metrics.month_to_date_token_growth_pct)}</strong>
+      <span class="efficiency-stat-foot">vs same point last month</span>
+    </div>
+    <div class="efficiency-stat">
+      <span class="efficiency-stat-label">Peak day share</span>
+      <strong>${formatPercent(metrics.peak_day_share)}</strong>
+      <span class="efficiency-stat-foot">${metrics.peak_day ? formatDate(metrics.peak_day.date) : "No peak day yet"}</span>
+    </div>
+    <div class="efficiency-stat">
+      <span class="efficiency-stat-label">Input / output</span>
+      <strong>${metrics.input_output_ratio !== null ? `${metrics.input_output_ratio.toFixed(1)}x` : "—"}</strong>
+      <span class="efficiency-stat-foot">Prompt load vs response load</span>
+    </div>
+  `;
+
+  const modelMixRows = dashboard.cost_breakdown_by_model || [];
+  if (!modelMixRows.length) {
+    elements.modelMixList.innerHTML = '<div class="empty-state">No priced model mix for this selection.</div>';
+  } else {
+    const totalCost = dashboard.summary.estimated_cost_usd || 0;
+    const palette = {
+      "gpt-5.4": "rgba(40, 72, 54, 0.82)",
+      "gpt-5.3-codex": "rgba(69, 155, 89, 0.7)",
+      "gpt-5.2-codex": "rgba(166, 214, 175, 0.95)"
+    };
+    elements.modelMixList.innerHTML = `
+      <div class="efficiency-section-title">Model mix</div>
+      ${modelMixRows.map((row) => {
+        const color = palette[row.model] || "rgba(35, 49, 39, 0.42)";
+        const share = totalCost > 0 ? row.share_of_total_cost : 0;
+        return `
+          <div class="mix-row" title="${row.model}: ${formatUsd(row.estimated_cost_usd)} estimated cost · ${formatFullNumber(row.total_tokens)} tokens">
+            <div class="mix-copy">
+              <span class="mix-label">${row.model}</span>
+              <span class="mix-sub">${formatUsd(row.estimated_cost_usd)} · ${formatPercent(share)}</span>
+            </div>
+            <div class="mix-bar-shell">
+              <span class="mix-bar" style="width:${Math.max(share * 100, share > 0 ? 6 : 0)}%; background:${color};"></span>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    `;
+  }
+
+  const insights = dashboard.insights || [];
+  elements.insightList.innerHTML = `
+    <div class="efficiency-section-title">Insights</div>
+    <div class="insight-stack">
+      ${insights.map((insight) => `
+        <article class="insight-card">
+          <strong>${insight.title}</strong>
+          <p>${insight.body}</p>
+        </article>
+      `).join("")}
+    </div>
+  `;
 }
 
 function renderWorkspaceFilter(dashboard) {
@@ -835,29 +922,6 @@ function renderRankRows(container, rows, formatter) {
   }
 }
 
-function renderCurrentWork(dashboard) {
-  const currentWorkRange = dashboard.current_work_range;
-  const windowHours = currentWorkRange?.hours || 72;
-  elements.currentWorkNote.textContent = `Most-used workflows over the last ${windowHours} hours`;
-
-  renderRankRows(elements.currentWorkTable, dashboard.current_work_sessions, (session) => {
-    const row = document.createElement("div");
-    row.className = "rank-row";
-    row.innerHTML = `
-      <div class="rank-main">
-        <span class="rank-title">${formatWorkflowName(session)}</span>
-        <span class="rank-sub">${formatWorkflowContext(session)} · ${formatCountLabel(session.active_days, "active day")}</span>
-      </div>
-      <div class="rank-metrics">
-        <span class="rank-value">${formatUsd(session.estimated_cost_usd)}</span>
-        <span class="rank-value-sub">${formatCompactNumber(session.total_tokens)} tokens</span>
-      </div>
-    `;
-    row.title = `${formatWorkflowName(session)}: ${formatFullNumber(session.total_tokens)} total tokens in the last ${windowHours} hours · ${formatUsd(session.estimated_cost_usd)} estimated cost`;
-    return row;
-  });
-}
-
 function renderTopThreads(dashboard) {
   renderRankRows(elements.threadTable, dashboard.top_threads, (thread) => {
     const row = document.createElement("div");
@@ -1016,8 +1080,8 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     renderWorkspaceFilter(dashboard);
     renderHeatmap(dashboard);
     renderTrend(dashboard);
+    renderEfficiencyPanel(dashboard);
     renderCostBreakdown(dashboard);
-    renderCurrentWork(dashboard);
     renderTopThreads(dashboard);
     syncDatePicker(dashboard);
     await loadDay(state.selectedDate);
@@ -1028,7 +1092,9 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     const message = `<div class="empty-state">${detail}</div>`;
     elements.costBreakdownBody.innerHTML = `<tr><td colspan="10" class="cost-empty">${detail}</td></tr>`;
     elements.costBreakdownFoot.innerHTML = "";
-    elements.currentWorkTable.innerHTML = message;
+    elements.efficiencyGrid.innerHTML = message;
+    elements.modelMixList.innerHTML = message;
+    elements.insightList.innerHTML = message;
     elements.threadTable.innerHTML = message;
     elements.daySessionList.innerHTML = message;
     elements.costToday.textContent = "-";

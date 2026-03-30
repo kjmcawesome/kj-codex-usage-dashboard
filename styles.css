@@ -920,6 +920,108 @@ select {
   font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
 }
 
+.efficiency-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.efficiency-stat {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(35, 49, 39, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  display: grid;
+  gap: 4px;
+}
+
+.efficiency-stat-label,
+.efficiency-section-title {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.efficiency-stat strong {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.efficiency-stat-foot {
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.model-mix-list,
+.insight-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.mix-row {
+  display: grid;
+  gap: 8px;
+}
+
+.mix-copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.mix-label {
+  font-weight: 700;
+}
+
+.mix-sub {
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+}
+
+.mix-bar-shell {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(35, 49, 39, 0.08);
+  overflow: hidden;
+}
+
+.mix-bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.insight-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.insight-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(35, 49, 39, 0.08);
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.insight-card strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.insight-card p {
+  margin: 0;
+  color: var(--ink-muted);
+  line-height: 1.45;
+  font-size: 0.86rem;
+}
+
 .day-panel {
   display: grid;
   gap: 14px;
@@ -1179,6 +1281,10 @@ select {
 
   .summary-grid,
   .day-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .efficiency-grid {
     grid-template-columns: 1fr;
   }
 
