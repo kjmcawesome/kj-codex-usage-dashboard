@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-03-30T19:37:14.902Z",
+  "generated_at": "2026-03-30T20:00:05.944Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -31891,6 +31891,64 @@
       "unpriced_total_tokens": null
     },
     {
+      "session_id": "019d4040-b438-7631-83c3-294b00c9d531",
+      "thread_name": "Compare GPT-5 vs 5.4 capabilities",
+      "parent_session_id": null,
+      "session_started_at": "2026-03-30T19:37:55.520Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.115.0-alpha.4",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 67827,
+      "input_tokens": 66651,
+      "cached_input_tokens": 39168,
+      "output_tokens": 1176,
+      "reasoning_output_tokens": 691,
+      "events": [
+        {
+          "timestamp": "2026-03-30T19:38:22.243Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 22047,
+          "input_tokens": 21418,
+          "cached_input_tokens": 4480,
+          "output_tokens": 629,
+          "reasoning_output_tokens": 415
+        },
+        {
+          "timestamp": "2026-03-30T19:43:25.497Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 17795,
+          "input_tokens": 17667,
+          "cached_input_tokens": 17152,
+          "output_tokens": 128,
+          "reasoning_output_tokens": 55
+        },
+        {
+          "timestamp": "2026-03-30T19:43:39.590Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 27985,
+          "input_tokens": 27566,
+          "cached_input_tokens": 17536,
+          "output_tokens": 419,
+          "reasoning_output_tokens": 221
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019d0915-7951-7832-846b-851da57a955c",
       "thread_name": "Connect to kevbra HP Envy printer",
       "parent_session_id": null,
@@ -48500,16 +48558,17 @@
       "model_provider": "openai",
       "primary_model": "gpt-5.4",
       "models_used": [
-        "gpt-5.4"
+        "gpt-5.4",
+        "arcanine"
       ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 106392998,
-      "input_tokens": 105807451,
-      "cached_input_tokens": 98298624,
-      "output_tokens": 585547,
-      "reasoning_output_tokens": 280751,
+      "total_tokens": 107198623,
+      "input_tokens": 106609761,
+      "cached_input_tokens": 98650240,
+      "output_tokens": 588862,
+      "reasoning_output_tokens": 282454,
       "events": [
         {
           "timestamp": "2026-03-25T20:26:46.091Z",
@@ -55910,6 +55969,66 @@
           "cached_input_tokens": 192640,
           "output_tokens": 676,
           "reasoning_output_tokens": 285
+        },
+        {
+          "timestamp": "2026-03-30T19:44:42.307Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 191597,
+          "input_tokens": 191195,
+          "cached_input_tokens": 3840,
+          "output_tokens": 402,
+          "reasoning_output_tokens": 160
+        },
+        {
+          "timestamp": "2026-03-30T19:45:11.395Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 223579,
+          "input_tokens": 222796,
+          "cached_input_tokens": 83328,
+          "output_tokens": 783,
+          "reasoning_output_tokens": 452
+        },
+        {
+          "timestamp": "2026-03-30T19:46:17.986Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 87731,
+          "input_tokens": 87465,
+          "cached_input_tokens": 3840,
+          "output_tokens": 266,
+          "reasoning_output_tokens": 65
+        },
+        {
+          "timestamp": "2026-03-30T19:46:39.433Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 100490,
+          "input_tokens": 99838,
+          "cached_input_tokens": 82944,
+          "output_tokens": 652,
+          "reasoning_output_tokens": 421
+        },
+        {
+          "timestamp": "2026-03-30T19:47:18.354Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 101479,
+          "input_tokens": 100528,
+          "cached_input_tokens": 95360,
+          "output_tokens": 951,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-03-30T19:57:08.928Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 100749,
+          "input_tokens": 100488,
+          "cached_input_tokens": 82304,
+          "output_tokens": 261,
+          "reasoning_output_tokens": 89
         }
       ],
       "estimated_cost_usd": null,
@@ -98725,6 +98844,6 @@
     }
   ],
   "source": {
-    "log_files": 213
+    "log_files": 214
   }
 }
