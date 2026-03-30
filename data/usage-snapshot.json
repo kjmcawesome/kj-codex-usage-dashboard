@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-03-30T20:15:54.468Z",
+  "generated_at": "2026-03-30T20:30:00.648Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -31903,16 +31903,19 @@
       "model_provider": "openai",
       "primary_model": "arcanine",
       "models_used": [
-        "arcanine"
+        "arcanine",
+        "gpt-5.4-pro",
+        "galapagos-mini-alpha",
+        "gpt-5.4"
       ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 67827,
-      "input_tokens": 66651,
-      "cached_input_tokens": 39168,
-      "output_tokens": 1176,
-      "reasoning_output_tokens": 691,
+      "total_tokens": 189775,
+      "input_tokens": 184944,
+      "cached_input_tokens": 76416,
+      "output_tokens": 4831,
+      "reasoning_output_tokens": 3124,
       "events": [
         {
           "timestamp": "2026-03-30T19:38:22.243Z",
@@ -31943,6 +31946,36 @@
           "cached_input_tokens": 17536,
           "output_tokens": 419,
           "reasoning_output_tokens": 221
+        },
+        {
+          "timestamp": "2026-03-30T20:21:08.313Z",
+          "date": "2026-03-30",
+          "model": "gpt-5.4-pro",
+          "total_tokens": 51037,
+          "input_tokens": 48272,
+          "cached_input_tokens": 0,
+          "output_tokens": 2765,
+          "reasoning_output_tokens": 2226
+        },
+        {
+          "timestamp": "2026-03-30T20:28:22.159Z",
+          "date": "2026-03-30",
+          "model": "gpt-5.4",
+          "total_tokens": 33940,
+          "input_tokens": 33639,
+          "cached_input_tokens": 3456,
+          "output_tokens": 301,
+          "reasoning_output_tokens": 100
+        },
+        {
+          "timestamp": "2026-03-30T20:28:35.630Z",
+          "date": "2026-03-30",
+          "model": "gpt-5.4",
+          "total_tokens": 36971,
+          "input_tokens": 36382,
+          "cached_input_tokens": 33792,
+          "output_tokens": 589,
+          "reasoning_output_tokens": 107
         }
       ],
       "estimated_cost_usd": null,
@@ -48564,11 +48597,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 108268778,
-      "input_tokens": 107674132,
-      "cached_input_tokens": 99508992,
-      "output_tokens": 594646,
-      "reasoning_output_tokens": 283141,
+      "total_tokens": 108398961,
+      "input_tokens": 107804109,
+      "cached_input_tokens": 99634176,
+      "output_tokens": 594852,
+      "reasoning_output_tokens": 283185,
       "events": [
         {
           "timestamp": "2026-03-25T20:26:46.091Z",
@@ -56119,6 +56152,16 @@
           "cached_input_tokens": 124672,
           "output_tokens": 92,
           "reasoning_output_tokens": 9
+        },
+        {
+          "timestamp": "2026-03-30T20:16:07.362Z",
+          "date": "2026-03-30",
+          "model": "arcanine",
+          "total_tokens": 130183,
+          "input_tokens": 129977,
+          "cached_input_tokens": 125184,
+          "output_tokens": 206,
+          "reasoning_output_tokens": 44
         }
       ],
       "estimated_cost_usd": null,
