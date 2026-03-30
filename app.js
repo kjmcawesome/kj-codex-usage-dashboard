@@ -669,19 +669,17 @@ function renderTrend(dashboard) {
   const trendTokens = tokenValues.reduce((total, value) => total + value, 0);
   const trendCost = costValues.reduce((total, value) => total + value, 0);
   const width = 520;
-  const height = 184;
+  const height = 128;
   const margin = {
-    top: 12,
-    right: 50,
-    bottom: 26,
-    left: 44
+    top: 14,
+    right: 8,
+    bottom: 24,
+    left: 8
   };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const maxTokens = Math.max(...tokenValues, 0);
-  const maxCost = Math.max(...costValues, 0);
   const tokenScaleMax = maxTokens || 1;
-  const costScaleMax = maxCost || 1;
 
   elements.trendTokens.textContent = formatCompactNumber(trendTokens);
   elements.trendTokens.title = formatFullNumber(trendTokens);
@@ -693,60 +691,59 @@ function renderTrend(dashboard) {
     return;
   }
 
-  const tickRatios = [1, 0.5, 0];
-  const tokenTicks = tickRatios.map((ratio) => tokenScaleMax * ratio);
-  const costTicks = tickRatios.map((ratio) => costScaleMax * ratio);
-
+  const baselineY = margin.top + plotHeight;
+  const peakTokens = Math.max(...tokenValues, 0);
+  const peakIndex = tokenValues.indexOf(peakTokens);
   const chartPoints = trendDays.map((day, index) => {
-    const x = trendDays.length === 1
-      ? margin.left + (plotWidth / 2)
-      : margin.left + ((index / (trendDays.length - 1)) * plotWidth);
-    const tokenY = margin.top + plotHeight - ((day.total_tokens || 0) / tokenScaleMax) * plotHeight;
-    const costHeight = ((day.estimated_cost_usd || 0) / costScaleMax) * plotHeight;
-    const barWidth = Math.min(24, plotWidth / Math.max(trendDays.length, 1) * 0.58);
-    const barX = x - (barWidth / 2);
-    const barY = margin.top + plotHeight - costHeight;
+    const slotWidth = plotWidth / Math.max(trendDays.length, 1);
+    const barWidth = Math.min(22, Math.max(12, slotWidth * 0.42));
+    const barX = margin.left + (slotWidth * index) + ((slotWidth - barWidth) / 2);
+    const ratio = (day.total_tokens || 0) / tokenScaleMax;
+    const barHeight = day.total_tokens > 0
+      ? Math.max(10, ratio * (plotHeight - 6))
+      : 3;
+    const barY = baselineY - barHeight;
+    const x = barX + (barWidth / 2);
+    const isToday = day.date === dateKeyFromDate(todayDate(state.snapshotNow || new Date()));
+    const isPeak = peakTokens > 0 && index === peakIndex;
+    const classNames = [
+      "trend-pulse-bar",
+      day.total_tokens > 0 ? "" : "is-zero",
+      isPeak ? "is-peak" : "",
+      isToday ? "is-today" : ""
+    ].filter(Boolean).join(" ");
+    const hoverTitle = `${formatTrendDate(day.date)}: ${formatFullNumber(day.total_tokens || 0)} tokens · ${formatUsd(day.estimated_cost_usd || 0)} estimated cost`;
 
     return {
       date: day.date,
       x,
-      tokenY,
-      tokenValue: day.total_tokens || 0,
-      costValue: day.estimated_cost_usd || 0,
       barWidth,
       barX,
       barY,
-      costHeight
+      barHeight,
+      classNames,
+      hoverTitle
     };
   });
 
-  const linePoints = chartPoints.map((point) => `${point.x},${point.tokenY}`);
   const xLabelIndexes = buildTrendLabelIndexes(trendDays.length);
 
   elements.trendSparkline.innerHTML = `
-    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token and estimated cost trend">
-      ${tokenTicks.map((tickValue, index) => {
-        const y = margin.top + (plotHeight * (index / (tokenTicks.length - 1)));
-        const matchingCost = costTicks[index];
-        return `
-          <line class="trend-grid-line" x1="${margin.left}" y1="${y}" x2="${margin.left + plotWidth}" y2="${y}"></line>
-          <text class="trend-axis-label" x="${margin.left - 10}" y="${y + 4}">${formatAxisTokens(tickValue)}</text>
-          <text class="trend-axis-label is-right" x="${width - 6}" y="${y + 4}">${formatAxisUsd(matchingCost)}</text>
-        `;
-      }).join("")}
-      <line class="trend-axis-line" x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotHeight}"></line>
-      <line class="trend-axis-line" x1="${margin.left + plotWidth}" y1="${margin.top}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}"></line>
-      <line class="trend-axis-line" x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${margin.left + plotWidth}" y2="${margin.top + plotHeight}"></line>
+    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token pulse chart">
+      <line class="trend-top-guide" x1="${margin.left}" y1="${margin.top}" x2="${margin.left + plotWidth}" y2="${margin.top}"></line>
+      <line class="trend-baseline" x1="${margin.left}" y1="${baselineY}" x2="${margin.left + plotWidth}" y2="${baselineY}"></line>
       ${chartPoints.map((point) => `
-        <rect class="trend-bar" x="${point.barX}" y="${point.barY}" width="${point.barWidth}" height="${Math.max(point.costHeight, 1)}" rx="4">
-          <title>${formatTrendDate(point.date)}: ${formatUsd(point.costValue)} estimated cost</title>
+        <rect
+          class="${point.classNames}"
+          x="${point.barX}"
+          y="${point.barY}"
+          width="${point.barWidth}"
+          height="${point.barHeight}"
+          rx="${Math.min(6, point.barWidth / 2)}"
+          tabindex="0"
+        >
+          <title>${point.hoverTitle}</title>
         </rect>
-      `).join("")}
-      <polyline class="sparkline-line" points="${linePoints.join(" ")}"></polyline>
-      ${chartPoints.map((point) => `
-        <circle class="trend-point" cx="${point.x}" cy="${point.tokenY}" r="3.8">
-          <title>${formatTrendDate(point.date)}: ${formatFullNumber(point.tokenValue)} tokens</title>
-        </circle>
       `).join("")}
       ${xLabelIndexes.map((index) => {
         const point = chartPoints[index];
@@ -755,10 +752,6 @@ function renderTrend(dashboard) {
         `;
       }).join("")}
     </svg>
-    <div class="trend-legend" aria-hidden="true">
-      <span class="trend-legend-item"><span class="trend-legend-line"></span>Tokens / day</span>
-      <span class="trend-legend-item"><span class="trend-legend-bar"></span>Est. cost / day</span>
-    </div>
   `;
 }
 
