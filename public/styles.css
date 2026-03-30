@@ -369,13 +369,21 @@ select {
 
 .momentum-panel-head {
   margin-bottom: 0;
+  justify-content: space-between;
+  align-items: start;
 }
 
-.habit-rail {
+.momentum-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(340px, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.insight-rail {
   display: grid;
   gap: 12px;
-  justify-items: end;
-  max-width: 460px;
+  align-content: start;
 }
 
 .momentum-head-status {
@@ -397,6 +405,45 @@ select {
 .momentum-status-copy span {
   color: var(--ink-muted);
   font-size: 0.8rem;
+}
+
+.insight-cost-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cost-window-card {
+  border: 1px solid rgba(35, 49, 39, 0.08);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.56);
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cost-window-card.is-featured {
+  grid-column: 1 / -1;
+}
+
+.cost-window-label {
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.cost-window-card strong {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 1.22rem;
+  color: var(--accent);
+}
+
+.cost-window-foot {
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .status-pill {
@@ -448,6 +495,10 @@ select {
   grid-template-columns: repeat(3, minmax(118px, 1fr));
   gap: 10px;
   width: 100%;
+}
+
+.habit-stat-grid-compact .habit-stat {
+  padding: 10px 11px;
 }
 
 .habit-stat {
@@ -512,30 +563,18 @@ select {
 
 .trend-strip {
   display: grid;
-  gap: 10px;
-  border-top: 1px solid rgba(35, 49, 39, 0.08);
-  padding-top: 14px;
+  gap: 8px;
+  border: 1px solid rgba(35, 49, 39, 0.08);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.38);
+  padding: 12px;
 }
 
 .trend-strip-head {
   display: flex;
   justify-content: space-between;
-  gap: 14px;
-  align-items: flex-start;
-}
-
-.trend-summary {
-  display: grid;
-  gap: 8px;
-  min-width: 148px;
-}
-
-.trend-summary .panel-stat {
-  gap: 2px;
-}
-
-.trend-summary .panel-stat strong {
-  font-size: 1.02rem;
+  gap: 10px;
+  align-items: start;
 }
 
 .cost-table-shell {
@@ -768,88 +807,56 @@ select {
 }
 
 .sparkline-compact {
-  min-height: 164px;
+  min-height: 116px;
 }
 
 .sparkline-compact svg {
-  height: 164px;
-}
-
-.sparkline-line {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 3.5;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-
-.trend-grid-line {
-  stroke: rgba(35, 49, 39, 0.08);
-  stroke-width: 1;
-  stroke-dasharray: 2 6;
-}
-
-.trend-axis-line {
-  stroke: rgba(35, 49, 39, 0.16);
-  stroke-width: 1;
+  height: 116px;
 }
 
 .trend-axis-label {
   fill: var(--ink-muted);
-  font-size: 10.5px;
-}
-
-.trend-axis-label.is-right {
-  text-anchor: end;
+  font-size: 10px;
 }
 
 .trend-axis-label.is-x {
   text-anchor: middle;
 }
 
-.trend-bar {
-  fill: rgba(69, 155, 89, 0.18);
+.trend-baseline {
+  stroke: rgba(35, 49, 39, 0.14);
+  stroke-width: 1;
 }
 
-.trend-point {
-  fill: #fffdf6;
-  stroke: var(--accent);
-  stroke-width: 2;
+.trend-top-guide {
+  stroke: rgba(35, 49, 39, 0.08);
+  stroke-width: 1;
+  stroke-dasharray: 3 7;
 }
 
-.trend-legend {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 12px;
-  color: var(--ink-muted);
-  font-size: 0.76rem;
+.trend-pulse-bar {
+  fill: rgba(69, 155, 89, 0.24);
+  transition: fill 140ms ease, opacity 140ms ease, stroke 140ms ease;
 }
 
-.trend-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
+.trend-pulse-bar.is-zero {
+  fill: rgba(69, 155, 89, 0.12);
 }
 
-.trend-legend-line,
-.trend-legend-bar {
-  display: inline-block;
-  border-radius: 999px;
+.trend-pulse-bar.is-peak {
+  fill: rgba(40, 72, 54, 0.3);
 }
 
-.trend-legend-line {
-  width: 16px;
-  height: 3px;
-  background: var(--accent);
+.trend-pulse-bar.is-today {
+  fill: rgba(69, 155, 89, 0.34);
+  stroke: rgba(40, 72, 54, 0.88);
+  stroke-width: 1.2;
 }
 
-.trend-legend-bar {
-  width: 12px;
-  height: 12px;
-  border-radius: 4px;
-  background: rgba(69, 155, 89, 0.18);
+.trend-pulse-bar:hover,
+.trend-pulse-bar:focus-visible {
+  fill: rgba(40, 72, 54, 0.38);
+  outline: none;
 }
 
 .rank-table,
@@ -1125,10 +1132,8 @@ select {
     text-align: left;
   }
 
-  .habit-rail {
-    justify-items: stretch;
-    max-width: none;
-    width: 100%;
+  .momentum-layout {
+    grid-template-columns: 1fr;
   }
 
   .trend-strip-head {
@@ -1190,6 +1195,10 @@ select {
   }
 
   .habit-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-cost-grid {
     grid-template-columns: 1fr;
   }
 

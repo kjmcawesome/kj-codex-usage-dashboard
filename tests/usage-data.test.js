@@ -171,6 +171,11 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.habit_board.end_date, "2026-03-25");
   assert.equal(allSessions.habit_metrics.today_has_usage, false);
   assert.equal(allSessions.habit_metrics.today_tokens, 0);
+  assertClose(allSessions.habit_metrics.today_estimated_cost_usd, 0);
+  assert.equal(allSessions.habit_metrics.last_14_days_tokens, 650);
+  assertClose(allSessions.habit_metrics.last_14_days_estimated_cost_usd, 0.0032305);
+  assert.equal(allSessions.habit_metrics.month_to_date_tokens, 650);
+  assertClose(allSessions.habit_metrics.month_to_date_estimated_cost_usd, 0.0032305);
   assert.equal(allSessions.habit_metrics.current_streak, 0);
   assert.equal(allSessions.habit_metrics.best_streak, 5);
   assert.equal(allSessions.habit_metrics.workweek_green_days, 2);
@@ -189,6 +194,13 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assertClose(
     allSessions.cost_breakdown_by_model.reduce((sum, row) => sum + row.estimated_cost_usd, 0),
     allSessions.summary.estimated_cost_usd
+  );
+  assert.equal(allSessions.trend_days.length, 14);
+  assert.equal(allSessions.trend_days[0].date, "2026-03-12");
+  assert.equal(allSessions.trend_days.at(-1).date, "2026-03-25");
+  assert.equal(
+    allSessions.trend_days.reduce((sum, day) => sum + day.total_tokens, 0),
+    650
   );
   assert.equal(allSessions.heatmap_days.filter((day) => day.in_range).length, 365);
   assert.equal(allSessions.habit_board.days.filter((day) => day.in_range).length, 365);
@@ -215,6 +227,9 @@ test("buildDashboardPayload supports custom date ranges", async () => {
   assert.equal(dashboard.summary.total_tokens, 450);
   assertClose(dashboard.summary.estimated_cost_usd, 0.0023755);
   assertClose(dashboard.heatmap_scale.max_total_tokens, 190);
+  assert.equal(dashboard.trend_days.length, 14);
+  assert.equal(dashboard.trend_days[0].date, "2026-03-12");
+  assert.equal(dashboard.trend_days.at(-1).date, "2026-03-25");
 });
 
 test("buildDashboardPayload supports workspace-specific filtering", async () => {
