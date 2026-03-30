@@ -401,6 +401,148 @@ function calculatePctChange(currentValue, previousValue) {
   return (currentValue - previousValue) / previousValue;
 }
 
+function countRangeDays(startDate, endDate) {
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  return Math.floor((todayDate(endDate).getTime() - todayDate(startDate).getTime()) / millisecondsPerDay) + 1;
+}
+
+function sumWindowTotals(dayMap, startDate, endDate) {
+  const totals = emptyTotals();
+  for (let cursor = new Date(startDate); cursor <= endDate; cursor = addDays(cursor, 1)) {
+    addTotals(totals, dayMap.get(dateKeyFromDate(cursor)) || emptyTotals());
+  }
+  return totals;
+}
+
+function buildWindowSnapshot(dayMap, currentStart, currentEnd, previousStart = null, previousEnd = null) {
+  const currentTotals = sumWindowTotals(dayMap, currentStart, currentEnd);
+  const previousTotals = previousStart && previousEnd
+    ? sumWindowTotals(dayMap, previousStart, previousEnd)
+    : emptyTotals();
+
+  return {
+    start_date: dateKeyFromDate(currentStart),
+    end_date: dateKeyFromDate(currentEnd),
+    total_tokens: currentTotals.total_tokens || 0,
+    estimated_cost_usd: currentTotals.estimated_cost_usd || 0,
+    previous_total_tokens: previousTotals.total_tokens || 0,
+    previous_estimated_cost_usd: previousTotals.estimated_cost_usd || 0,
+    token_change_pct: calculatePctChange(
+      currentTotals.total_tokens || 0,
+      previousTotals.total_tokens || 0
+    ),
+    cost_change_pct: calculatePctChange(
+      currentTotals.estimated_cost_usd || 0,
+      previousTotals.estimated_cost_usd || 0
+    ),
+    effective_cost_per_million: calculateCostPerMillion(
+      currentTotals.estimated_cost_usd || 0,
+      currentTotals.total_tokens || 0
+    )
+  };
+}
+
+function buildMomentumSnapshots(dayMap, now = new Date()) {
+  const today = todayDate(now);
+  const trailingFourteenStart = addDays(today, -13);
+  const previousFourteenStart = addDays(today, -27);
+  const previousFourteenEnd = addDays(today, -14);
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const previousMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const previousMonthLastDay = new Date(today.getFullYear(), today.getMonth(), 0);
+  const previousMonthComparableDay = Math.min(today.getDate(), previousMonthLastDay.getDate());
+  const previousMonthComparableEnd = new Date(
+    previousMonthStart.getFullYear(),
+    previousMonthStart.getMonth(),
+    previousMonthComparableDay
+  );
+
+  return {
+    today: buildWindowSnapshot(dayMap, today, today),
+    trailing_14d: buildWindowSnapshot(
+      dayMap,
+      trailingFourteenStart,
+      today,
+      previousFourteenStart,
+      previousFourteenEnd
+    ),
+    month_to_date: buildWindowSnapshot(
+      dayMap,
+      monthStart,
+      today,
+      previousMonthStart,
+      previousMonthComparableEnd
+    )
+  };
+}
+
+function buildRangeComparison(dayMap, range, summary) {
+  if (range.requestedDays === "all") {
+    return {
+      available: false,
+      label: "All time has no prior comparable window",
+      previous_start_date: null,
+      previous_end_date: null,
+      previous_total_tokens: 0,
+      previous_estimated_cost_usd: 0,
+      token_change_pct: null,
+      cost_change_pct: null
+    };
+  }
+
+  const rangeLengthDays = countRangeDays(range.startDate, range.endDate);
+  const previousEndDate = addDays(range.startDate, -1);
+  const previousStartDate = addDays(previousEndDate, -(rangeLengthDays - 1));
+  const previousTotals = sumWindowTotals(dayMap, previousStartDate, previousEndDate);
+
+  return {
+    available: true,
+    label: `${formatDisplayDate(previousStartDate)} - ${formatDisplayDate(previousEndDate)}`,
+    previous_start_date: dateKeyFromDate(previousStartDate),
+    previous_end_date: dateKeyFromDate(previousEndDate),
+    previous_total_tokens: previousTotals.total_tokens || 0,
+    previous_estimated_cost_usd: previousTotals.estimated_cost_usd || 0,
+    token_change_pct: calculatePctChange(
+      summary.total_tokens || 0,
+      previousTotals.total_tokens || 0
+    ),
+    cost_change_pct: calculatePctChange(
+      summary.estimated_cost_usd || 0,
+      previousTotals.estimated_cost_usd || 0
+    )
+  };
+}
+
+function modelFamilyForDisplay(model) {
+  return canonicalizePricedModel(model) || model || "Other";
+}
+
+function determineDominantModelFamily(modelTotals) {
+  if (!modelTotals || modelTotals.size === 0) {
+    return "Other";
+  }
+
+  let dominant = null;
+  for (const [model, totalTokens] of modelTotals.entries()) {
+    if (!dominant || totalTokens > dominant.total_tokens) {
+      dominant = {
+        model,
+        total_tokens: totalTokens
+      };
+    }
+  }
+
+  return dominant?.model || "Other";
+}
+
+function shareOfTotal(total, value) {
+  if (!total) {
+    return 0;
+  }
+
+  return value / total;
+}
+
 function buildEfficiencyMetrics(summary, dayMap, habitMetrics, costBreakdownByModel) {
   let peakDay = null;
 
@@ -447,6 +589,7 @@ function buildEfficiencyMetrics(summary, dayMap, habitMetrics, costBreakdownByMo
       ? {
         model: topModel.model,
         share_of_total_cost: topModel.share_of_total_cost || 0,
+        share_of_total_tokens: topModel.share_of_total_tokens || 0,
         estimated_cost_usd: topModel.estimated_cost_usd || 0,
         total_tokens: topModel.total_tokens || 0
       }
@@ -496,7 +639,7 @@ function buildInsights(efficiencyMetrics) {
   ) {
     insights.push({
       title: "Cost is concentrated in one model",
-      body: `${efficiencyMetrics.top_model.model} drove ${Math.round(efficiencyMetrics.top_model.share_of_total_cost * 100)}% of estimated cost in this selection.`
+      body: `${efficiencyMetrics.top_model.model} drove ${Math.round(efficiencyMetrics.top_model.share_of_total_cost * 100)}% of estimated cost on ${Math.round(efficiencyMetrics.top_model.share_of_total_tokens * 100)}% of tokens.`
     });
   }
 
@@ -659,11 +802,17 @@ function filterContributions(index, options) {
           is_subagent: session.is_subagent,
           session_started_at: session.session_started_at,
           active_days: 0,
+          model_totals: new Map(),
           ...emptyTotals()
         });
       }
       const sessionTotals = sessionMap.get(session.session_id);
       addTotals(sessionTotals, pricedEvent);
+      const modelFamily = modelFamilyForDisplay(event.model);
+      sessionTotals.model_totals.set(
+        modelFamily,
+        (sessionTotals.model_totals.get(modelFamily) || 0) + (pricedEvent.total_tokens || 0)
+      );
 
       addTotals(summary, pricedEvent);
     }
@@ -682,11 +831,39 @@ function filterContributions(index, options) {
       dates.add(event.date);
     }
     sessionTotals.active_days = dates.size;
+    sessionTotals.dominant_model_family = determineDominantModelFamily(sessionTotals.model_totals);
+    sessionTotals.input_output_ratio = sessionTotals.output_tokens > 0
+      ? sessionTotals.input_tokens / sessionTotals.output_tokens
+      : null;
   }
 
   const threads = [...sessionMap.values()]
-    .sort((left, right) => right.total_tokens - left.total_tokens)
-    .slice(0, 8);
+    .sort((left, right) =>
+      (right.estimated_cost_usd - left.estimated_cost_usd) ||
+      (right.total_tokens - left.total_tokens)
+    )
+    .slice(0, 8)
+    .map((entry) => ({
+      session_id: entry.session_id,
+      thread_name: entry.thread_name,
+      workspace_key: entry.workspace_key,
+      workspace_label: entry.workspace_label,
+      cwd: entry.cwd,
+      is_subagent: entry.is_subagent,
+      session_started_at: entry.session_started_at,
+      active_days: entry.active_days,
+      total_tokens: entry.total_tokens,
+      input_tokens: entry.input_tokens,
+      cached_input_tokens: entry.cached_input_tokens,
+      output_tokens: entry.output_tokens,
+      reasoning_output_tokens: entry.reasoning_output_tokens,
+      estimated_cost_usd: entry.estimated_cost_usd,
+      unpriced_total_tokens: entry.unpriced_total_tokens,
+      dominant_model_family: entry.dominant_model_family,
+      input_output_ratio: entry.input_output_ratio,
+      token_share: shareOfTotal(summary.total_tokens, entry.total_tokens),
+      cost_share: shareOfTotal(summary.estimated_cost_usd, entry.estimated_cost_usd)
+    }));
   const currentWorkSessions = [...currentWorkSessionMap.values()]
     .map((entry) => ({
       session_id: entry.session_id,
@@ -735,6 +912,13 @@ function filterContributions(index, options) {
       share_of_total_cost: totalEstimatedCost > 0
         ? entry.estimated_cost_usd / totalEstimatedCost
         : 0,
+      share_of_total_tokens: summary.total_tokens > 0
+        ? entry.total_tokens / summary.total_tokens
+        : 0,
+      effective_cost_per_million: calculateCostPerMillion(
+        entry.estimated_cost_usd,
+        entry.total_tokens
+      ),
       rates: entry.rates
     }))
     .sort((left, right) => right.estimated_cost_usd - left.estimated_cost_usd);
@@ -754,6 +938,8 @@ function filterContributions(index, options) {
     habitMetrics,
     costBreakdownByModel
   );
+  const rangeComparison = buildRangeComparison(habitDayMap, range, derivedSummary);
+  const snapshotWindows = buildMomentumSnapshots(habitDayMap, now);
 
   return {
     range,
@@ -780,6 +966,8 @@ function filterContributions(index, options) {
     cost_breakdown_by_model: costBreakdownByModel,
     trend_days: buildTrendDays(habitDayMap, now),
     efficiency_metrics: efficiencyMetrics,
+    range_comparison: rangeComparison,
+    snapshot_windows: snapshotWindows,
     insights: buildInsights(efficiencyMetrics),
     day_map: dayMap,
     habit_day_map: habitDayMap,
@@ -834,6 +1022,8 @@ export function buildDashboardPayload(index, options = {}) {
     current_work_sessions: filtered.current_work_sessions,
     trend_days: filtered.trend_days,
     efficiency_metrics: filtered.efficiency_metrics,
+    range_comparison: filtered.range_comparison,
+    snapshot_windows: filtered.snapshot_windows,
     insights: filtered.insights,
     cost_breakdown_by_model: filtered.cost_breakdown_by_model,
     top_threads: filtered.top_threads,
@@ -867,11 +1057,18 @@ export function buildDayPayload(index, date, options = {}) {
     }
 
     const totals = emptyTotals();
+    const modelTotals = new Map();
     for (const event of session.events) {
       if (event.date !== dateKey) {
         continue;
       }
-      addTotals(totals, priceEvent(event));
+      const pricedEvent = priceEvent(event);
+      addTotals(totals, pricedEvent);
+      const modelFamily = modelFamilyForDisplay(event.model);
+      modelTotals.set(
+        modelFamily,
+        (modelTotals.get(modelFamily) || 0) + (pricedEvent.total_tokens || 0)
+      );
     }
 
     if (totals.total_tokens <= 0) {
@@ -886,11 +1083,20 @@ export function buildDayPayload(index, date, options = {}) {
       cwd: session.cwd,
       is_subagent: session.is_subagent,
       session_started_at: session.session_started_at,
+      dominant_model_family: determineDominantModelFamily(modelTotals),
+      input_output_ratio: totals.output_tokens > 0
+        ? totals.input_tokens / totals.output_tokens
+        : null,
+      token_share: dayTotals.total_tokens > 0 ? totals.total_tokens / dayTotals.total_tokens : 0,
+      cost_share: dayTotals.estimated_cost_usd > 0 ? totals.estimated_cost_usd / dayTotals.estimated_cost_usd : 0,
       ...totals
     });
   }
 
-  sessions.sort((left, right) => right.total_tokens - left.total_tokens);
+  sessions.sort((left, right) =>
+    (right.estimated_cost_usd - left.estimated_cost_usd) ||
+    (right.total_tokens - left.total_tokens)
+  );
 
   return {
     date: dateKey,

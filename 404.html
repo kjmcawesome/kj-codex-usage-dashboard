@@ -25,69 +25,12 @@
               <strong id="last-refresh">Loading...</strong>
             </div>
             <div class="meta-card">
-              <span class="meta-label">Range</span>
-              <strong id="source-note">Momentum-first snapshot</strong>
+              <span class="meta-label">Snapshot</span>
+              <strong id="source-note">365-day board + fixed windows</strong>
             </div>
           </div>
         </div>
-        <section class="summary-grid hero-summary-grid">
-        <article class="summary-card">
-          <span class="card-label">Usage</span>
-          <strong class="card-value" id="summary-total">-</strong>
-          <span class="card-foot" id="summary-total-foot">Selected range</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Estimated cost</span>
-          <strong class="card-value" id="summary-cost">-</strong>
-          <span class="card-foot" id="summary-cost-foot">Directional planning lens</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Today</span>
-          <strong class="card-value" id="summary-burst">-</strong>
-          <span class="card-foot" id="summary-burst-foot">Today’s square status</span>
-        </article>
-
-        <article class="summary-card">
-          <span class="card-label">Eff. cost / 1M</span>
-          <strong class="card-value" id="summary-days">-</strong>
-          <span class="card-foot" id="summary-days-foot">Selected-range efficiency</span>
-        </article>
-      </section>
       </header>
-
-      <section class="controls-panel">
-        <div class="toolbar-group toolbar-group-range">
-          <div class="toolbar-field">
-            <span class="toolbar-label">Range</span>
-            <div class="range-controls">
-              <div class="range-chips" id="range-chips" aria-label="Date range"></div>
-              <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
-              <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
-              <strong id="active-range-pill" class="active-range-pill">Last 30 days</strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="toolbar-group toolbar-group-filters">
-          <label class="control control-stacked">
-            <span>Workspace</span>
-            <select id="workspace-filter">
-              <option value="all">All workspaces</option>
-            </select>
-          </label>
-
-          <label class="toggle toggle-stacked">
-            <span>Subagents</span>
-            <span class="toggle-row">
-              <input id="subagent-toggle" type="checkbox" checked />
-              <span>Include subagents</span>
-            </span>
-          </label>
-        </div>
-        <button id="refresh-button" class="refresh-button" type="button">Check for updates</button>
-      </section>
 
       <section class="panel momentum-panel">
         <div class="panel-head momentum-panel-head">
@@ -171,13 +114,83 @@
               <div class="trend-strip-head">
                 <div>
                   <h3>Last 14 days</h3>
-                  <p class="activity-note">Daily tokens. Hover a bar for cost.</p>
+                  <p class="activity-note">Fixed trailing pulse. Hover a bar for tokens + cost.</p>
                 </div>
               </div>
               <div id="trend-sparkline" class="sparkline sparkline-compact"></div>
             </section>
           </aside>
         </div>
+      </section>
+
+      <section class="panel selected-range-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-eyebrow">Selected range</p>
+            <h2 id="selected-range-title">Last 30 days</h2>
+            <p class="ranking-note" id="selected-range-note">
+              Filters below affect the KPI row, coaching view, workflows, and day details.
+            </p>
+          </div>
+        </div>
+
+        <div class="controls-panel controls-panel-inline">
+          <div class="toolbar-group toolbar-group-range">
+            <div class="toolbar-field">
+              <span class="toolbar-label">Range</span>
+              <div class="range-controls">
+                <div class="range-chips" id="range-chips" aria-label="Date range"></div>
+                <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
+                <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
+                <strong id="active-range-pill" class="active-range-pill">Last 30 days</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar-group toolbar-group-filters">
+            <label class="control control-stacked">
+              <span>Workspace</span>
+              <select id="workspace-filter">
+                <option value="all">All workspaces</option>
+              </select>
+            </label>
+
+            <label class="toggle toggle-stacked">
+              <span>Subagents</span>
+              <span class="toggle-row">
+                <input id="subagent-toggle" type="checkbox" checked />
+                <span>Include subagents</span>
+              </span>
+            </label>
+          </div>
+          <button id="refresh-button" class="refresh-button" type="button">Check for updates</button>
+        </div>
+
+        <section class="summary-grid range-summary-grid">
+          <article class="summary-card">
+            <span class="card-label">Usage</span>
+            <strong class="card-value" id="summary-total">-</strong>
+            <span class="card-foot" id="summary-total-foot">Selected range</span>
+          </article>
+
+          <article class="summary-card">
+            <span class="card-label">Estimated cost</span>
+            <strong class="card-value" id="summary-cost">-</strong>
+            <span class="card-foot" id="summary-cost-foot">Directional planning lens</span>
+          </article>
+
+          <article class="summary-card">
+            <span class="card-label">Eff. cost / 1M</span>
+            <strong class="card-value" id="summary-days">-</strong>
+            <span class="card-foot" id="summary-days-foot">Selected-range efficiency</span>
+          </article>
+
+          <article class="summary-card">
+            <span class="card-label">Vs prior comparable range</span>
+            <strong class="card-value" id="summary-burst">-</strong>
+            <span class="card-foot" id="summary-burst-foot">Previous equal-length window</span>
+          </article>
+        </section>
       </section>
 
       <section class="lower-grid">

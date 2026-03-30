@@ -40,6 +40,8 @@ const state = {
 const elements = {
   lastRefresh: document.querySelector("#last-refresh"),
   sourceNote: document.querySelector("#source-note"),
+  selectedRangeTitle: document.querySelector("#selected-range-title"),
+  selectedRangeNote: document.querySelector("#selected-range-note"),
   rangeChips: document.querySelector("#range-chips"),
   customRangeButton: document.querySelector("#custom-range-button"),
   customRangeInput: document.querySelector("#custom-range-input"),
@@ -162,6 +164,14 @@ function formatDate(value) {
 
 function formatCountLabel(value, singular, plural = `${singular}s`) {
   return `${value} ${value === 1 ? singular : plural}`;
+}
+
+function formatComparisonFootline(changePct, label) {
+  if (changePct === null || Number.isNaN(changePct)) {
+    return `No prior comparison · ${label}`;
+  }
+
+  return `${formatSignedPercent(changePct)} vs ${label}`;
 }
 
 function formatAxisTokens(value) {
@@ -523,8 +533,8 @@ function renderHabitRail(dashboard) {
   if (metrics.today_has_usage) {
     elements.todayStatusHeadline.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens so far today`;
     elements.todayStatusNote.textContent = metrics.current_streak > 1
-      ? `${formatCountLabel(metrics.current_streak, "day")} streak is live`
-      : "Streak is live";
+      ? `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · ${formatCountLabel(metrics.current_streak, "day")} streak is live`
+      : `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · streak is live`;
   } else {
     elements.todayStatusHeadline.textContent = "One workflow starts the streak";
     elements.todayStatusNote.textContent = "No usage yet today. Get the square green.";
@@ -547,27 +557,35 @@ function renderHabitRail(dashboard) {
 }
 
 function renderInsightCosts(dashboard) {
-  const metrics = dashboard.habit_metrics;
+  const snapshots = dashboard.snapshot_windows;
 
-  elements.costToday.textContent = formatUsd(metrics.today_estimated_cost_usd);
-  elements.costToday.title = formatUsd(metrics.today_estimated_cost_usd);
-  elements.costTodayFoot.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens today`;
-  elements.costTodayFoot.title = formatFullNumber(metrics.today_tokens);
+  elements.costToday.textContent = formatUsd(snapshots.today.estimated_cost_usd);
+  elements.costToday.title = formatUsd(snapshots.today.estimated_cost_usd);
+  elements.costTodayFoot.textContent = `${formatCompactNumber(snapshots.today.total_tokens)} tokens today`;
+  elements.costTodayFoot.title = formatFullNumber(snapshots.today.total_tokens);
 
-  elements.cost14d.textContent = formatUsd(metrics.last_14_days_estimated_cost_usd);
-  elements.cost14d.title = formatUsd(metrics.last_14_days_estimated_cost_usd);
-  elements.cost14dFoot.textContent = `${formatCompactNumber(metrics.last_14_days_tokens)} tokens`;
-  elements.cost14dFoot.title = formatFullNumber(metrics.last_14_days_tokens);
+  elements.cost14d.textContent = formatUsd(snapshots.trailing_14d.estimated_cost_usd);
+  elements.cost14d.title = formatUsd(snapshots.trailing_14d.estimated_cost_usd);
+  elements.cost14dFoot.textContent = `${formatCompactNumber(snapshots.trailing_14d.total_tokens)} tokens · ${formatComparisonFootline(
+    snapshots.trailing_14d.cost_change_pct,
+    "prior 14 days"
+  )}`;
+  elements.cost14dFoot.title = `${formatFullNumber(snapshots.trailing_14d.total_tokens)} tokens`;
 
-  elements.costMonth.textContent = formatUsd(metrics.month_to_date_estimated_cost_usd);
-  elements.costMonth.title = formatUsd(metrics.month_to_date_estimated_cost_usd);
-  elements.costMonthFoot.textContent = `${formatCompactNumber(metrics.month_to_date_tokens)} tokens`;
-  elements.costMonthFoot.title = formatFullNumber(metrics.month_to_date_tokens);
+  elements.costMonth.textContent = formatUsd(snapshots.month_to_date.estimated_cost_usd);
+  elements.costMonth.title = formatUsd(snapshots.month_to_date.estimated_cost_usd);
+  elements.costMonthFoot.textContent = `${formatCompactNumber(snapshots.month_to_date.total_tokens)} tokens · ${formatComparisonFootline(
+    snapshots.month_to_date.cost_change_pct,
+    "same point last month"
+  )}`;
+  elements.costMonthFoot.title = `${formatFullNumber(snapshots.month_to_date.total_tokens)} tokens`;
 }
 
 function renderSummary(dashboard) {
   elements.lastRefresh.textContent = new Date(dashboard.generated_at).toLocaleString();
-  elements.sourceNote.textContent = dashboard.selection.label;
+  elements.sourceNote.textContent = `${formatDate(dashboard.habit_board.start_date)} - ${formatDate(dashboard.habit_board.end_date)}`;
+  elements.selectedRangeTitle.textContent = dashboard.selection.label;
+  elements.selectedRangeNote.textContent = `Filters here only change the selected-range KPIs, coaching view, workflows, and day details.`;
   elements.summaryTotal.textContent = formatCompactNumber(dashboard.summary.total_tokens);
   elements.summaryTotal.title = formatFullNumber(dashboard.summary.total_tokens);
   elements.summaryTotalFoot.textContent = `${dashboard.selection.label} · ${formatCountLabel(dashboard.summary.active_days, "active day")}`;
@@ -583,11 +601,16 @@ function renderSummary(dashboard) {
   elements.summaryDaysFoot.textContent = dashboard.efficiency_metrics.input_output_ratio !== null
     ? `Input/output ${dashboard.efficiency_metrics.input_output_ratio.toFixed(1)}x`
     : "No output in range";
-  elements.summaryBurst.textContent = formatCompactNumber(dashboard.habit_metrics.today_tokens);
-  elements.summaryBurst.title = formatFullNumber(dashboard.habit_metrics.today_tokens);
-  elements.summaryBurstFoot.textContent = dashboard.habit_metrics.today_has_usage
-    ? `Green today · ${formatCompactUsd(dashboard.habit_metrics.today_estimated_cost_usd)} estimated cost`
-    : "No usage yet today";
+  const rangeComparison = dashboard.range_comparison;
+  elements.summaryBurst.textContent = rangeComparison.token_change_pct !== null
+    ? formatSignedPercent(rangeComparison.token_change_pct)
+    : "—";
+  elements.summaryBurst.title = rangeComparison.available
+    ? `${formatFullNumber(dashboard.summary.total_tokens)} tokens vs ${formatFullNumber(rangeComparison.previous_total_tokens)} in ${rangeComparison.label}`
+    : rangeComparison.label;
+  elements.summaryBurstFoot.textContent = rangeComparison.available
+    ? `${rangeComparison.cost_change_pct !== null ? `Cost ${formatSignedPercent(rangeComparison.cost_change_pct)}` : "No prior cost comparison"} · ${rangeComparison.label}`
+    : rangeComparison.label;
   elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
   updateRangeSelectionLabel(dashboard.selection.label);
 }
@@ -606,7 +629,7 @@ function renderEfficiencyPanel(dashboard) {
     <div class="efficiency-stat">
       <span class="efficiency-stat-label">Month pace</span>
       <strong>${formatSignedPercent(metrics.month_to_date_token_growth_pct)}</strong>
-      <span class="efficiency-stat-foot">vs same point last month</span>
+      <span class="efficiency-stat-foot">Tokens vs same point last month</span>
     </div>
     <div class="efficiency-stat">
       <span class="efficiency-stat-label">Peak day share</span>
@@ -634,15 +657,29 @@ function renderEfficiencyPanel(dashboard) {
       <div class="efficiency-section-title">Model mix</div>
       ${modelMixRows.map((row) => {
         const color = palette[row.model] || "rgba(35, 49, 39, 0.42)";
-        const share = totalCost > 0 ? row.share_of_total_cost : 0;
+        const costShare = totalCost > 0 ? row.share_of_total_cost : 0;
+        const tokenShare = row.share_of_total_tokens || 0;
         return `
-          <div class="mix-row" title="${row.model}: ${formatUsd(row.estimated_cost_usd)} estimated cost · ${formatFullNumber(row.total_tokens)} tokens">
+          <div class="mix-row" title="${row.model}: ${formatUsd(row.estimated_cost_usd)} estimated cost · ${formatFullNumber(row.total_tokens)} tokens · ${formatRate(row.effective_cost_per_million || 0)}">
             <div class="mix-copy">
               <span class="mix-label">${row.model}</span>
-              <span class="mix-sub">${formatUsd(row.estimated_cost_usd)} · ${formatPercent(share)}</span>
+              <span class="mix-sub">${formatUsd(row.estimated_cost_usd)} · ${formatRate(row.effective_cost_per_million || 0)}</span>
             </div>
-            <div class="mix-bar-shell">
-              <span class="mix-bar" style="width:${Math.max(share * 100, share > 0 ? 6 : 0)}%; background:${color};"></span>
+            <div class="mix-bars">
+              <div class="mix-track">
+                <span class="mix-track-label">Tokens</span>
+                <div class="mix-bar-shell">
+                  <span class="mix-bar" style="width:${Math.max(tokenShare * 100, tokenShare > 0 ? 6 : 0)}%; background:${color};"></span>
+                </div>
+                <span class="mix-track-value">${formatPercent(tokenShare)}</span>
+              </div>
+              <div class="mix-track">
+                <span class="mix-track-label">Cost</span>
+                <div class="mix-bar-shell">
+                  <span class="mix-bar" style="width:${Math.max(costShare * 100, costShare > 0 ? 6 : 0)}%; background:${color}; opacity:0.78;"></span>
+                </div>
+                <span class="mix-track-value">${formatPercent(costShare)}</span>
+              </div>
             </div>
           </div>
         `;
@@ -929,14 +966,14 @@ function renderTopThreads(dashboard) {
     row.innerHTML = `
       <div class="rank-main">
         <span class="rank-title">${formatWorkflowName(thread)}</span>
-        <span class="rank-sub">${formatWorkflowContext(thread)}</span>
+        <span class="rank-sub">${formatWorkflowContext(thread)} · ${formatCountLabel(thread.active_days || 0, "active day")} · ${thread.dominant_model_family || "Other"} dominant</span>
       </div>
       <div class="rank-metrics">
         <span class="rank-value">${formatUsd(thread.estimated_cost_usd)}</span>
-        <span class="rank-value-sub">${formatCompactNumber(thread.total_tokens)} tokens</span>
+        <span class="rank-value-sub">${formatCompactNumber(thread.total_tokens)} tokens · ${formatPercent(thread.cost_share || 0)} cost share</span>
       </div>
     `;
-    row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated cost`;
+    row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated cost · ${thread.dominant_model_family || "Other"} dominant model`;
     return row;
   });
 }
@@ -975,6 +1012,10 @@ function renderDayPanel(dayPayload) {
       <div class="session-metrics">
         <div class="metric-pair"><span>Total</span><strong>${formatFullNumber(session.total_tokens)}</strong></div>
         <div class="metric-pair"><span>Est. cost</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
+        <div class="metric-pair"><span>Token share</span><strong>${formatPercent(session.token_share)}</strong></div>
+        <div class="metric-pair"><span>Cost share</span><strong>${formatPercent(session.cost_share)}</strong></div>
+        <div class="metric-pair"><span>Dominant model</span><strong>${session.dominant_model_family || "Other"}</strong></div>
+        <div class="metric-pair"><span>Input / output</span><strong>${session.input_output_ratio !== null ? `${session.input_output_ratio.toFixed(1)}x` : "—"}</strong></div>
         <div class="metric-pair"><span>Input</span><strong>${formatFullNumber(session.input_tokens)}</strong></div>
         <div class="metric-pair"><span>Reused input</span><strong>${formatFullNumber(session.cached_input_tokens)}</strong></div>
         <div class="metric-pair"><span>Output</span><strong>${formatFullNumber(session.output_tokens)}</strong></div>
@@ -1004,8 +1045,8 @@ async function loadDay(date) {
 }
 
 function chooseDefaultDay(dashboard) {
-  const activeDays = dashboard.heatmap_days.filter((day) => day.in_range && day.total_tokens > 0);
-  return activeDays.at(-1)?.date || dashboard.range.end_date;
+  const activeDays = dashboard.habit_board.days.filter((day) => day.in_range && day.total_tokens > 0);
+  return activeDays.at(-1)?.date || dashboard.habit_board.end_date;
 }
 
 function syncDatePicker(dashboard) {
