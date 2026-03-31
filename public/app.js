@@ -84,6 +84,8 @@ const elements = {
   cost14dFoot: document.querySelector("#cost-14d-foot"),
   costMonth: document.querySelector("#cost-month"),
   costMonthFoot: document.querySelector("#cost-month-foot"),
+  trendTotalTokens: document.querySelector("#trend-total-tokens"),
+  trendTotalCost: document.querySelector("#trend-total-cost"),
   trendSparkline: document.querySelector("#trend-sparkline"),
   threadTable: document.querySelector("#thread-table"),
   dayTitle: document.querySelector("#day-title"),
@@ -187,8 +189,9 @@ function formatAxisTokens(value) {
   return String(Math.round(value));
 }
 
-function formatTrendDate(value) {
+function formatTrendDayLabel(value) {
   return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
+    weekday: "short",
     month: "short",
     day: "numeric"
   });
@@ -243,22 +246,6 @@ function sleep(ms) {
 
 function isPublicPagesSite() {
   return window.location.hostname === "kjmcawesome.github.io";
-}
-
-function buildTrendLabelIndexes(length) {
-  if (length <= 0) {
-    return [];
-  }
-
-  if (length <= 3) {
-    return [...Array(length).keys()];
-  }
-
-  return [...new Set([
-    0,
-    Math.floor((length - 1) / 2),
-    length - 1
-  ])];
 }
 
 function setRefreshButtonLabel(label, title) {
@@ -820,87 +807,66 @@ function renderHeatmap(dashboard) {
 
 function renderTrend(dashboard) {
   const trendDays = dashboard.trend_days || [];
+  const snapshots = dashboard.snapshot_windows || {};
+  const trailingSnapshot = snapshots.trailing_14d || null;
   const tokenValues = trendDays.map((day) => day.total_tokens || 0);
-  const width = 520;
-  const height = 128;
-  const margin = {
-    top: 14,
-    right: 8,
-    bottom: 24,
-    left: 8
-  };
-  const plotWidth = width - margin.left - margin.right;
-  const plotHeight = height - margin.top - margin.bottom;
-  const maxTokens = Math.max(...tokenValues, 0);
-  const tokenScaleMax = maxTokens || 1;
+  const tokenScaleMax = Math.max(...tokenValues, 0) || 1;
+
+  if (elements.trendTotalTokens) {
+    elements.trendTotalTokens.textContent = trailingSnapshot
+      ? formatCompactNumber(trailingSnapshot.total_tokens)
+      : "—";
+    elements.trendTotalTokens.title = trailingSnapshot
+      ? formatFullNumber(trailingSnapshot.total_tokens)
+      : "";
+  }
+
+  if (elements.trendTotalCost) {
+    elements.trendTotalCost.textContent = trailingSnapshot
+      ? formatUsd(trailingSnapshot.estimated_cost_usd)
+      : "—";
+    elements.trendTotalCost.title = trailingSnapshot
+      ? formatUsd(trailingSnapshot.estimated_cost_usd)
+      : "";
+  }
 
   if (!trendDays.length) {
     elements.trendSparkline.innerHTML = '<div class="empty-state">No trend data for this range.</div>';
     return;
   }
 
-  const baselineY = margin.top + plotHeight;
   const peakTokens = Math.max(...tokenValues, 0);
   const peakIndex = tokenValues.indexOf(peakTokens);
-  const chartPoints = trendDays.map((day, index) => {
-    const slotWidth = plotWidth / Math.max(trendDays.length, 1);
-    const barWidth = Math.min(22, Math.max(12, slotWidth * 0.42));
-    const barX = margin.left + (slotWidth * index) + ((slotWidth - barWidth) / 2);
-    const ratio = (day.total_tokens || 0) / tokenScaleMax;
-    const barHeight = day.total_tokens > 0
-      ? Math.max(10, ratio * (plotHeight - 6))
-      : 3;
-    const barY = baselineY - barHeight;
-    const x = barX + (barWidth / 2);
-    const isToday = day.date === dateKeyFromDate(todayDate(state.snapshotNow || new Date()));
+  const todayKey = dateKeyFromDate(todayDate(state.snapshotNow || new Date()));
+
+  elements.trendSparkline.innerHTML = trendDays.map((day, index) => {
+    const totalTokens = day.total_tokens || 0;
+    const estimatedCost = day.estimated_cost_usd || 0;
+    const widthPct = totalTokens > 0 ? Math.max((totalTokens / tokenScaleMax) * 100, 1.5) : 0;
+    const isToday = day.date === todayKey;
     const isPeak = peakTokens > 0 && index === peakIndex;
-    const classNames = [
-      "trend-pulse-bar",
-      day.total_tokens > 0 ? "" : "is-zero",
+    const classes = [
+      "trend-ledger-row",
+      totalTokens === 0 ? "is-zero" : "",
       isPeak ? "is-peak" : "",
       isToday ? "is-today" : ""
     ].filter(Boolean).join(" ");
-    const hoverTitle = `${formatTrendDate(day.date)}: ${formatFullNumber(day.total_tokens || 0)} tokens · ${formatUsd(day.estimated_cost_usd || 0)} estimated cost`;
 
-    return {
-      date: day.date,
-      x,
-      barWidth,
-      barX,
-      barY,
-      barHeight,
-      classNames,
-      hoverTitle
-    };
-  });
-
-  const xLabelIndexes = buildTrendLabelIndexes(trendDays.length);
-
-  elements.trendSparkline.innerHTML = `
-    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="14 day token pulse chart">
-      <line class="trend-top-guide" x1="${margin.left}" y1="${margin.top}" x2="${margin.left + plotWidth}" y2="${margin.top}"></line>
-      <line class="trend-baseline" x1="${margin.left}" y1="${baselineY}" x2="${margin.left + plotWidth}" y2="${baselineY}"></line>
-      ${chartPoints.map((point) => `
-        <rect
-          class="${point.classNames}"
-          x="${point.barX}"
-          y="${point.barY}"
-          width="${point.barWidth}"
-          height="${point.barHeight}"
-          rx="${Math.min(6, point.barWidth / 2)}"
-          tabindex="0"
-        >
-          <title>${point.hoverTitle}</title>
-        </rect>
-      `).join("")}
-      ${xLabelIndexes.map((index) => {
-        const point = chartPoints[index];
-        return `
-          <text class="trend-axis-label is-x" x="${point.x}" y="${height - 8}">${formatTrendDate(point.date)}</text>
-        `;
-      }).join("")}
-    </svg>
-  `;
+    return `
+      <div class="${classes}" title="${formatTrendDayLabel(day.date)}: ${formatFullNumber(totalTokens)} tokens · ${formatUsd(estimatedCost)} estimated cost">
+        <div class="trend-ledger-day">
+          <span class="trend-ledger-weekday">${formatTrendDayLabel(day.date)}</span>
+        </div>
+        <div class="trend-ledger-bar-shell" aria-hidden="true">
+          <span class="trend-ledger-bar" style="width:${widthPct}%;"></span>
+        </div>
+        <div class="trend-ledger-value">
+          <strong>${formatCompactNumber(totalTokens)}</strong>
+          <span>${formatUsd(estimatedCost)}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
 function renderCostBreakdown(dashboard) {

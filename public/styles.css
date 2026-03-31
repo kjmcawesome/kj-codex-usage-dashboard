@@ -588,6 +588,32 @@ select {
   align-items: start;
 }
 
+.trend-strip-summary {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  justify-content: flex-end;
+}
+
+.trend-strip-stat {
+  display: grid;
+  gap: 1px;
+  justify-items: end;
+}
+
+.trend-strip-label {
+  color: var(--ink-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.trend-strip-stat strong {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 0.94rem;
+  color: var(--accent);
+}
+
 .selected-range-panel .panel-head {
   margin-bottom: 0;
 }
@@ -810,68 +836,98 @@ select {
   grid-template-columns: 1fr 1fr;
 }
 
-.sparkline {
-  min-height: 206px;
+.trend-ledger {
   display: grid;
-  align-items: end;
+  gap: 6px;
 }
 
-.sparkline svg {
-  width: 100%;
-  height: 206px;
+.trend-ledger-row {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr) 118px;
+  gap: 12px;
+  align-items: center;
+  padding: 4px 0;
 }
 
-.sparkline-compact {
-  min-height: 92px;
+.trend-ledger-row.is-peak {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding-inline: 8px;
 }
 
-.sparkline-compact svg {
-  height: 92px;
+.trend-ledger-row.is-today {
+  background: rgba(69, 155, 89, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(40, 72, 54, 0.18);
+  border-radius: 10px;
+  padding-inline: 8px;
 }
 
-.trend-axis-label {
-  fill: var(--ink-muted);
-  font-size: 10px;
+.trend-ledger-day {
+  min-width: 0;
 }
 
-.trend-axis-label.is-x {
-  text-anchor: middle;
+.trend-ledger-weekday {
+  display: block;
+  color: var(--ink);
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
-.trend-baseline {
-  stroke: rgba(35, 49, 39, 0.14);
-  stroke-width: 1;
+.trend-ledger-bar-shell {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(35, 49, 39, 0.08);
+  overflow: hidden;
 }
 
-.trend-top-guide {
-  stroke: rgba(35, 49, 39, 0.08);
-  stroke-width: 1;
-  stroke-dasharray: 3 7;
+.trend-ledger-bar-shell::before {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 1px;
+  background: rgba(35, 49, 39, 0.06);
+  transform: translateY(-50%);
 }
 
-.trend-pulse-bar {
-  fill: rgba(69, 155, 89, 0.24);
-  transition: fill 140ms ease, opacity 140ms ease, stroke 140ms ease;
+.trend-ledger-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  min-width: 1px;
+  border-radius: 999px;
+  background: rgba(69, 155, 89, 0.32);
 }
 
-.trend-pulse-bar.is-zero {
-  fill: rgba(69, 155, 89, 0.12);
+.trend-ledger-row.is-peak .trend-ledger-bar {
+  background: rgba(40, 72, 54, 0.38);
 }
 
-.trend-pulse-bar.is-peak {
-  fill: rgba(40, 72, 54, 0.3);
+.trend-ledger-row.is-today .trend-ledger-bar {
+  background: rgba(69, 155, 89, 0.42);
 }
 
-.trend-pulse-bar.is-today {
-  fill: rgba(69, 155, 89, 0.34);
-  stroke: rgba(40, 72, 54, 0.88);
-  stroke-width: 1.2;
+.trend-ledger-row.is-zero .trend-ledger-bar {
+  width: 10px !important;
+  min-width: 10px;
+  background: rgba(35, 49, 39, 0.16);
 }
 
-.trend-pulse-bar:hover,
-.trend-pulse-bar:focus-visible {
-  fill: rgba(40, 72, 54, 0.38);
-  outline: none;
+.trend-ledger-value {
+  display: grid;
+  gap: 1px;
+  justify-items: end;
+}
+
+.trend-ledger-value strong {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: var(--accent);
+}
+
+.trend-ledger-value span {
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
 }
 
 .rank-table,
@@ -1295,6 +1351,10 @@ select {
     flex-direction: column;
   }
 
+  .trend-strip-summary {
+    justify-content: flex-start;
+  }
+
   .toolbar-group-filters {
     justify-content: flex-start;
   }
@@ -1371,6 +1431,28 @@ select {
   .trend-strip-head {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .trend-strip-summary {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .trend-ledger-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    align-items: start;
+  }
+
+  .trend-ledger-value {
+    grid-template-columns: 1fr auto;
+    justify-items: start;
+    align-items: baseline;
+  }
+
+  .trend-ledger-value span {
+    justify-self: end;
   }
 
   .budget-toggle {
