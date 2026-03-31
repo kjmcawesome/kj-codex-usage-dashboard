@@ -197,6 +197,19 @@ function formatTrendDayLabel(value) {
   });
 }
 
+function formatTrendDayShort(value) {
+  return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
+    weekday: "short"
+  });
+}
+
+function formatTrendDayNumber(value) {
+  return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
+}
+
 function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
     return `Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view did not match a priced model.`;
@@ -836,37 +849,60 @@ function renderTrend(dashboard) {
   }
 
   const peakTokens = Math.max(...tokenValues, 0);
-  const peakIndex = tokenValues.indexOf(peakTokens);
   const todayKey = dateKeyFromDate(todayDate(state.snapshotNow || new Date()));
 
   elements.trendSparkline.innerHTML = trendDays.map((day, index) => {
     const totalTokens = day.total_tokens || 0;
     const estimatedCost = day.estimated_cost_usd || 0;
-    const widthPct = totalTokens > 0 ? Math.max((totalTokens / tokenScaleMax) * 100, 1.5) : 0;
+    const ratio = totalTokens / tokenScaleMax;
+    const level = totalTokens === 0
+      ? 0
+      : ratio <= 0.25
+        ? 1
+        : ratio <= 0.5
+          ? 2
+          : ratio <= 0.75
+            ? 3
+            : 4;
     const isToday = day.date === todayKey;
-    const isPeak = peakTokens > 0 && index === peakIndex;
+    const isPeak = peakTokens > 0 && totalTokens === peakTokens;
     const classes = [
-      "trend-ledger-row",
+      "trend-day-chip",
+      `level-${level}`,
       totalTokens === 0 ? "is-zero" : "",
       isPeak ? "is-peak" : "",
       isToday ? "is-today" : ""
     ].filter(Boolean).join(" ");
+    const hoverTitle = `${formatTrendDayLabel(day.date)}: ${formatFullNumber(totalTokens)} tokens · ${formatUsd(estimatedCost)} estimated cost`;
 
     return `
-      <div class="${classes}" title="${formatTrendDayLabel(day.date)}: ${formatFullNumber(totalTokens)} tokens · ${formatUsd(estimatedCost)} estimated cost">
-        <div class="trend-ledger-day">
-          <span class="trend-ledger-weekday">${formatTrendDayLabel(day.date)}</span>
-        </div>
-        <div class="trend-ledger-bar-shell" aria-hidden="true">
-          <span class="trend-ledger-bar" style="width:${widthPct}%;"></span>
-        </div>
-        <div class="trend-ledger-value">
-          <strong>${formatCompactNumber(totalTokens)}</strong>
-          <span>${formatUsd(estimatedCost)}</span>
-        </div>
-      </div>
+      <button
+        type="button"
+        class="${classes}"
+        data-date="${day.date}"
+        title="${hoverTitle}"
+        aria-label="${hoverTitle}"
+      >
+        <span class="trend-day-weekday">${formatTrendDayShort(day.date)}</span>
+        <span class="trend-day-swatch" style="--day-fill:var(--level-${level});"></span>
+        <span class="trend-day-date">${formatTrendDayNumber(day.date)}</span>
+      </button>
     `;
   }).join("");
+
+  for (const chip of elements.trendSparkline.querySelectorAll(".trend-day-chip")) {
+    chip.addEventListener("click", () => {
+      const selectedDate = chip.dataset.date;
+      if (!selectedDate) {
+        return;
+      }
+
+      state.selectedDate = selectedDate;
+      elements.heatmapGrid.querySelector(".day-cell.is-selected")?.classList.remove("is-selected");
+      elements.heatmapGrid.querySelector(`.day-cell[data-date="${selectedDate}"]`)?.classList.add("is-selected");
+      loadDay(selectedDate);
+    });
+  }
 }
 
 function renderCostBreakdown(dashboard) {
