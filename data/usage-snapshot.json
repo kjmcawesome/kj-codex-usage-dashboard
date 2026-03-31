@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-03-31T23:00:06.468Z",
+  "generated_at": "2026-03-31T23:30:06.617Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -99658,6 +99658,54 @@
       ],
       "estimated_cost_usd": null,
       "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d4628-b8a2-7292-b194-00d5c35e34e8",
+      "thread_name": "Write 30-day ramp update",
+      "parent_session_id": null,
+      "session_started_at": "2026-03-31T23:09:27.081Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.118.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4-pro",
+      "models_used": [
+        "gpt-5.4-pro"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 53264,
+      "input_tokens": 51633,
+      "cached_input_tokens": 0,
+      "output_tokens": 1631,
+      "reasoning_output_tokens": 895,
+      "events": [
+        {
+          "timestamp": "2026-03-31T23:13:37.374Z",
+          "date": "2026-03-31",
+          "model": "gpt-5.4-pro",
+          "total_tokens": 23965,
+          "input_tokens": 23415,
+          "cached_input_tokens": 0,
+          "output_tokens": 550,
+          "reasoning_output_tokens": 344
+        },
+        {
+          "timestamp": "2026-03-31T23:20:56.262Z",
+          "date": "2026-03-31",
+          "model": "gpt-5.4-pro",
+          "total_tokens": 29299,
+          "input_tokens": 28218,
+          "cached_input_tokens": 0,
+          "output_tokens": 1081,
+          "reasoning_output_tokens": 551
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     }
   ],
   "workspaces": [
@@ -99751,6 +99799,6 @@
     }
   ],
   "source": {
-    "log_files": 216
+    "log_files": 217
   }
 }
