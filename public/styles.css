@@ -379,6 +379,8 @@ select {
 .momentum-panel {
   display: grid;
   gap: 12px;
+  --cell-size: 16px;
+  --cell-gap: 5px;
 }
 
 .selected-range-panel {
@@ -392,21 +394,10 @@ select {
   align-items: start;
 }
 
-.momentum-layout {
+.momentum-ribbon {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(340px, 0.95fr);
-  gap: 16px;
-  align-items: start;
-}
-
-.insight-rail {
-  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
-  align-content: start;
-  padding: 12px;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.28);
-  border: 1px solid rgba(35, 49, 39, 0.06);
 }
 
 .momentum-head-status {
@@ -430,24 +421,15 @@ select {
   font-size: 0.8rem;
 }
 
-.insight-cost-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
 .cost-window-card {
   border: 0;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.58);
-  padding: 11px 12px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 10px 11px;
   display: grid;
   gap: 3px;
   min-width: 0;
-}
-
-.cost-window-card.is-featured {
-  grid-column: 1 / -1;
+  align-content: start;
 }
 
 .cost-window-label {
@@ -459,7 +441,7 @@ select {
 
 .cost-window-card strong {
   font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
-  font-size: 1.14rem;
+  font-size: 1.08rem;
   color: var(--accent);
 }
 
@@ -527,11 +509,12 @@ select {
 .habit-stat {
   border: 0;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.58);
-  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 10px 11px;
   display: grid;
   gap: 3px;
   min-width: 0;
+  align-content: start;
 }
 
 .habit-stat-label {
@@ -556,6 +539,7 @@ select {
 .habit-board {
   display: grid;
   gap: 8px;
+  padding-top: 2px;
 }
 
 .habit-board-head {
@@ -573,24 +557,28 @@ select {
 }
 
 .activity-note {
-  margin: 4px 0 0;
+  margin: 3px 0 0;
   color: var(--ink-muted);
-  font-size: 0.8rem;
-  line-height: 1.45;
-  max-width: 28ch;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  max-width: 36ch;
 }
 
 .heatmap-chart-board {
-  padding-top: 2px;
+  padding-top: 4px;
 }
 
 .trend-strip {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   border: 0;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.42);
-  padding: 11px 12px 10px;
+  background: rgba(255, 255, 255, 0.34);
+  padding: 10px 12px 8px;
+}
+
+.trend-strip-hero {
+  margin-top: 2px;
 }
 
 .trend-strip-head {
@@ -834,11 +822,11 @@ select {
 }
 
 .sparkline-compact {
-  min-height: 116px;
+  min-height: 92px;
 }
 
 .sparkline-compact svg {
-  height: 116px;
+  height: 92px;
 }
 
 .trend-axis-label {
@@ -1294,8 +1282,13 @@ select {
     text-align: left;
   }
 
-  .momentum-layout {
-    grid-template-columns: 1fr;
+  .momentum-panel {
+    --cell-size: 15px;
+    --cell-gap: 4px;
+  }
+
+  .momentum-ribbon {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .trend-strip-head {
@@ -1317,6 +1310,16 @@ select {
   .controls-panel,
   .panel {
     padding: 14px;
+  }
+
+  .momentum-panel {
+    --cell-size: 14px;
+    --cell-gap: 4px;
+  }
+
+  .momentum-ribbon {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .controls-panel {
@@ -1362,14 +1365,6 @@ select {
 
   .heatmap-weekdays {
     min-width: 32px;
-  }
-
-  .habit-stat-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .insight-cost-grid {
-    grid-template-columns: 1fr;
   }
 
   .habit-board-head,

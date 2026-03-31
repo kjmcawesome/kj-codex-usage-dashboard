@@ -736,6 +736,13 @@ function buildHeatmapHeadline(dashboard) {
   return `${formatFullNumber(totalTokens)} tokens across the last 365 days`;
 }
 
+function heatmapWeekWidth() {
+  const styles = window.getComputedStyle(elements.heatmapGrid);
+  const cellSize = parseFloat(styles.gridAutoColumns) || parseFloat(styles.getPropertyValue("--cell-size")) || 14;
+  const gap = parseFloat(styles.columnGap || styles.gap) || 4;
+  return cellSize + gap;
+}
+
 function resetHeatmapViewportIfNeeded() {
   if (!state.shouldResetHeatmapViewport) {
     return;
@@ -757,7 +764,7 @@ function resetHeatmapViewportIfNeeded() {
 }
 
 function renderHeatmap(dashboard) {
-  const weekWidth = 18;
+  const weekWidth = heatmapWeekWidth();
   const board = dashboard.habit_board;
   const totalWeeks = (board.days.at(-1)?.week_index || 0) + 1;
   const todayKey = state.snapshotNow ? dateKeyFromDate(state.snapshotNow) : null;
