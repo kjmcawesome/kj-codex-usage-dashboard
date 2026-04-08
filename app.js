@@ -212,7 +212,7 @@ function formatTrendDayNumber(value) {
 
 function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view did not match a priced model.`;
+    return `Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct public-rate entry.`;
   }
 
   return "Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend.";

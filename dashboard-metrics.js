@@ -1,6 +1,7 @@
 const RATE_CARD_PUBLISHED_AT = "2026-03-25";
 const RATE_CARD_MODE = "standard";
 const CURRENT_WORK_WINDOW_HOURS = 72;
+const PROXY_PRICED_MODEL = "gpt-5.4 estimate";
 const RATE_CARD = Object.freeze({
   "gpt-5.2-codex": {
     input: 1.75,
@@ -13,6 +14,11 @@ const RATE_CARD = Object.freeze({
     output: 14.0
   },
   "gpt-5.4": {
+    input: 2.5,
+    cached_input: 0.25,
+    output: 15.0
+  },
+  [PROXY_PRICED_MODEL]: {
     input: 2.5,
     cached_input: 0.25,
     output: 15.0
@@ -111,16 +117,9 @@ function canonicalizePricedModel(model) {
 }
 
 function estimateCost(totals, model) {
-  const pricedModel = canonicalizePricedModel(model);
-  const rates = pricedModel ? RATE_CARD[pricedModel] : null;
-
-  if (!rates) {
-    return {
-      estimated_cost_usd: 0,
-      unpriced_total_tokens: totals.total_tokens || 0,
-      priced_model: null
-    };
-  }
+  const canonicalPricedModel = canonicalizePricedModel(model);
+  const pricedModel = canonicalPricedModel || PROXY_PRICED_MODEL;
+  const rates = RATE_CARD[pricedModel];
 
   const uncachedInputTokens = Math.max(0, (totals.input_tokens || 0) - (totals.cached_input_tokens || 0));
   const billedOutputTokens = (totals.output_tokens || 0) + (totals.reasoning_output_tokens || 0);
@@ -131,7 +130,7 @@ function estimateCost(totals, model) {
 
   return {
     estimated_cost_usd: estimatedCostUsd,
-    unpriced_total_tokens: 0,
+    unpriced_total_tokens: canonicalPricedModel ? 0 : (totals.total_tokens || 0),
     priced_model: pricedModel
   };
 }
@@ -154,10 +153,10 @@ function buildRateCardPayload() {
 
 function buildCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not your billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view did not match a priced model and are excluded.`;
+    return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct public-rate entry.`;
   }
 
-  return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not your billed spend.`;
+  return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not billed spend.`;
 }
 
 function formatDisplayDate(date) {
