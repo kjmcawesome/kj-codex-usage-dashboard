@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-04-08T16:30:05.727Z",
+  "generated_at": "2026-04-08T17:00:06.060Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -17094,11 +17094,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 1074150,
-      "input_tokens": 1062414,
+      "total_tokens": 1193328,
+      "input_tokens": 1180502,
       "cached_input_tokens": 0,
-      "output_tokens": 11736,
-      "reasoning_output_tokens": 7234,
+      "output_tokens": 12826,
+      "reasoning_output_tokens": 8128,
       "events": [
         {
           "timestamp": "2026-03-31T21:10:45.616Z",
@@ -17239,6 +17239,16 @@
           "cached_input_tokens": 0,
           "output_tokens": 1040,
           "reasoning_output_tokens": 452
+        },
+        {
+          "timestamp": "2026-04-08T16:50:59.796Z",
+          "date": "2026-04-08",
+          "model": "gpt-5.4-pro",
+          "total_tokens": 119178,
+          "input_tokens": 118088,
+          "cached_input_tokens": 0,
+          "output_tokens": 1090,
+          "reasoning_output_tokens": 894
         }
       ],
       "estimated_cost_usd": null,
@@ -39624,16 +39634,17 @@
       "model_provider": "openai",
       "primary_model": "gpt-5.4",
       "models_used": [
-        "gpt-5.4"
+        "gpt-5.4",
+        "arcanine"
       ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 1229427,
-      "input_tokens": 1222069,
-      "cached_input_tokens": 997376,
-      "output_tokens": 7358,
-      "reasoning_output_tokens": 4997,
+      "total_tokens": 1387908,
+      "input_tokens": 1380125,
+      "cached_input_tokens": 999808,
+      "output_tokens": 7783,
+      "reasoning_output_tokens": 5263,
       "events": [
         {
           "timestamp": "2026-03-26T21:36:00.333Z",
@@ -39744,6 +39755,114 @@
           "cached_input_tokens": 154368,
           "output_tokens": 1672,
           "reasoning_output_tokens": 1007
+        },
+        {
+          "timestamp": "2026-04-08T16:50:28.392Z",
+          "date": "2026-04-08",
+          "model": "arcanine",
+          "total_tokens": 158481,
+          "input_tokens": 158056,
+          "cached_input_tokens": 2432,
+          "output_tokens": 425,
+          "reasoning_output_tokens": 266
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d6e01-2a90-7702-b9d4-0bcaae0669f0",
+      "thread_name": "Find attendees for deal session",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-08T16:51:03.450Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.11",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 494707,
+      "input_tokens": 490514,
+      "cached_input_tokens": 353408,
+      "output_tokens": 4193,
+      "reasoning_output_tokens": 1429,
+      "events": [
+        {
+          "timestamp": "2026-04-08T16:54:15.728Z",
+          "date": "2026-04-08",
+          "model": "arcanine",
+          "total_tokens": 27684,
+          "input_tokens": 27258,
+          "cached_input_tokens": 4480,
+          "output_tokens": 426,
+          "reasoning_output_tokens": 178
+        },
+        {
+          "timestamp": "2026-04-08T16:54:20.472Z",
+          "date": "2026-04-08",
+          "model": "arcanine",
+          "total_tokens": 30179,
+          "input_tokens": 30014,
+          "cached_input_tokens": 27008,
+          "output_tokens": 165,
+          "reasoning_output_tokens": 39
+        },
+        {
+          "timestamp": "2026-04-08T16:54:32.727Z",
+          "date": "2026-04-08",
+          "model": "arcanine",
+          "total_tokens": 31114,
+          "input_tokens": 30578,
+          "cached_input_tokens": 29568,
+          "output_tokens": 536,
+          "reasoning_output_tokens": 129
+        },
+        {
+          "timestamp": "2026-04-08T16:54:51.101Z",
+          "date": "2026-04-08",
+          "model": "arcanine",
+          "total_tokens": 44583,
+          "input_tokens": 43981,
+          "cached_input_tokens": 30080,
+          "output_tokens": 602,
+          "reasoning_output_tokens": 161
+        },
+        {
+          "timestamp": "2026-04-08T16:55:18.168Z",
+          "date": "2026-04-08",
+          "model": "arcanine",
+          "total_tokens": 100783,
+          "input_tokens": 100108,
+          "cached_input_tokens": 43904,
+          "output_tokens": 675,
+          "reasoning_output_tokens": 199
+        },
+        {
+          "timestamp": "2026-04-08T16:55:43.477Z",
+          "date": "2026-04-08",
+          "model": "arcanine",
+          "total_tokens": 119803,
+          "input_tokens": 119157,
+          "cached_input_tokens": 99712,
+          "output_tokens": 646,
+          "reasoning_output_tokens": 207
+        },
+        {
+          "timestamp": "2026-04-08T16:56:23.555Z",
+          "date": "2026-04-08",
+          "model": "arcanine",
+          "total_tokens": 140561,
+          "input_tokens": 139418,
+          "cached_input_tokens": 118656,
+          "output_tokens": 1143,
+          "reasoning_output_tokens": 516
         }
       ],
       "estimated_cost_usd": null,
@@ -99677,11 +99796,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 84456,
-      "input_tokens": 81686,
+      "total_tokens": 155255,
+      "input_tokens": 148279,
       "cached_input_tokens": 0,
-      "output_tokens": 2770,
-      "reasoning_output_tokens": 1403,
+      "output_tokens": 6976,
+      "reasoning_output_tokens": 4297,
       "events": [
         {
           "timestamp": "2026-03-31T23:13:37.374Z",
@@ -99712,6 +99831,26 @@
           "cached_input_tokens": 0,
           "output_tokens": 1139,
           "reasoning_output_tokens": 508
+        },
+        {
+          "timestamp": "2026-04-08T16:42:38.330Z",
+          "date": "2026-04-08",
+          "model": "gpt-5.4-pro",
+          "total_tokens": 33453,
+          "input_tokens": 31248,
+          "cached_input_tokens": 0,
+          "output_tokens": 2205,
+          "reasoning_output_tokens": 1403
+        },
+        {
+          "timestamp": "2026-04-08T16:50:56.239Z",
+          "date": "2026-04-08",
+          "model": "gpt-5.4-pro",
+          "total_tokens": 37346,
+          "input_tokens": 35345,
+          "cached_input_tokens": 0,
+          "output_tokens": 2001,
+          "reasoning_output_tokens": 1491
         }
       ],
       "estimated_cost_usd": null,
@@ -99809,6 +99948,6 @@
     }
   ],
   "source": {
-    "log_files": 217
+    "log_files": 218
   }
 }
