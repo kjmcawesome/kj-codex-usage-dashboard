@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-04-10T19:00:06.583Z",
+  "generated_at": "2026-04-10T19:30:01.916Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -34202,6 +34202,184 @@
           "cached_input_tokens": 39936,
           "output_tokens": 288,
           "reasoning_output_tokens": 61
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d78d6-5d5a-7122-a429-11c36878724a",
+      "thread_name": "Close Zoom and ChatGPT",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-10T19:20:07.793Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.11",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 453791,
+      "input_tokens": 452567,
+      "cached_input_tokens": 395904,
+      "output_tokens": 1224,
+      "reasoning_output_tokens": 416,
+      "events": [
+        {
+          "timestamp": "2026-04-10T19:20:38.897Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 27475,
+          "input_tokens": 27407,
+          "cached_input_tokens": 5504,
+          "output_tokens": 68,
+          "reasoning_output_tokens": 14
+        },
+        {
+          "timestamp": "2026-04-10T19:21:24.937Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 27889,
+          "input_tokens": 27793,
+          "cached_input_tokens": 27008,
+          "output_tokens": 96,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-10T19:21:34.732Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 28169,
+          "input_tokens": 27993,
+          "cached_input_tokens": 27520,
+          "output_tokens": 176,
+          "reasoning_output_tokens": 60
+        },
+        {
+          "timestamp": "2026-04-10T19:21:38.007Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 28430,
+          "input_tokens": 28276,
+          "cached_input_tokens": 27520,
+          "output_tokens": 154,
+          "reasoning_output_tokens": 49
+        },
+        {
+          "timestamp": "2026-04-10T19:21:39.372Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 28603,
+          "input_tokens": 28583,
+          "cached_input_tokens": 28032,
+          "output_tokens": 20,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-10T19:21:43.177Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 29085,
+          "input_tokens": 28921,
+          "cached_input_tokens": 28544,
+          "output_tokens": 164,
+          "reasoning_output_tokens": 89
+        },
+        {
+          "timestamp": "2026-04-10T19:21:45.267Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 30991,
+          "input_tokens": 30960,
+          "cached_input_tokens": 4480,
+          "output_tokens": 31,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-10T19:21:47.339Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 31076,
+          "input_tokens": 31031,
+          "cached_input_tokens": 30592,
+          "output_tokens": 45,
+          "reasoning_output_tokens": 12
+        },
+        {
+          "timestamp": "2026-04-10T19:21:53.814Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 31138,
+          "input_tokens": 31112,
+          "cached_input_tokens": 30592,
+          "output_tokens": 26,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-10T19:21:55.178Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 31215,
+          "input_tokens": 31189,
+          "cached_input_tokens": 30592,
+          "output_tokens": 26,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-10T19:21:56.674Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 31291,
+          "input_tokens": 31254,
+          "cached_input_tokens": 30592,
+          "output_tokens": 37,
+          "reasoning_output_tokens": 15
+        },
+        {
+          "timestamp": "2026-04-10T19:22:01.759Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 31865,
+          "input_tokens": 31607,
+          "cached_input_tokens": 30592,
+          "output_tokens": 258,
+          "reasoning_output_tokens": 161
+        },
+        {
+          "timestamp": "2026-04-10T19:22:03.980Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 32014,
+          "input_tokens": 31948,
+          "cached_input_tokens": 31104,
+          "output_tokens": 66,
+          "reasoning_output_tokens": 16
+        },
+        {
+          "timestamp": "2026-04-10T19:29:47.377Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 32111,
+          "input_tokens": 32091,
+          "cached_input_tokens": 31616,
+          "output_tokens": 20,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-10T19:29:51.249Z",
+          "date": "2026-04-10",
+          "model": "arcanine",
+          "total_tokens": 32439,
+          "input_tokens": 32402,
+          "cached_input_tokens": 31616,
+          "output_tokens": 37,
+          "reasoning_output_tokens": 0
         }
       ],
       "estimated_cost_usd": null,
@@ -108508,6 +108686,6 @@
     }
   ],
   "source": {
-    "log_files": 221
+    "log_files": 222
   }
 }
