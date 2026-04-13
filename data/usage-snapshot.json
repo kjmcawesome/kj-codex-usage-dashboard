@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-04-13T18:00:05.552Z",
+  "generated_at": "2026-04-13T18:04:46.167Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -34263,10 +34263,10 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 4821457,
-      "input_tokens": 4807355,
-      "cached_input_tokens": 4358784,
-      "output_tokens": 14102,
+      "total_tokens": 4940180,
+      "input_tokens": 4926031,
+      "cached_input_tokens": 4473344,
+      "output_tokens": 14149,
       "reasoning_output_tokens": 5941,
       "events": [
         {
@@ -34976,6 +34976,16 @@
           "total_tokens": 116923,
           "input_tokens": 116876,
           "cached_input_tokens": 110976,
+          "output_tokens": 47,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-13T18:00:14.441Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 118723,
+          "input_tokens": 118676,
+          "cached_input_tokens": 114560,
           "output_tokens": 47,
           "reasoning_output_tokens": 0
         }
@@ -88785,16 +88795,17 @@
       "model_provider": "openai",
       "primary_model": "gpt-5.4",
       "models_used": [
-        "gpt-5.4"
+        "gpt-5.4",
+        "arcanine"
       ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 108004670,
-      "input_tokens": 107583566,
-      "cached_input_tokens": 98667776,
-      "output_tokens": 421104,
-      "reasoning_output_tokens": 206997,
+      "total_tokens": 109944659,
+      "input_tokens": 109520289,
+      "cached_input_tokens": 100256000,
+      "output_tokens": 424370,
+      "reasoning_output_tokens": 207909,
       "events": [
         {
           "timestamp": "2026-03-12T16:28:35.597Z",
@@ -96315,6 +96326,126 @@
           "cached_input_tokens": 150400,
           "output_tokens": 228,
           "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-13T18:02:11.992Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 152052,
+          "input_tokens": 151796,
+          "cached_input_tokens": 9600,
+          "output_tokens": 256,
+          "reasoning_output_tokens": 104
+        },
+        {
+          "timestamp": "2026-04-13T18:02:19.132Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 152959,
+          "input_tokens": 152665,
+          "cached_input_tokens": 148352,
+          "output_tokens": 294,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-13T18:02:27.259Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 155021,
+          "input_tokens": 154629,
+          "cached_input_tokens": 149376,
+          "output_tokens": 392,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-13T18:02:42.791Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 156787,
+          "input_tokens": 156135,
+          "cached_input_tokens": 151424,
+          "output_tokens": 652,
+          "reasoning_output_tokens": 280
+        },
+        {
+          "timestamp": "2026-04-13T18:02:47.855Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 159747,
+          "input_tokens": 159656,
+          "cached_input_tokens": 152960,
+          "output_tokens": 91,
+          "reasoning_output_tokens": 12
+        },
+        {
+          "timestamp": "2026-04-13T18:02:56.867Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 161735,
+          "input_tokens": 161569,
+          "cached_input_tokens": 156544,
+          "output_tokens": 166,
+          "reasoning_output_tokens": 44
+        },
+        {
+          "timestamp": "2026-04-13T18:03:05.181Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 162008,
+          "input_tokens": 161828,
+          "cached_input_tokens": 158080,
+          "output_tokens": 180,
+          "reasoning_output_tokens": 61
+        },
+        {
+          "timestamp": "2026-04-13T18:03:13.629Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 163504,
+          "input_tokens": 163299,
+          "cached_input_tokens": 158592,
+          "output_tokens": 205,
+          "reasoning_output_tokens": 43
+        },
+        {
+          "timestamp": "2026-04-13T18:03:20.394Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 164046,
+          "input_tokens": 163766,
+          "cached_input_tokens": 160128,
+          "output_tokens": 280,
+          "reasoning_output_tokens": 29
+        },
+        {
+          "timestamp": "2026-04-13T18:03:27.007Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 167835,
+          "input_tokens": 167656,
+          "cached_input_tokens": 160640,
+          "output_tokens": 179,
+          "reasoning_output_tokens": 72
+        },
+        {
+          "timestamp": "2026-04-13T18:03:34.085Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 170127,
+          "input_tokens": 169983,
+          "cached_input_tokens": 15744,
+          "output_tokens": 144,
+          "reasoning_output_tokens": 61
+        },
+        {
+          "timestamp": "2026-04-13T18:03:49.084Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 174168,
+          "input_tokens": 173741,
+          "cached_input_tokens": 166784,
+          "output_tokens": 427,
+          "reasoning_output_tokens": 206
         }
       ],
       "estimated_cost_usd": null,
