@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-04-13T19:14:43.256Z",
+  "generated_at": "2026-04-13T19:30:03.696Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -42443,6 +42443,84 @@
           "cached_input_tokens": 63360,
           "output_tokens": 541,
           "reasoning_output_tokens": 195
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8850-366e-7f73-be0c-b207c4c4be9d",
+      "thread_name": "Enable yolo mode now",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-13T19:27:31.452Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 180287,
+      "input_tokens": 178233,
+      "cached_input_tokens": 130432,
+      "output_tokens": 2054,
+      "reasoning_output_tokens": 1106,
+      "events": [
+        {
+          "timestamp": "2026-04-13T19:27:58.383Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 32621,
+          "input_tokens": 32028,
+          "cached_input_tokens": 5504,
+          "output_tokens": 593,
+          "reasoning_output_tokens": 323
+        },
+        {
+          "timestamp": "2026-04-13T19:28:02.937Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 30622,
+          "input_tokens": 30426,
+          "cached_input_tokens": 27520,
+          "output_tokens": 196,
+          "reasoning_output_tokens": 18
+        },
+        {
+          "timestamp": "2026-04-13T19:28:19.567Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 45844,
+          "input_tokens": 45246,
+          "cached_input_tokens": 30080,
+          "output_tokens": 598,
+          "reasoning_output_tokens": 470
+        },
+        {
+          "timestamp": "2026-04-13T19:28:23.264Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 34417,
+          "input_tokens": 34243,
+          "cached_input_tokens": 33152,
+          "output_tokens": 174,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-13T19:28:33.398Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 36783,
+          "input_tokens": 36290,
+          "cached_input_tokens": 34176,
+          "output_tokens": 493,
+          "reasoning_output_tokens": 295
         }
       ],
       "estimated_cost_usd": null,
@@ -109845,6 +109923,6 @@
     }
   ],
   "source": {
-    "log_files": 225
+    "log_files": 226
   }
 }
