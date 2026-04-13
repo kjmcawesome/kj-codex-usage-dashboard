@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-04-13T16:00:05.379Z",
+  "generated_at": "2026-04-13T16:30:06.099Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -44687,6 +44687,54 @@
           "cached_input_tokens": 44928,
           "output_tokens": 381,
           "reasoning_output_tokens": 33
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8791-60f3-7bd1-b05a-7bb9fc7e5490",
+      "thread_name": "Find computer control uses",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-13T15:59:04.964Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 56778,
+      "input_tokens": 55225,
+      "cached_input_tokens": 32512,
+      "output_tokens": 1553,
+      "reasoning_output_tokens": 81,
+      "events": [
+        {
+          "timestamp": "2026-04-13T16:00:48.695Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 27876,
+          "input_tokens": 27319,
+          "cached_input_tokens": 5504,
+          "output_tokens": 557,
+          "reasoning_output_tokens": 42
+        },
+        {
+          "timestamp": "2026-04-13T16:01:54.995Z",
+          "date": "2026-04-13",
+          "model": "arcanine",
+          "total_tokens": 28902,
+          "input_tokens": 27906,
+          "cached_input_tokens": 27008,
+          "output_tokens": 996,
+          "reasoning_output_tokens": 39
         }
       ],
       "estimated_cost_usd": null,
@@ -109254,6 +109302,6 @@
     }
   ],
   "source": {
-    "log_files": 223
+    "log_files": 224
   }
 }
