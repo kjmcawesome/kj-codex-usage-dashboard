@@ -137,36 +137,58 @@
           </div>
         </div>
 
-        <div class="controls-panel controls-panel-inline">
-          <div class="toolbar-group toolbar-group-range">
-            <div class="toolbar-field">
-              <span class="toolbar-label">Range</span>
-              <div class="range-controls">
-                <div class="range-chips" id="range-chips" aria-label="Date range"></div>
-                <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
-                <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
-                <strong id="active-range-pill" class="active-range-pill">Last 30 days</strong>
+        <div class="mobile-selection-bar">
+          <div class="mobile-selection-copy">
+            <span class="mobile-selection-label">Active filters</span>
+            <strong id="mobile-selection-summary">Last 30 days · All workspaces · Subagents on</strong>
+          </div>
+          <button id="mobile-filters-button" class="mobile-filters-button" type="button" aria-haspopup="dialog" aria-controls="mobile-filters-sheet">
+            Filters
+          </button>
+        </div>
+
+        <div id="mobile-filters-sheet" class="mobile-filters-sheet" aria-hidden="true">
+          <div id="mobile-filters-backdrop" class="mobile-filters-backdrop"></div>
+          <div class="mobile-filters-dialog" role="dialog" aria-modal="true" aria-labelledby="mobile-filters-title">
+            <div class="mobile-filters-head">
+              <div>
+                <span class="mobile-filters-label">Selected range</span>
+                <h3 id="mobile-filters-title">Filters</h3>
               </div>
+              <button id="mobile-filters-close" class="mobile-filters-close" type="button" aria-label="Close filters">Close</button>
+            </div>
+            <div class="controls-panel controls-panel-inline controls-panel-sheet">
+              <div class="toolbar-group toolbar-group-range">
+                <div class="toolbar-field">
+                  <span class="toolbar-label">Range</span>
+                  <div class="range-controls">
+                    <div class="range-chips" id="range-chips" aria-label="Date range"></div>
+                    <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
+                    <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
+                    <strong id="active-range-pill" class="active-range-pill">Last 30 days</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="toolbar-group toolbar-group-filters">
+                <label class="control control-stacked">
+                  <span>Workspace</span>
+                  <select id="workspace-filter">
+                    <option value="all">All workspaces</option>
+                  </select>
+                </label>
+
+                <label class="toggle toggle-stacked">
+                  <span>Subagents</span>
+                  <span class="toggle-row">
+                    <input id="subagent-toggle" type="checkbox" checked />
+                    <span>Include subagents</span>
+                  </span>
+                </label>
+              </div>
+              <button id="refresh-button" class="refresh-button" type="button">Check for updates</button>
             </div>
           </div>
-
-          <div class="toolbar-group toolbar-group-filters">
-            <label class="control control-stacked">
-              <span>Workspace</span>
-              <select id="workspace-filter">
-                <option value="all">All workspaces</option>
-              </select>
-            </label>
-
-            <label class="toggle toggle-stacked">
-              <span>Subagents</span>
-              <span class="toggle-row">
-                <input id="subagent-toggle" type="checkbox" checked />
-                <span>Include subagents</span>
-              </span>
-            </label>
-          </div>
-          <button id="refresh-button" class="refresh-button" type="button">Check for updates</button>
         </div>
 
         <section class="summary-grid range-summary-grid">

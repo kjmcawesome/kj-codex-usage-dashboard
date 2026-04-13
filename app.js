@@ -19,6 +19,7 @@ const REFRESH_REBUILDING_LABEL = "Rebuilding...";
 const REFRESH_WAITING_LABEL = "Waiting for publish...";
 const REFRESH_POLL_INTERVAL_MS = 2500;
 const REFRESH_POLL_TIMEOUT_MS = 60000;
+const MOBILE_BREAKPOINT = 760;
 
 const state = {
   rangeMode: "preset",
@@ -46,6 +47,11 @@ const elements = {
   customRangeButton: document.querySelector("#custom-range-button"),
   customRangeInput: document.querySelector("#custom-range-input"),
   activeRangePill: document.querySelector("#active-range-pill"),
+  mobileSelectionSummary: document.querySelector("#mobile-selection-summary"),
+  mobileFiltersButton: document.querySelector("#mobile-filters-button"),
+  mobileFiltersSheet: document.querySelector("#mobile-filters-sheet"),
+  mobileFiltersBackdrop: document.querySelector("#mobile-filters-backdrop"),
+  mobileFiltersClose: document.querySelector("#mobile-filters-close"),
   workspaceFilter: document.querySelector("#workspace-filter"),
   subagentToggle: document.querySelector("#subagent-toggle"),
   refreshButton: document.querySelector("#refresh-button"),
@@ -255,6 +261,38 @@ function sleep(ms) {
   return new Promise((resolve) => {
     window.setTimeout(resolve, ms);
   });
+}
+
+function isMobileViewport() {
+  return window.innerWidth <= MOBILE_BREAKPOINT;
+}
+
+function openMobileFilters() {
+  if (!isMobileViewport()) {
+    return;
+  }
+
+  document.body.classList.add("mobile-filters-open");
+  elements.mobileFiltersSheet?.setAttribute("aria-hidden", "false");
+  elements.mobileFiltersButton?.setAttribute("aria-expanded", "true");
+}
+
+function closeMobileFilters() {
+  document.body.classList.remove("mobile-filters-open");
+  elements.mobileFiltersSheet?.setAttribute("aria-hidden", "true");
+  elements.mobileFiltersButton?.setAttribute("aria-expanded", "false");
+}
+
+function buildMobileSelectionSummary(dashboard) {
+  const workspaceLabel = state.workspace === "all"
+    ? "All workspaces"
+    : (elements.workspaceFilter.selectedOptions[0]?.textContent || "Filtered workspace");
+
+  return [
+    dashboard.selection.label,
+    workspaceLabel,
+    state.includeSubagents ? "Subagents on" : "Subagents off"
+  ].join(" · ");
 }
 
 function isPublicPagesSite() {
@@ -515,6 +553,7 @@ function renderRangeControls() {
       syncUrl();
       syncDatePicker(null);
       renderRangeControls();
+      closeMobileFilters();
       loadDashboard();
     });
     elements.rangeChips.append(button);
@@ -613,6 +652,8 @@ function renderSummary(dashboard) {
     : rangeComparison.label;
   elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
   updateRangeSelectionLabel(dashboard.selection.label);
+  elements.mobileSelectionSummary.textContent = buildMobileSelectionSummary(dashboard);
+  elements.mobileSelectionSummary.title = elements.mobileSelectionSummary.textContent;
 }
 
 function renderEfficiencyPanel(dashboard) {
@@ -1081,6 +1122,7 @@ function syncDatePicker(dashboard) {
         state.endDate = dateKeyFromDate(selectedDates[1]);
         syncUrl();
         renderRangeControls();
+        closeMobileFilters();
         loadDashboard();
         state.datePicker.close();
       }
@@ -1208,18 +1250,33 @@ elements.customRangeButton.addEventListener("click", () => {
 elements.workspaceFilter.addEventListener("change", () => {
   state.workspace = elements.workspaceFilter.value;
   state.shouldResetHeatmapViewport = true;
+  closeMobileFilters();
   loadDashboard();
 });
 
 elements.subagentToggle.addEventListener("change", () => {
   state.includeSubagents = elements.subagentToggle.checked;
   state.shouldResetHeatmapViewport = true;
+  closeMobileFilters();
   loadDashboard();
 });
 
 elements.refreshButton.addEventListener("click", refreshDashboard);
+elements.mobileFiltersButton?.addEventListener("click", openMobileFilters);
+elements.mobileFiltersClose?.addEventListener("click", closeMobileFilters);
+elements.mobileFiltersBackdrop?.addEventListener("click", closeMobileFilters);
 elements.dayDetails.addEventListener("toggle", () => {
   elements.dayDetailsLabel.textContent = elements.dayDetails.open ? "Hide details" : "Expand details";
+});
+window.addEventListener("resize", () => {
+  if (!isMobileViewport()) {
+    closeMobileFilters();
+  }
+});
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeMobileFilters();
+  }
 });
 
 initializeStateFromUrl();
