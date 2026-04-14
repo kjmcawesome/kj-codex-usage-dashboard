@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-04-14T16:30:02.684Z",
+  "generated_at": "2026-04-14T17:30:07.657Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -13008,12 +13008,517 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
+      "total_tokens": 153155,
+      "input_tokens": 152136,
+      "cached_input_tokens": 79104,
+      "output_tokens": 1019,
+      "reasoning_output_tokens": 0,
+      "events": [
+        {
+          "timestamp": "2026-04-14T16:30:11.938Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 76432,
+          "input_tokens": 75543,
+          "cached_input_tokens": 3712,
+          "output_tokens": 889,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T16:31:59.729Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 76723,
+          "input_tokens": 76593,
+          "cached_input_tokens": 75392,
+          "output_tokens": 130,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cd5-f8c7-75e2-843d-731afcf1a749",
+      "thread_name": "019d8cd5-f8c7-75e2-843d-731afcf1a749",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T16:32:06.385Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 158522,
+      "input_tokens": 156130,
+      "cached_input_tokens": 152832,
+      "output_tokens": 2392,
+      "reasoning_output_tokens": 0,
+      "events": [
+        {
+          "timestamp": "2026-04-14T16:35:34.362Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 79132,
+          "input_tokens": 76869,
+          "cached_input_tokens": 76416,
+          "output_tokens": 2263,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:01:45.555Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 79390,
+          "input_tokens": 79261,
+          "cached_input_tokens": 76416,
+          "output_tokens": 129,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cf1-384c-7f40-828b-0ca17cd368bb",
+      "thread_name": "019d8cf1-384c-7f40-828b-0ca17cd368bb",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:01:52.142Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 153935,
+      "input_tokens": 152816,
+      "cached_input_tokens": 79104,
+      "output_tokens": 1119,
+      "reasoning_output_tokens": 0,
+      "events": [
+        {
+          "timestamp": "2026-04-14T17:02:04.329Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 76820,
+          "input_tokens": 75833,
+          "cached_input_tokens": 3712,
+          "output_tokens": 987,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:03:46.933Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 77115,
+          "input_tokens": 76983,
+          "cached_input_tokens": 75392,
+          "output_tokens": 132,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cf3-010c-7153-8adf-668d161e2e34",
+      "thread_name": "019d8cf3-010c-7153-8adf-668d161e2e34",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:03:49.054Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 156945,
+      "input_tokens": 155178,
+      "cached_input_tokens": 80128,
+      "output_tokens": 1767,
+      "reasoning_output_tokens": 348,
+      "events": [
+        {
+          "timestamp": "2026-04-14T17:04:15.561Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 78320,
+          "input_tokens": 76690,
+          "cached_input_tokens": 3456,
+          "output_tokens": 1630,
+          "reasoning_output_tokens": 348
+        },
+        {
+          "timestamp": "2026-04-14T17:04:28.089Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 78625,
+          "input_tokens": 78488,
+          "cached_input_tokens": 76672,
+          "output_tokens": 137,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cf4-4151-7990-8f97-5428eadfa05e",
+      "thread_name": "019d8cf4-4151-7990-8f97-5428eadfa05e",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:05:11.057Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
       "total_tokens": 0,
       "input_tokens": 0,
       "cached_input_tokens": 0,
       "output_tokens": 0,
       "reasoning_output_tokens": 0,
       "events": []
+    },
+    {
+      "session_id": "019d8cfc-a618-7f82-a832-b5d50ee7e16e",
+      "thread_name": "019d8cfc-a618-7f82-a832-b5d50ee7e16e",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:14:21.397Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 155990,
+      "input_tokens": 153407,
+      "cached_input_tokens": 78592,
+      "output_tokens": 2583,
+      "reasoning_output_tokens": 459,
+      "events": [
+        {
+          "timestamp": "2026-04-14T17:14:46.020Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 77843,
+          "input_tokens": 75395,
+          "cached_input_tokens": 3456,
+          "output_tokens": 2448,
+          "reasoning_output_tokens": 459
+        },
+        {
+          "timestamp": "2026-04-14T17:15:01.849Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 78147,
+          "input_tokens": 78012,
+          "cached_input_tokens": 75136,
+          "output_tokens": 135,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cfd-4973-7572-bd73-24293ca9e84d",
+      "thread_name": "019d8cfd-4973-7572-bd73-24293ca9e84d",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:15:02.933Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 151266,
+      "input_tokens": 149994,
+      "cached_input_tokens": 77568,
+      "output_tokens": 1272,
+      "reasoning_output_tokens": 250,
+      "events": [
+        {
+          "timestamp": "2026-04-14T17:15:15.346Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 75489,
+          "input_tokens": 74344,
+          "cached_input_tokens": 3456,
+          "output_tokens": 1145,
+          "reasoning_output_tokens": 250
+        },
+        {
+          "timestamp": "2026-04-14T17:15:29.934Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 75777,
+          "input_tokens": 75650,
+          "cached_input_tokens": 74112,
+          "output_tokens": 127,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cfd-b989-7152-93cb-14e2058a6c50",
+      "thread_name": "019d8cfd-b989-7152-93cb-14e2058a6c50",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:15:31.621Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 156843,
+      "input_tokens": 154107,
+      "cached_input_tokens": 79104,
+      "output_tokens": 2736,
+      "reasoning_output_tokens": 339,
+      "events": [
+        {
+          "timestamp": "2026-04-14T17:15:55.986Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 78274,
+          "input_tokens": 75670,
+          "cached_input_tokens": 3456,
+          "output_tokens": 2604,
+          "reasoning_output_tokens": 339
+        },
+        {
+          "timestamp": "2026-04-14T17:16:06.174Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 78569,
+          "input_tokens": 78437,
+          "cached_input_tokens": 75648,
+          "output_tokens": 132,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cfe-444c-77e2-87e4-8f068b78be6a",
+      "thread_name": "019d8cfe-444c-77e2-87e4-8f068b78be6a",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:16:07.160Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 152200,
+      "input_tokens": 150559,
+      "cached_input_tokens": 147200,
+      "output_tokens": 1641,
+      "reasoning_output_tokens": 516,
+      "events": [
+        {
+          "timestamp": "2026-04-14T17:16:23.365Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 75950,
+          "input_tokens": 74442,
+          "cached_input_tokens": 73088,
+          "output_tokens": 1508,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-14T17:16:32.141Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 76250,
+          "input_tokens": 76117,
+          "cached_input_tokens": 74112,
+          "output_tokens": 133,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cfe-acb0-7c91-be0d-4185825b1f19",
+      "thread_name": "019d8cfe-acb0-7c91-be0d-4185825b1f19",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:16:33.871Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 153268,
+      "input_tokens": 151335,
+      "cached_input_tokens": 78080,
+      "output_tokens": 1933,
+      "reasoning_output_tokens": 516,
+      "events": [
+        {
+          "timestamp": "2026-04-14T17:17:01.966Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 76485,
+          "input_tokens": 74684,
+          "cached_input_tokens": 3456,
+          "output_tokens": 1801,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-14T17:17:11.781Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 76783,
+          "input_tokens": 76651,
+          "cached_input_tokens": 74624,
+          "output_tokens": 132,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d8cff-4459-7162-ab0d-7e39a46a6512",
+      "thread_name": "019d8cff-4459-7162-ab0d-7e39a46a6512",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:17:12.712Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "events": []
+    },
+    {
+      "session_id": "019d8cff-51c9-7ab2-b330-fe96b6741af2",
+      "thread_name": "019d8cff-51c9-7ab2-b330-fe96b6741af2",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-14T17:17:16.149Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 151419,
+      "input_tokens": 149795,
+      "cached_input_tokens": 147200,
+      "output_tokens": 1624,
+      "reasoning_output_tokens": 672,
+      "events": [
+        {
+          "timestamp": "2026-04-14T17:17:34.675Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 75325,
+          "input_tokens": 74133,
+          "cached_input_tokens": 73088,
+          "output_tokens": 1192,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-14T17:17:51.767Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 76094,
+          "input_tokens": 75662,
+          "cached_input_tokens": 74112,
+          "output_tokens": 432,
+          "reasoning_output_tokens": 156
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019d1caf-3c61-7590-a9a1-4408eaefe89f",
@@ -17388,11 +17893,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 19026998,
-      "input_tokens": 18914891,
-      "cached_input_tokens": 14598912,
-      "output_tokens": 112107,
-      "reasoning_output_tokens": 45571,
+      "total_tokens": 25571516,
+      "input_tokens": 25439712,
+      "cached_input_tokens": 20745984,
+      "output_tokens": 131804,
+      "reasoning_output_tokens": 54170,
       "events": [
         {
           "timestamp": "2026-03-31T21:10:45.616Z",
@@ -18843,6 +19348,446 @@
           "cached_input_tokens": 158592,
           "output_tokens": 37,
           "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T16:32:15.642Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 159017,
+          "input_tokens": 158932,
+          "cached_input_tokens": 158592,
+          "output_tokens": 85,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:03:43.264Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 159126,
+          "input_tokens": 159067,
+          "cached_input_tokens": 5504,
+          "output_tokens": 59,
+          "reasoning_output_tokens": 20
+        },
+        {
+          "timestamp": "2026-04-14T17:04:42.898Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 159789,
+          "input_tokens": 159310,
+          "cached_input_tokens": 158592,
+          "output_tokens": 479,
+          "reasoning_output_tokens": 53
+        },
+        {
+          "timestamp": "2026-04-14T17:04:50.283Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 161111,
+          "input_tokens": 160952,
+          "cached_input_tokens": 159104,
+          "output_tokens": 159,
+          "reasoning_output_tokens": 86
+        },
+        {
+          "timestamp": "2026-04-14T17:05:10.705Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 162466,
+          "input_tokens": 161551,
+          "cached_input_tokens": 160640,
+          "output_tokens": 915,
+          "reasoning_output_tokens": 724
+        },
+        {
+          "timestamp": "2026-04-14T17:05:17.722Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 162551,
+          "input_tokens": 162514,
+          "cached_input_tokens": 161152,
+          "output_tokens": 37,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:05:23.863Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 162724,
+          "input_tokens": 162642,
+          "cached_input_tokens": 162176,
+          "output_tokens": 82,
+          "reasoning_output_tokens": 8
+        },
+        {
+          "timestamp": "2026-04-14T17:05:35.110Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 164117,
+          "input_tokens": 163637,
+          "cached_input_tokens": 162176,
+          "output_tokens": 480,
+          "reasoning_output_tokens": 145
+        },
+        {
+          "timestamp": "2026-04-14T17:07:50.518Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 164869,
+          "input_tokens": 164514,
+          "cached_input_tokens": 163200,
+          "output_tokens": 355,
+          "reasoning_output_tokens": 52
+        },
+        {
+          "timestamp": "2026-04-14T17:13:25.360Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 168921,
+          "input_tokens": 168745,
+          "cached_input_tokens": 164224,
+          "output_tokens": 176,
+          "reasoning_output_tokens": 62
+        },
+        {
+          "timestamp": "2026-04-14T17:13:41.266Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 169577,
+          "input_tokens": 169516,
+          "cached_input_tokens": 168320,
+          "output_tokens": 61,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:14:20.100Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 170569,
+          "input_tokens": 169706,
+          "cached_input_tokens": 169344,
+          "output_tokens": 863,
+          "reasoning_output_tokens": 664
+        },
+        {
+          "timestamp": "2026-04-14T17:14:24.206Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 170653,
+          "input_tokens": 170616,
+          "cached_input_tokens": 169344,
+          "output_tokens": 37,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:16:32.954Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 170786,
+          "input_tokens": 170701,
+          "cached_input_tokens": 170368,
+          "output_tokens": 85,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:18:10.026Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 171437,
+          "input_tokens": 170967,
+          "cached_input_tokens": 170368,
+          "output_tokens": 470,
+          "reasoning_output_tokens": 10
+        },
+        {
+          "timestamp": "2026-04-14T17:18:24.066Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 173413,
+          "input_tokens": 172992,
+          "cached_input_tokens": 170880,
+          "output_tokens": 421,
+          "reasoning_output_tokens": 307
+        },
+        {
+          "timestamp": "2026-04-14T17:19:51.437Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 184452,
+          "input_tokens": 179909,
+          "cached_input_tokens": 172928,
+          "output_tokens": 4543,
+          "reasoning_output_tokens": 1121
+        },
+        {
+          "timestamp": "2026-04-14T17:20:14.289Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 184954,
+          "input_tokens": 184529,
+          "cached_input_tokens": 184192,
+          "output_tokens": 425,
+          "reasoning_output_tokens": 82
+        },
+        {
+          "timestamp": "2026-04-14T17:20:18.163Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 185037,
+          "input_tokens": 185000,
+          "cached_input_tokens": 184192,
+          "output_tokens": 37,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:20:20.562Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 185176,
+          "input_tokens": 185082,
+          "cached_input_tokens": 184704,
+          "output_tokens": 94,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:20:28.052Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 185619,
+          "input_tokens": 185222,
+          "cached_input_tokens": 184704,
+          "output_tokens": 397,
+          "reasoning_output_tokens": 8
+        },
+        {
+          "timestamp": "2026-04-14T17:20:33.526Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 186602,
+          "input_tokens": 186536,
+          "cached_input_tokens": 184704,
+          "output_tokens": 66,
+          "reasoning_output_tokens": 27
+        },
+        {
+          "timestamp": "2026-04-14T17:20:41.062Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 186970,
+          "input_tokens": 186664,
+          "cached_input_tokens": 186240,
+          "output_tokens": 306,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:20:48.802Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 200011,
+          "input_tokens": 199745,
+          "cached_input_tokens": 186240,
+          "output_tokens": 266,
+          "reasoning_output_tokens": 98
+        },
+        {
+          "timestamp": "2026-04-14T17:20:52.914Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 201676,
+          "input_tokens": 201479,
+          "cached_input_tokens": 199552,
+          "output_tokens": 197,
+          "reasoning_output_tokens": 77
+        },
+        {
+          "timestamp": "2026-04-14T17:21:00.016Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 202051,
+          "input_tokens": 201724,
+          "cached_input_tokens": 201088,
+          "output_tokens": 327,
+          "reasoning_output_tokens": 106
+        },
+        {
+          "timestamp": "2026-04-14T17:21:15.769Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 203308,
+          "input_tokens": 202611,
+          "cached_input_tokens": 201600,
+          "output_tokens": 697,
+          "reasoning_output_tokens": 301
+        },
+        {
+          "timestamp": "2026-04-14T17:21:38.375Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 198586,
+          "input_tokens": 197404,
+          "cached_input_tokens": 149376,
+          "output_tokens": 1182,
+          "reasoning_output_tokens": 838
+        },
+        {
+          "timestamp": "2026-04-14T17:21:45.849Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 201547,
+          "input_tokens": 201276,
+          "cached_input_tokens": 196992,
+          "output_tokens": 271,
+          "reasoning_output_tokens": 68
+        },
+        {
+          "timestamp": "2026-04-14T17:22:01.309Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 203764,
+          "input_tokens": 203114,
+          "cached_input_tokens": 201088,
+          "output_tokens": 650,
+          "reasoning_output_tokens": 515
+        },
+        {
+          "timestamp": "2026-04-14T17:22:11.858Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 203921,
+          "input_tokens": 203844,
+          "cached_input_tokens": 202624,
+          "output_tokens": 77,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:23:18.370Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 208088,
+          "input_tokens": 207773,
+          "cached_input_tokens": 203648,
+          "output_tokens": 315,
+          "reasoning_output_tokens": 173
+        },
+        {
+          "timestamp": "2026-04-14T17:24:28.802Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 41397,
+          "input_tokens": 41082,
+          "cached_input_tokens": 15744,
+          "output_tokens": 315,
+          "reasoning_output_tokens": 188
+        },
+        {
+          "timestamp": "2026-04-14T17:24:38.764Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 42906,
+          "input_tokens": 42476,
+          "cached_input_tokens": 40832,
+          "output_tokens": 430,
+          "reasoning_output_tokens": 141
+        },
+        {
+          "timestamp": "2026-04-14T17:24:50.625Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 49744,
+          "input_tokens": 48998,
+          "cached_input_tokens": 42368,
+          "output_tokens": 746,
+          "reasoning_output_tokens": 200
+        },
+        {
+          "timestamp": "2026-04-14T17:24:55.492Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 59353,
+          "input_tokens": 59169,
+          "cached_input_tokens": 48512,
+          "output_tokens": 184,
+          "reasoning_output_tokens": 23
+        },
+        {
+          "timestamp": "2026-04-14T17:25:12.343Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 60931,
+          "input_tokens": 60142,
+          "cached_input_tokens": 58752,
+          "output_tokens": 789,
+          "reasoning_output_tokens": 554
+        },
+        {
+          "timestamp": "2026-04-14T17:25:23.080Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 62754,
+          "input_tokens": 62209,
+          "cached_input_tokens": 59776,
+          "output_tokens": 545,
+          "reasoning_output_tokens": 510
+        },
+        {
+          "timestamp": "2026-04-14T17:25:27.565Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 68235,
+          "input_tokens": 68134,
+          "cached_input_tokens": 15744,
+          "output_tokens": 101,
+          "reasoning_output_tokens": 69
+        },
+        {
+          "timestamp": "2026-04-14T17:25:47.242Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 68864,
+          "input_tokens": 68406,
+          "cached_input_tokens": 67968,
+          "output_tokens": 458,
+          "reasoning_output_tokens": 379
+        },
+        {
+          "timestamp": "2026-04-14T17:28:02.286Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 76081,
+          "input_tokens": 75374,
+          "cached_input_tokens": 67968,
+          "output_tokens": 707,
+          "reasoning_output_tokens": 483
+        },
+        {
+          "timestamp": "2026-04-14T17:28:06.721Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 77956,
+          "input_tokens": 77821,
+          "cached_input_tokens": 75136,
+          "output_tokens": 135,
+          "reasoning_output_tokens": 67
+        },
+        {
+          "timestamp": "2026-04-14T17:28:09.198Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 79249,
+          "input_tokens": 79159,
+          "cached_input_tokens": 77696,
+          "output_tokens": 90,
+          "reasoning_output_tokens": 19
+        },
+        {
+          "timestamp": "2026-04-14T17:28:22.798Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 84160,
+          "input_tokens": 83577,
+          "cached_input_tokens": 78720,
+          "output_tokens": 583,
+          "reasoning_output_tokens": 421
         }
       ],
       "estimated_cost_usd": null,
@@ -43902,11 +44847,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 18512307,
-      "input_tokens": 18487009,
-      "cached_input_tokens": 16926336,
-      "output_tokens": 25298,
-      "reasoning_output_tokens": 9696,
+      "total_tokens": 19602307,
+      "input_tokens": 19574372,
+      "cached_input_tokens": 17779712,
+      "output_tokens": 27935,
+      "reasoning_output_tokens": 10613,
       "events": [
         {
           "timestamp": "2026-04-13T19:27:58.383Z",
@@ -45187,6 +46132,56 @@
           "cached_input_tokens": 199040,
           "output_tokens": 104,
           "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:08:26.539Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 216172,
+          "input_tokens": 215432,
+          "cached_input_tokens": 5504,
+          "output_tokens": 740,
+          "reasoning_output_tokens": 128
+        },
+        {
+          "timestamp": "2026-04-14T17:08:38.773Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 216428,
+          "input_tokens": 216309,
+          "cached_input_tokens": 210304,
+          "output_tokens": 119,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:09:10.291Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 218499,
+          "input_tokens": 217471,
+          "cached_input_tokens": 211328,
+          "output_tokens": 1028,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-14T17:09:18.505Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 218677,
+          "input_tokens": 218591,
+          "cached_input_tokens": 212352,
+          "output_tokens": 86,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-14T17:09:34.125Z",
+          "date": "2026-04-14",
+          "model": "arcanine",
+          "total_tokens": 220224,
+          "input_tokens": 219560,
+          "cached_input_tokens": 213888,
+          "output_tokens": 664,
+          "reasoning_output_tokens": 273
         }
       ],
       "estimated_cost_usd": null,
@@ -114378,6 +115373,6 @@
     }
   ],
   "source": {
-    "log_files": 233
+    "log_files": 244
   }
 }
