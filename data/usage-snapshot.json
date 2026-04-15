@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-04-15T18:00:06.014Z",
+  "generated_at": "2026-04-15T18:30:04.280Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -14812,6 +14812,150 @@
           "input_tokens": 74086,
           "cached_input_tokens": 71808,
           "output_tokens": 39,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d924d-e4b8-7980-bf69-83d531331fb7",
+      "thread_name": "019d924d-e4b8-7980-bf69-83d531331fb7",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-15T18:01:11.677Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 244109,
+      "input_tokens": 238962,
+      "cached_input_tokens": 159360,
+      "output_tokens": 5147,
+      "reasoning_output_tokens": 1032,
+      "events": [
+        {
+          "timestamp": "2026-04-15T18:01:40.304Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 79550,
+          "input_tokens": 77045,
+          "cached_input_tokens": 3456,
+          "output_tokens": 2505,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-15T18:03:59.883Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 82124,
+          "input_tokens": 79622,
+          "cached_input_tokens": 76672,
+          "output_tokens": 2502,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-15T18:04:29.268Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 82435,
+          "input_tokens": 82295,
+          "cached_input_tokens": 79232,
+          "output_tokens": 140,
+          "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d9250-ed9d-7002-95a0-215c8ce7f23c",
+      "thread_name": "019d9250-ed9d-7002-95a0-215c8ce7f23c",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-15T18:04:30.525Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 77437,
+      "input_tokens": 76026,
+      "cached_input_tokens": 3456,
+      "output_tokens": 1411,
+      "reasoning_output_tokens": 516,
+      "events": [
+        {
+          "timestamp": "2026-04-15T18:05:12.572Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 77437,
+          "input_tokens": 76026,
+          "cached_input_tokens": 3456,
+          "output_tokens": 1411,
+          "reasoning_output_tokens": 516
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019d9252-2c54-7c20-96c3-c26e60889202",
+      "thread_name": "019d9252-2c54-7c20-96c3-c26e60889202",
+      "parent_session_id": null,
+      "session_started_at": "2026-04-15T18:05:52.157Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.119.0-alpha.28",
+      "model_provider": "openai",
+      "primary_model": "arcanine",
+      "models_used": [
+        "arcanine"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 156630,
+      "input_tokens": 154698,
+      "cached_input_tokens": 151296,
+      "output_tokens": 1932,
+      "reasoning_output_tokens": 516,
+      "events": [
+        {
+          "timestamp": "2026-04-15T18:06:27.185Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 78167,
+          "input_tokens": 76366,
+          "cached_input_tokens": 75136,
+          "output_tokens": 1801,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-15T18:06:38.782Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 78463,
+          "input_tokens": 78332,
+          "cached_input_tokens": 76160,
+          "output_tokens": 131,
           "reasoning_output_tokens": 0
         }
       ],
@@ -47910,11 +48054,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 2142863,
-      "input_tokens": 2134041,
-      "cached_input_tokens": 1550976,
-      "output_tokens": 8822,
-      "reasoning_output_tokens": 4331,
+      "total_tokens": 10060673,
+      "input_tokens": 10032451,
+      "cached_input_tokens": 9286144,
+      "output_tokens": 28222,
+      "reasoning_output_tokens": 13756,
       "events": [
         {
           "timestamp": "2026-04-15T17:24:07.659Z",
@@ -48105,6 +48249,456 @@
           "cached_input_tokens": 149888,
           "output_tokens": 66,
           "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-15T18:01:00.277Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 156301,
+          "input_tokens": 155987,
+          "cached_input_tokens": 122240,
+          "output_tokens": 314,
+          "reasoning_output_tokens": 244
+        },
+        {
+          "timestamp": "2026-04-15T18:01:10.671Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 157472,
+          "input_tokens": 156836,
+          "cached_input_tokens": 155520,
+          "output_tokens": 636,
+          "reasoning_output_tokens": 468
+        },
+        {
+          "timestamp": "2026-04-15T18:01:14.261Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 157608,
+          "input_tokens": 157519,
+          "cached_input_tokens": 156544,
+          "output_tokens": 89,
+          "reasoning_output_tokens": 10
+        },
+        {
+          "timestamp": "2026-04-15T18:01:49.658Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 157878,
+          "input_tokens": 157658,
+          "cached_input_tokens": 157056,
+          "output_tokens": 220,
+          "reasoning_output_tokens": 11
+        },
+        {
+          "timestamp": "2026-04-15T18:01:52.384Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 163146,
+          "input_tokens": 163077,
+          "cached_input_tokens": 157056,
+          "output_tokens": 69,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-15T18:01:54.414Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 167154,
+          "input_tokens": 167085,
+          "cached_input_tokens": 162688,
+          "output_tokens": 69,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-15T18:01:56.206Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 167790,
+          "input_tokens": 167742,
+          "cached_input_tokens": 166784,
+          "output_tokens": 48,
+          "reasoning_output_tokens": 9
+        },
+        {
+          "timestamp": "2026-04-15T18:02:32.697Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 167979,
+          "input_tokens": 167839,
+          "cached_input_tokens": 167296,
+          "output_tokens": 140,
+          "reasoning_output_tokens": 27
+        },
+        {
+          "timestamp": "2026-04-15T18:03:06.716Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 168151,
+          "input_tokens": 168027,
+          "cached_input_tokens": 167296,
+          "output_tokens": 124,
+          "reasoning_output_tokens": 49
+        },
+        {
+          "timestamp": "2026-04-15T18:03:10.735Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 170761,
+          "input_tokens": 170664,
+          "cached_input_tokens": 167808,
+          "output_tokens": 97,
+          "reasoning_output_tokens": 58
+        },
+        {
+          "timestamp": "2026-04-15T18:03:43.546Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 170913,
+          "input_tokens": 170809,
+          "cached_input_tokens": 170368,
+          "output_tokens": 104,
+          "reasoning_output_tokens": 15
+        },
+        {
+          "timestamp": "2026-04-15T18:05:18.725Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 171171,
+          "input_tokens": 170961,
+          "cached_input_tokens": 170368,
+          "output_tokens": 210,
+          "reasoning_output_tokens": 123
+        },
+        {
+          "timestamp": "2026-04-15T18:05:26.367Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 171391,
+          "input_tokens": 171206,
+          "cached_input_tokens": 170368,
+          "output_tokens": 185,
+          "reasoning_output_tokens": 132
+        },
+        {
+          "timestamp": "2026-04-15T18:05:28.772Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 171504,
+          "input_tokens": 171452,
+          "cached_input_tokens": 170880,
+          "output_tokens": 52,
+          "reasoning_output_tokens": 13
+        },
+        {
+          "timestamp": "2026-04-15T18:05:37.322Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 172219,
+          "input_tokens": 171551,
+          "cached_input_tokens": 170880,
+          "output_tokens": 668,
+          "reasoning_output_tokens": 436
+        },
+        {
+          "timestamp": "2026-04-15T18:05:51.388Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 173015,
+          "input_tokens": 172490,
+          "cached_input_tokens": 170880,
+          "output_tokens": 525,
+          "reasoning_output_tokens": 245
+        },
+        {
+          "timestamp": "2026-04-15T18:05:57.209Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 173110,
+          "input_tokens": 173064,
+          "cached_input_tokens": 171904,
+          "output_tokens": 46,
+          "reasoning_output_tokens": 7
+        },
+        {
+          "timestamp": "2026-04-15T18:06:32.494Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 173259,
+          "input_tokens": 173159,
+          "cached_input_tokens": 172416,
+          "output_tokens": 100,
+          "reasoning_output_tokens": 6
+        },
+        {
+          "timestamp": "2026-04-15T18:06:50.960Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 174179,
+          "input_tokens": 173433,
+          "cached_input_tokens": 172928,
+          "output_tokens": 746,
+          "reasoning_output_tokens": 374
+        },
+        {
+          "timestamp": "2026-04-15T18:07:01.074Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 175298,
+          "input_tokens": 174777,
+          "cached_input_tokens": 172928,
+          "output_tokens": 521,
+          "reasoning_output_tokens": 182
+        },
+        {
+          "timestamp": "2026-04-15T18:07:11.289Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 176202,
+          "input_tokens": 175596,
+          "cached_input_tokens": 174464,
+          "output_tokens": 606,
+          "reasoning_output_tokens": 491
+        },
+        {
+          "timestamp": "2026-04-15T18:07:27.133Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 177617,
+          "input_tokens": 176453,
+          "cached_input_tokens": 174976,
+          "output_tokens": 1164,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-15T18:07:32.935Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 178379,
+          "input_tokens": 178160,
+          "cached_input_tokens": 176000,
+          "output_tokens": 219,
+          "reasoning_output_tokens": 73
+        },
+        {
+          "timestamp": "2026-04-15T18:07:41.322Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 178861,
+          "input_tokens": 178437,
+          "cached_input_tokens": 177536,
+          "output_tokens": 424,
+          "reasoning_output_tokens": 328
+        },
+        {
+          "timestamp": "2026-04-15T18:08:06.296Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 180976,
+          "input_tokens": 179684,
+          "cached_input_tokens": 178048,
+          "output_tokens": 1292,
+          "reasoning_output_tokens": 1141
+        },
+        {
+          "timestamp": "2026-04-15T18:08:21.609Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 182502,
+          "input_tokens": 181027,
+          "cached_input_tokens": 179072,
+          "output_tokens": 1475,
+          "reasoning_output_tokens": 290
+        },
+        {
+          "timestamp": "2026-04-15T18:08:26.457Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 182621,
+          "input_tokens": 182564,
+          "cached_input_tokens": 180608,
+          "output_tokens": 57,
+          "reasoning_output_tokens": 16
+        },
+        {
+          "timestamp": "2026-04-15T18:08:40.332Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 185403,
+          "input_tokens": 184326,
+          "cached_input_tokens": 182144,
+          "output_tokens": 1077,
+          "reasoning_output_tokens": 503
+        },
+        {
+          "timestamp": "2026-04-15T18:15:57.570Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 178882,
+          "input_tokens": 178148,
+          "cached_input_tokens": 120704,
+          "output_tokens": 734,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-15T18:16:01.828Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 179182,
+          "input_tokens": 179087,
+          "cached_input_tokens": 177536,
+          "output_tokens": 95,
+          "reasoning_output_tokens": 7
+        },
+        {
+          "timestamp": "2026-04-15T18:16:13.216Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 180492,
+          "input_tokens": 180126,
+          "cached_input_tokens": 178560,
+          "output_tokens": 366,
+          "reasoning_output_tokens": 223
+        },
+        {
+          "timestamp": "2026-04-15T18:16:16.842Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 180578,
+          "input_tokens": 180541,
+          "cached_input_tokens": 179584,
+          "output_tokens": 37,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-15T18:16:28.978Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 182480,
+          "input_tokens": 181786,
+          "cached_input_tokens": 179584,
+          "output_tokens": 694,
+          "reasoning_output_tokens": 512
+        },
+        {
+          "timestamp": "2026-04-15T18:17:03.737Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 181913,
+          "input_tokens": 181226,
+          "cached_input_tokens": 177536,
+          "output_tokens": 687,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-15T18:17:15.246Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 181912,
+          "input_tokens": 181409,
+          "cached_input_tokens": 180608,
+          "output_tokens": 503,
+          "reasoning_output_tokens": 378
+        },
+        {
+          "timestamp": "2026-04-15T18:17:20.284Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 182046,
+          "input_tokens": 181959,
+          "cached_input_tokens": 180608,
+          "output_tokens": 87,
+          "reasoning_output_tokens": 7
+        },
+        {
+          "timestamp": "2026-04-15T18:17:25.999Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 182268,
+          "input_tokens": 182117,
+          "cached_input_tokens": 181120,
+          "output_tokens": 151,
+          "reasoning_output_tokens": 19
+        },
+        {
+          "timestamp": "2026-04-15T18:17:30.493Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 182354,
+          "input_tokens": 182317,
+          "cached_input_tokens": 181632,
+          "output_tokens": 37,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-15T18:17:48.673Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 183629,
+          "input_tokens": 182519,
+          "cached_input_tokens": 181632,
+          "output_tokens": 1110,
+          "reasoning_output_tokens": 847
+        },
+        {
+          "timestamp": "2026-04-15T18:17:54.911Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 183712,
+          "input_tokens": 183675,
+          "cached_input_tokens": 181632,
+          "output_tokens": 37,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-15T18:18:01.152Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 183920,
+          "input_tokens": 183764,
+          "cached_input_tokens": 183168,
+          "output_tokens": 156,
+          "reasoning_output_tokens": 8
+        },
+        {
+          "timestamp": "2026-04-15T18:18:17.134Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 186642,
+          "input_tokens": 184766,
+          "cached_input_tokens": 183168,
+          "output_tokens": 1876,
+          "reasoning_output_tokens": 7
+        },
+        {
+          "timestamp": "2026-04-15T18:18:21.271Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 186920,
+          "input_tokens": 186879,
+          "cached_input_tokens": 184192,
+          "output_tokens": 41,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-04-15T18:18:32.814Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 189327,
+          "input_tokens": 188625,
+          "cached_input_tokens": 186240,
+          "output_tokens": 702,
+          "reasoning_output_tokens": 184
+        },
+        {
+          "timestamp": "2026-04-15T18:29:50.070Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 188693,
+          "input_tokens": 187883,
+          "cached_input_tokens": 180608,
+          "output_tokens": 810,
+          "reasoning_output_tokens": 434
         }
       ],
       "estimated_cost_usd": null,
@@ -48382,11 +48976,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 306967,
-      "input_tokens": 291739,
-      "cached_input_tokens": 248960,
-      "output_tokens": 15228,
-      "reasoning_output_tokens": 4811,
+      "total_tokens": 419015,
+      "input_tokens": 398899,
+      "cached_input_tokens": 345472,
+      "output_tokens": 20116,
+      "reasoning_output_tokens": 5986,
       "events": [
         {
           "timestamp": "2026-04-15T17:29:38.149Z",
@@ -48457,6 +49051,26 @@
           "cached_input_tokens": 45440,
           "output_tokens": 1130,
           "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-15T18:06:37.258Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 55418,
+          "input_tokens": 51234,
+          "cached_input_tokens": 45440,
+          "output_tokens": 4184,
+          "reasoning_output_tokens": 1034
+        },
+        {
+          "timestamp": "2026-04-15T18:06:44.461Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 56630,
+          "input_tokens": 55926,
+          "cached_input_tokens": 51072,
+          "output_tokens": 704,
+          "reasoning_output_tokens": 141
         }
       ],
       "estimated_cost_usd": null,
@@ -102248,11 +102862,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 238000,
-      "input_tokens": 233822,
-      "cached_input_tokens": 174208,
-      "output_tokens": 4178,
-      "reasoning_output_tokens": 2900,
+      "total_tokens": 590117,
+      "input_tokens": 583536,
+      "cached_input_tokens": 414592,
+      "output_tokens": 6581,
+      "reasoning_output_tokens": 4541,
       "events": [
         {
           "timestamp": "2026-04-15T17:25:56.638Z",
@@ -102323,6 +102937,66 @@
           "cached_input_tokens": 40320,
           "output_tokens": 684,
           "reasoning_output_tokens": 412
+        },
+        {
+          "timestamp": "2026-04-15T18:00:16.346Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 48480,
+          "input_tokens": 47777,
+          "cached_input_tokens": 41344,
+          "output_tokens": 703,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-04-15T18:00:34.917Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 52681,
+          "input_tokens": 52203,
+          "cached_input_tokens": 47488,
+          "output_tokens": 478,
+          "reasoning_output_tokens": 445
+        },
+        {
+          "timestamp": "2026-04-15T18:00:37.662Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 62187,
+          "input_tokens": 62108,
+          "cached_input_tokens": 11648,
+          "output_tokens": 79,
+          "reasoning_output_tokens": 46
+        },
+        {
+          "timestamp": "2026-04-15T18:00:42.711Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 62311,
+          "input_tokens": 62259,
+          "cached_input_tokens": 15744,
+          "output_tokens": 52,
+          "reasoning_output_tokens": 19
+        },
+        {
+          "timestamp": "2026-04-15T18:00:48.554Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 62737,
+          "input_tokens": 62451,
+          "cached_input_tokens": 61824,
+          "output_tokens": 286,
+          "reasoning_output_tokens": 99
+        },
+        {
+          "timestamp": "2026-04-15T18:01:04.878Z",
+          "date": "2026-04-15",
+          "model": "arcanine",
+          "total_tokens": 63721,
+          "input_tokens": 62916,
+          "cached_input_tokens": 62336,
+          "output_tokens": 805,
+          "reasoning_output_tokens": 516
         }
       ],
       "estimated_cost_usd": null,
@@ -120167,6 +120841,6 @@
     }
   ],
   "source": {
-    "log_files": 275
+    "log_files": 278
   }
 }
