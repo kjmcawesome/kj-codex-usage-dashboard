@@ -107,10 +107,11 @@ const elements = {
   dayOutput: document.querySelector("#day-output"),
   dayReasoning: document.querySelector("#day-reasoning"),
   daySessions: document.querySelector("#day-sessions"),
-  dayDetails: document.querySelector("#day-details"),
-  dayDetailsLabel: document.querySelector("#day-details-label"),
   dayCostNote: document.querySelector("#day-cost-note"),
-  daySessionList: document.querySelector("#day-session-list")
+  daySessionList: document.querySelector("#day-session-list"),
+  dayDrawerShell: document.querySelector("#day-drawer-shell"),
+  dayDrawerBackdrop: document.querySelector("#day-drawer-backdrop"),
+  dayDrawerClose: document.querySelector("#day-drawer-close")
 };
 
 function formatCompactNumber(value) {
@@ -378,9 +379,10 @@ async function probeRefreshHelper() {
   }
 }
 
-function setDayDetailsOpen(open) {
-  elements.dayDetails.open = open;
-  elements.dayDetailsLabel.textContent = open ? "Hide details" : "Expand details";
+function setDayDrawerOpen(open) {
+  elements.dayDrawerShell?.classList.toggle("is-open", open);
+  elements.dayDrawerShell?.setAttribute("aria-hidden", open ? "false" : "true");
+  document.body.classList.toggle("day-drawer-open", open);
 }
 
 async function waitForSnapshotGeneration(targetGeneratedAt, timeoutMs) {
@@ -647,14 +649,12 @@ function renderHeroProgress(dashboard) {
   }).length;
   const ratio = elapsedDays ? activeDaysThisMonth / elapsedDays : 0;
 
-  elements.heroProgressLabel.textContent = metrics.today_has_usage
-    ? "Month pace is live"
-    : "Month pace needs a pulse";
+  elements.heroProgressLabel.textContent = "Monthly active-day pace";
   elements.heroProgressNote.textContent = metrics.today_has_usage
-    ? "Today is active, so the monthly rhythm keeps moving."
-    : "No usage yet today. One workflow keeps the month from flattening.";
-  elements.heroProgressValue.textContent = formatPercent(ratio);
-  elements.heroProgressFoot.textContent = `${activeDaysThisMonth}/${elapsedDays} green days this month`;
+    ? "Days this month with any Codex usage so far."
+    : "No usage yet today. One workflow adds another active day to the month.";
+  elements.heroProgressValue.textContent = `${activeDaysThisMonth} / ${elapsedDays} days`;
+  elements.heroProgressFoot.textContent = `${formatPercent(ratio)} active so far this month`;
   elements.heroProgressFill.style.width = `${Math.max(ratio > 0 ? 6 : 0, Math.round(ratio * 100))}%`;
   elements.heroProgressFill.title = `${activeDaysThisMonth} active days out of ${elapsedDays} elapsed this month`;
 }
@@ -891,7 +891,7 @@ function renderHeatmap(dashboard) {
       state.selectedDate = day.date;
       elements.heatmapGrid.querySelector(".day-cell.is-selected")?.classList.remove("is-selected");
       button.classList.add("is-selected");
-      loadDay(day.date);
+      loadDay(day.date, { openDrawer: true });
     });
     elements.heatmapGrid.append(button);
   }
@@ -981,7 +981,7 @@ function renderTrend(dashboard) {
       state.selectedDate = selectedDate;
       elements.heatmapGrid.querySelector(".day-cell.is-selected")?.classList.remove("is-selected");
       elements.heatmapGrid.querySelector(`.day-cell[data-date="${selectedDate}"]`)?.classList.add("is-selected");
-      loadDay(selectedDate);
+      loadDay(selectedDate, { openDrawer: true });
     });
   }
 }
@@ -1069,7 +1069,6 @@ function renderTopThreads(dashboard) {
 }
 
 function renderDayPanel(dayPayload) {
-  setDayDetailsOpen(false);
   elements.dayTitle.textContent = formatDate(dayPayload.date);
   elements.dayTotal.textContent = formatCompactNumber(dayPayload.summary.total_tokens);
   elements.dayTotal.title = formatFullNumber(dayPayload.summary.total_tokens);
@@ -1082,13 +1081,20 @@ function renderDayPanel(dayPayload) {
   elements.daySessions.textContent = formatFullNumber(dayPayload.sessions.length);
   elements.dayCostNote.textContent = buildEstimatedCostNote(dayPayload.summary.unpriced_total_tokens);
 
-  if (!dayPayload.sessions.length) {
+  const sessions = [...(dayPayload.sessions || [])].sort((left, right) => {
+    if ((right.estimated_cost_usd || 0) !== (left.estimated_cost_usd || 0)) {
+      return (right.estimated_cost_usd || 0) - (left.estimated_cost_usd || 0);
+    }
+    return (right.total_tokens || 0) - (left.total_tokens || 0);
+  });
+
+  if (!sessions.length) {
     elements.daySessionList.innerHTML = '<div class="empty-state">No workflows contributed usage on this day.</div>';
     return;
   }
 
   elements.daySessionList.innerHTML = "";
-  for (const session of dayPayload.sessions) {
+  for (const session of sessions) {
     const card = document.createElement("article");
     card.className = "session-card";
     card.innerHTML = `
@@ -1117,7 +1123,7 @@ function renderDayPanel(dayPayload) {
   }
 }
 
-async function loadDay(date) {
+async function loadDay(date, { openDrawer = false } = {}) {
   try {
     const payload = buildDayPayload(state.snapshot, date, {
       days: state.rangeMode === "preset" ? state.days : undefined,
@@ -1128,9 +1134,14 @@ async function loadDay(date) {
       now: state.snapshotNow
     });
     renderDayPanel(payload);
+    if (openDrawer) {
+      setDayDrawerOpen(true);
+    }
   } catch (error) {
-    setDayDetailsOpen(false);
     elements.daySessionList.innerHTML = `<div class="empty-state">${error.message}</div>`;
+    if (openDrawer) {
+      setDayDrawerOpen(true);
+    }
   }
 }
 
@@ -1311,9 +1322,8 @@ elements.refreshButton.addEventListener("click", refreshDashboard);
 elements.mobileFiltersButton?.addEventListener("click", openMobileFilters);
 elements.mobileFiltersClose?.addEventListener("click", closeMobileFilters);
 elements.mobileFiltersBackdrop?.addEventListener("click", closeMobileFilters);
-elements.dayDetails.addEventListener("toggle", () => {
-  elements.dayDetailsLabel.textContent = elements.dayDetails.open ? "Hide details" : "Expand details";
-});
+elements.dayDrawerClose?.addEventListener("click", () => setDayDrawerOpen(false));
+elements.dayDrawerBackdrop?.addEventListener("click", () => setDayDrawerOpen(false));
 window.addEventListener("resize", () => {
   if (!isMobileViewport()) {
     closeMobileFilters();
@@ -1322,6 +1332,7 @@ window.addEventListener("resize", () => {
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeMobileFilters();
+    setDayDrawerOpen(false);
   }
 });
 
@@ -1329,7 +1340,7 @@ initializeStateFromUrl();
 renderRangeControls();
 renderWeekdayLabels();
 syncDatePicker(null);
-setDayDetailsOpen(false);
+setDayDrawerOpen(false);
 syncRefreshButtonMode();
 renderIcons();
 loadDashboard(true);

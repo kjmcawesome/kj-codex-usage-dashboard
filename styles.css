@@ -681,7 +681,6 @@ select {
 .mix-row,
 .insight-card,
 .mini-stat,
-.day-details,
 .mobile-selection-bar,
 .empty-state {
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -736,7 +735,6 @@ select {
 .mini-stat strong,
 .summary-card strong,
 .card-value,
-.day-details-toggle,
 .session-badge,
 .metric-pair strong {
   font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
@@ -1301,11 +1299,6 @@ select {
   margin-bottom: 6px;
 }
 
-.day-panel {
-  display: grid;
-  gap: 12px;
-}
-
 .day-summary-grid {
   display: grid;
   gap: 8px;
@@ -1323,42 +1316,70 @@ select {
   font-size: 0.82rem;
 }
 
-.day-details {
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.day-details-toggle {
-  list-style: none;
-  cursor: pointer;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: 700;
-  color: #dfe5ff;
-}
-
-.day-details-toggle::-webkit-details-marker {
+.day-drawer-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
   display: none;
 }
 
-.day-details-toggle::after {
-  content: "+";
-  margin-left: auto;
-  font-size: 1.2rem;
-  line-height: 1;
-  color: var(--ink-muted);
+.day-drawer-shell.is-open {
+  display: block;
 }
 
-.day-details[open] .day-details-toggle::after {
-  content: "−";
+.day-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 6, 12, 0.58);
+  backdrop-filter: blur(8px);
 }
 
-.day-details-body {
+.day-drawer {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  bottom: 18px;
+  width: min(520px, calc(100vw - 36px));
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 28px 68px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(145, 162, 255, 0.08);
+}
+
+.day-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.day-drawer-close {
+  border: 1px solid rgba(144, 160, 255, 0.16);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, rgba(86, 109, 255, 0.24), rgba(153, 100, 255, 0.14)),
+    rgba(255, 255, 255, 0.04);
+  color: #fff;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.day-drawer-close:hover {
+  transform: translateY(-1px);
+  border-color: rgba(165, 179, 255, 0.24);
+}
+
+.day-drawer-body {
   display: grid;
   gap: 12px;
-  padding: 0 14px 14px;
+  align-content: start;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
 }
 
 .budget-panel {
@@ -1778,6 +1799,22 @@ select {
 
   .rank-value-sub {
     text-align: left;
+  }
+
+  .day-drawer {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: min(86vh, 860px);
+    border-radius: 22px 22px 0 0;
+    padding: 16px 14px calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .day-drawer-head {
+    flex-direction: row;
+    align-items: flex-start;
   }
 }
 

@@ -31,8 +31,8 @@
                     <i data-lucide="activity" aria-hidden="true"></i>
                     Daily cadence
                   </p>
-                  <strong id="hero-progress-label">Month pace</strong>
-                  <span id="hero-progress-note">Loading current pace...</span>
+                  <strong id="hero-progress-label">Monthly active-day pace</strong>
+                  <span id="hero-progress-note">Loading current month activity...</span>
                 </div>
                 <div class="hero-progress-side">
                   <strong id="hero-progress-value">—</strong>
@@ -61,7 +61,7 @@
         <div class="panel-head momentum-panel-head">
           <div>
             <p class="panel-eyebrow">Daily momentum</p>
-            <h2>Keep the square green</h2>
+            <h2>Keep the squares lit</h2>
             <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
           </div>
           <div class="momentum-head-status">
@@ -268,60 +268,61 @@
         </article>
       </section>
 
-      <aside class="panel day-panel">
-        <div class="panel-head">
-          <div>
-            <p class="panel-eyebrow">Day details</p>
-            <h2 id="day-title">Select a day</h2>
+      <div id="day-drawer-shell" class="day-drawer-shell" aria-hidden="true">
+        <div id="day-drawer-backdrop" class="day-drawer-backdrop"></div>
+        <aside class="panel day-drawer" role="dialog" aria-modal="true" aria-labelledby="day-title">
+          <div class="day-drawer-head">
+            <div>
+              <p class="panel-eyebrow">Day breakdown</p>
+              <h2 id="day-title">Select a day</h2>
+            </div>
+            <button id="day-drawer-close" class="day-drawer-close" type="button" aria-label="Close day breakdown">
+              Close
+            </button>
           </div>
-        </div>
 
-        <div class="day-summary-grid">
-          <div class="mini-stat">
-            <span>Total</span>
-            <strong id="day-total">-</strong>
+          <div class="day-summary-grid">
+            <div class="mini-stat">
+              <span>Total</span>
+              <strong id="day-total">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Estimated cost</span>
+              <strong id="day-cost">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Input</span>
+              <strong id="day-input">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Reused input</span>
+              <strong id="day-cached">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Output</span>
+              <strong id="day-output">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Reasoning</span>
+              <strong id="day-reasoning">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Workflows</span>
+              <strong id="day-sessions">-</strong>
+            </div>
           </div>
-          <div class="mini-stat">
-            <span>Estimated cost</span>
-            <strong id="day-cost">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Input</span>
-            <strong id="day-input">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Reused input</span>
-            <strong id="day-cached">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Output</span>
-            <strong id="day-output">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Reasoning</span>
-            <strong id="day-reasoning">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Workflows</span>
-            <strong id="day-sessions">-</strong>
-          </div>
-        </div>
 
-        <details id="day-details" class="day-details">
-          <summary class="day-details-toggle">
-            <span id="day-details-label">Expand details</span>
-          </summary>
-          <div class="day-details-body">
+          <div class="day-drawer-body">
             <p class="day-explainer">
-              Expand details to see the workflows and token buckets that drove this day.
+              Workflow rows below show what drove the selected day.
             </p>
             <p class="day-explainer" id="day-cost-note">
               Estimated cost uses published OpenAI API pricing as a directional planning lens.
             </p>
             <div id="day-session-list" class="session-list"></div>
           </div>
-        </details>
-      </aside>
+        </aside>
+      </div>
 
       <details class="panel budget-panel">
         <summary class="budget-toggle">
