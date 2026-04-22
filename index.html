@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="./" />
     <title>KJ Codex Usage Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./vendor/flatpickr/flatpickr.min.css" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -18,6 +24,25 @@
             <p class="hero-note">
               Token usage, estimated cost, and today’s momentum.
             </p>
+            <section class="hero-progress-card" aria-labelledby="hero-progress-label">
+              <div class="hero-progress-head">
+                <div class="hero-progress-copy">
+                  <p class="hero-progress-kicker">
+                    <i data-lucide="activity" aria-hidden="true"></i>
+                    Daily cadence
+                  </p>
+                  <strong id="hero-progress-label">Month pace</strong>
+                  <span id="hero-progress-note">Loading current pace...</span>
+                </div>
+                <div class="hero-progress-side">
+                  <strong id="hero-progress-value">—</strong>
+                  <span id="hero-progress-foot">—</span>
+                </div>
+              </div>
+              <div class="hero-progress-track" aria-hidden="true">
+                <span id="hero-progress-fill"></span>
+              </div>
+            </section>
           </div>
           <div class="hero-meta">
             <div class="meta-card">
@@ -335,6 +360,7 @@
     </div>
 
     <script src="./vendor/flatpickr/flatpickr.min.js"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
     <script type="module" src="./app.js"></script>
   </body>
 </html>

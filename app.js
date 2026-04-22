@@ -41,6 +41,11 @@ const state = {
 const elements = {
   lastRefresh: document.querySelector("#last-refresh"),
   sourceNote: document.querySelector("#source-note"),
+  heroProgressLabel: document.querySelector("#hero-progress-label"),
+  heroProgressNote: document.querySelector("#hero-progress-note"),
+  heroProgressValue: document.querySelector("#hero-progress-value"),
+  heroProgressFoot: document.querySelector("#hero-progress-foot"),
+  heroProgressFill: document.querySelector("#hero-progress-fill"),
   selectedRangeTitle: document.querySelector("#selected-range-title"),
   selectedRangeNote: document.querySelector("#selected-range-note"),
   rangeChips: document.querySelector("#range-chips"),
@@ -255,6 +260,12 @@ function formatWorkflowContext(item) {
     parts.push("Helper run");
   }
   return parts.join(" · ") || "Workflow";
+}
+
+function renderIcons() {
+  if (window.lucide?.createIcons) {
+    window.lucide.createIcons();
+  }
 }
 
 function sleep(ms) {
@@ -620,6 +631,34 @@ function renderInsightCosts(dashboard) {
   elements.costMonthFoot.title = `${formatFullNumber(snapshots.month_to_date.total_tokens)} tokens`;
 }
 
+function renderHeroProgress(dashboard) {
+  const boardDays = dashboard.habit_board?.days || [];
+  const metrics = dashboard.habit_metrics || {};
+  const now = todayDate(state.snapshotNow || new Date());
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const elapsedDays = Math.max(1, Math.round((now - monthStart) / 86400000) + 1);
+  const activeDaysThisMonth = boardDays.filter((day) => {
+    if (!day?.date) {
+      return false;
+    }
+
+    const date = new Date(`${day.date}T12:00:00`);
+    return date >= monthStart && date <= now && (day.total_tokens || 0) > 0;
+  }).length;
+  const ratio = elapsedDays ? activeDaysThisMonth / elapsedDays : 0;
+
+  elements.heroProgressLabel.textContent = metrics.today_has_usage
+    ? "Month pace is live"
+    : "Month pace needs a pulse";
+  elements.heroProgressNote.textContent = metrics.today_has_usage
+    ? "Today is active, so the monthly rhythm keeps moving."
+    : "No usage yet today. One workflow keeps the month from flattening.";
+  elements.heroProgressValue.textContent = formatPercent(ratio);
+  elements.heroProgressFoot.textContent = `${activeDaysThisMonth}/${elapsedDays} green days this month`;
+  elements.heroProgressFill.style.width = `${Math.max(ratio > 0 ? 6 : 0, Math.round(ratio * 100))}%`;
+  elements.heroProgressFill.title = `${activeDaysThisMonth} active days out of ${elapsedDays} elapsed this month`;
+}
+
 function renderSummary(dashboard) {
   elements.lastRefresh.textContent = new Date(dashboard.generated_at).toLocaleString();
   elements.sourceNote.textContent = `${formatDate(dashboard.habit_board.start_date)} - ${formatDate(dashboard.habit_board.end_date)}`;
@@ -654,6 +693,7 @@ function renderSummary(dashboard) {
   updateRangeSelectionLabel(dashboard.selection.label);
   elements.mobileSelectionSummary.textContent = buildMobileSelectionSummary(dashboard);
   elements.mobileSelectionSummary.title = elements.mobileSelectionSummary.textContent;
+  renderHeroProgress(dashboard);
 }
 
 function renderEfficiencyPanel(dashboard) {
@@ -1175,6 +1215,7 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     renderEfficiencyPanel(dashboard);
     renderCostBreakdown(dashboard);
     renderTopThreads(dashboard);
+    renderIcons();
     syncDatePicker(dashboard);
     await loadDay(state.selectedDate);
   } catch (error) {
@@ -1206,6 +1247,11 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.heatmapSummary.textContent = detail;
     elements.heatmapGrid.innerHTML = "";
     elements.heatmapMonths.innerHTML = "";
+    elements.heroProgressValue.textContent = "—";
+    elements.heroProgressFoot.textContent = "—";
+    elements.heroProgressNote.textContent = "A fresh snapshot is required before the hero can render.";
+    elements.heroProgressFill.style.width = "0%";
+    renderIcons();
   } finally {
     if (!suppressButtonToggle) {
       elements.refreshButton.disabled = false;
@@ -1285,6 +1331,7 @@ renderWeekdayLabels();
 syncDatePicker(null);
 setDayDetailsOpen(false);
 syncRefreshButtonMode();
+renderIcons();
 loadDashboard(true);
 probeRefreshHelper();
 window.addEventListener("focus", probeRefreshHelper);
