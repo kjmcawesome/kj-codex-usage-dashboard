@@ -329,17 +329,11 @@ function syncRefreshButtonMode() {
     return;
   }
 
-  if (state.refreshHelperAvailable) {
-    setRefreshButtonLabel(
-      REFRESH_FORCE_LABEL,
-      "Rebuild the snapshot from local ~/.codex logs and publish it if anything changed"
-    );
-    return;
-  }
-
   setRefreshButtonLabel(
-    REFRESH_CHECK_LABEL,
-    "Fetch the latest published snapshot from the static site"
+    REFRESH_FORCE_LABEL,
+    state.refreshHelperAvailable
+      ? "Rebuild the snapshot from local ~/.codex logs. The local helper can also publish if needed."
+      : "Rebuild the local snapshot from ~/.codex logs"
   );
 }
 
@@ -441,6 +435,21 @@ async function forceRefreshViaHelper() {
   if (!observed) {
     await loadDashboard(true, { suppressButtonToggle: true });
   }
+}
+
+async function forceRefreshLocally() {
+  setRefreshButtonLabel(
+    REFRESH_REBUILDING_LABEL,
+    "Rebuilding the local snapshot from ~/.codex logs"
+  );
+
+  await fetchJson("/api/refresh", {
+    method: "POST",
+    cache: "no-store"
+  });
+
+  state.shouldResetHeatmapViewport = true;
+  await loadDashboard(true, { suppressButtonToggle: true });
 }
 
 function isDateKey(value) {
@@ -577,7 +586,7 @@ function renderRangeControls() {
 
 function renderHabitRail(dashboard) {
   const metrics = dashboard.habit_metrics;
-  const todayStatusLabel = metrics.today_has_usage ? "Green today" : "Not green yet";
+  const todayStatusLabel = metrics.today_has_usage ? "Lit today" : "Not lit yet";
   elements.todayStatusPill.textContent = todayStatusLabel;
   elements.todayStatusPill.classList.toggle("is-live", metrics.today_has_usage);
   elements.todayStatusPill.classList.toggle("is-idle", !metrics.today_has_usage);
@@ -589,14 +598,14 @@ function renderHabitRail(dashboard) {
       : `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · streak is live`;
   } else {
     elements.todayStatusHeadline.textContent = "One workflow starts the streak";
-    elements.todayStatusNote.textContent = "No usage yet today. Get the square green.";
+    elements.todayStatusNote.textContent = "No usage yet today. Light up today's square.";
   }
 
   const streakStartDate = buildStreakStartDate(metrics.current_streak);
   elements.habitCurrentStreak.textContent = formatFullNumber(metrics.current_streak);
   elements.habitCurrentNote.textContent = streakStartDate
     ? `Live since ${formatDate(streakStartDate)}`
-    : "Start with one green day";
+    : "Start with one active day";
   elements.habitBestStreak.textContent = formatFullNumber(metrics.best_streak);
   elements.habitBestNote.textContent = metrics.best_streak > 0
     ? "Best run in the last 365 days"
@@ -605,7 +614,7 @@ function renderHabitRail(dashboard) {
   const workweekRemaining = Math.max(metrics.workweek_goal - metrics.workweek_green_days, 0);
   elements.habitWorkweekNote.textContent = workweekRemaining === 0
     ? "Workweek goal hit"
-    : `${workweekRemaining} green day${workweekRemaining === 1 ? "" : "s"} to go`;
+    : `${workweekRemaining} active day${workweekRemaining === 1 ? "" : "s"} to go`;
 }
 
 function renderInsightCosts(dashboard) {
@@ -1280,16 +1289,18 @@ async function refreshDashboard() {
       return;
     }
 
+    await forceRefreshLocally();
+  } catch (error) {
     if (state.refreshHelperAvailable && state.refreshHelperUrl) {
-      await forceRefreshViaHelper();
-      return;
+      try {
+        await forceRefreshViaHelper();
+        return;
+      } catch {
+        state.refreshHelperAvailable = false;
+        state.refreshHelperUrl = null;
+      }
     }
 
-    state.shouldResetHeatmapViewport = true;
-    await loadDashboard(true, { suppressButtonToggle: true });
-  } catch (error) {
-    state.refreshHelperAvailable = false;
-    state.refreshHelperUrl = null;
     await loadDashboard(true, { suppressButtonToggle: true });
     window.alert(error instanceof Error ? error.message : String(error));
   } finally {
