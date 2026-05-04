@@ -11,7 +11,7 @@ const RANGE_OPTIONS = [
 ];
 
 const DEFAULT_DAYS = 30;
-const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
+const WEEKDAY_LABELS = ["", "", "Mon", "", "Wed", "", "Fri", ""];
 const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
 const REFRESH_CHECK_LABEL = "Check for updates";
 const REFRESH_FORCE_LABEL = "Force rebuild";
@@ -28,6 +28,7 @@ const state = {
   endDate: null,
   workspace: "all",
   includeSubagents: true,
+  projectSort: "credits",
   selectedDate: null,
   snapshot: null,
   snapshotNow: null,
@@ -68,6 +69,10 @@ const elements = {
   summaryDaysFoot: document.querySelector("#summary-days-foot"),
   summaryBurst: document.querySelector("#summary-burst"),
   summaryBurstFoot: document.querySelector("#summary-burst-foot"),
+  projectUsageSection: document.querySelector("#project-usage-section"),
+  projectUsageNote: document.querySelector("#project-usage-note"),
+  projectUsageList: document.querySelector("#project-usage-list"),
+  projectSortButtons: document.querySelectorAll(".project-sort-button"),
   efficiencyNote: document.querySelector("#efficiency-note"),
   efficiencyGrid: document.querySelector("#efficiency-grid"),
   modelMixList: document.querySelector("#model-mix-list"),
@@ -264,6 +269,10 @@ function formatWorkflowContext(item) {
     parts.push("Helper run");
   }
   return parts.join(" · ") || "Workflow";
+}
+
+function formatProjectName(project) {
+  return project.workspace_label || project.workspace_key || "Unknown project";
 }
 
 function renderIcons() {
@@ -1049,6 +1058,110 @@ function renderCostBreakdown(dashboard) {
   `;
 }
 
+function getSortedProjects(projects) {
+  return [...projects].sort((left, right) => {
+    if (state.projectSort === "tokens") {
+      return (right.total_tokens - left.total_tokens) ||
+        (right.estimated_cost_usd - left.estimated_cost_usd);
+    }
+
+    if (state.projectSort === "efficiency") {
+      return ((right.effective_cost_per_million || 0) - (left.effective_cost_per_million || 0)) ||
+        (right.estimated_cost_usd - left.estimated_cost_usd);
+    }
+
+    return (right.estimated_cost_usd - left.estimated_cost_usd) ||
+      (right.total_tokens - left.total_tokens);
+  });
+}
+
+function renderProjectUsage(dashboard) {
+  const projects = getSortedProjects(dashboard.project_usage || []);
+  const rangeLabel = dashboard.selection.label.toLowerCase();
+  const sortLabels = {
+    credits: "estimated credits",
+    tokens: "tokens",
+    efficiency: "credits per 1M tokens"
+  };
+
+  elements.projectUsageNote.textContent =
+    `Workspace projects in ${rangeLabel}, sorted by ${sortLabels[state.projectSort]}. Click a project to focus the workflow view.`;
+
+  for (const button of elements.projectSortButtons) {
+    const isActive = button.dataset.projectSort === state.projectSort;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
+
+  if (!projects.length) {
+    elements.projectUsageList.innerHTML = '<div class="empty-state">No project usage in this selection.</div>';
+    return;
+  }
+
+  elements.projectUsageList.innerHTML = "";
+  for (const project of projects) {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "project-usage-card";
+    card.dataset.workspaceKey = project.workspace_key;
+    const costSharePercent = formatPercent(project.cost_share || 0);
+    const tokenSharePercent = formatPercent(project.token_share || 0);
+    const tokenTrend = project.token_change_pct !== null
+      ? formatSignedPercent(project.token_change_pct)
+      : "No prior token baseline";
+    const costTrend = project.cost_change_pct !== null
+      ? formatSignedPercent(project.cost_change_pct)
+      : "No prior credit baseline";
+    const efficiency = project.effective_cost_per_million !== null
+      ? formatRate(project.effective_cost_per_million)
+      : "—";
+
+    card.innerHTML = `
+      <div class="project-usage-main">
+        <span class="project-title">${formatProjectName(project)}</span>
+        <span class="project-sub">${formatCountLabel(project.active_days || 0, "active day")} · ${formatCountLabel(project.workflows || 0, "workflow")}</span>
+      </div>
+      <div class="project-bar" aria-hidden="true">
+        <span style="width:${Math.max((project.cost_share || 0) * 100, project.cost_share > 0 ? 6 : 0)}%;"></span>
+      </div>
+      <div class="project-metric-grid">
+        <div>
+          <span>Tokens</span>
+          <strong>${formatCompactNumber(project.total_tokens)}</strong>
+          <small>${tokenSharePercent} of range</small>
+        </div>
+        <div>
+          <span>Est. credits</span>
+          <strong>${formatUsd(project.estimated_cost_usd)}</strong>
+          <small>${costSharePercent} of range</small>
+        </div>
+        <div>
+          <span>Credits / 1M</span>
+          <strong>${efficiency}</strong>
+          <small>Directional efficiency</small>
+        </div>
+        <div>
+          <span>Vs prior</span>
+          <strong>${tokenTrend}</strong>
+          <small>Credits ${costTrend}</small>
+        </div>
+      </div>
+    `;
+    card.title = `${formatProjectName(project)}: ${formatFullNumber(project.total_tokens)} tokens · ${formatUsd(project.estimated_cost_usd)} estimated credits`;
+    card.addEventListener("click", async () => {
+      if (!project.workspace_key) {
+        return;
+      }
+
+      state.workspace = project.workspace_key;
+      closeMobileFilters();
+      await loadDashboard();
+      elements.selectedRangeTitle.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    elements.projectUsageList.append(card);
+  }
+}
+
 function renderRankRows(container, rows, formatter) {
   if (!rows.length) {
     container.innerHTML = '<div class="empty-state">No usage in this selection.</div>';
@@ -1233,6 +1346,7 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     renderInsightCosts(dashboard);
     renderSummary(dashboard);
     renderWorkspaceFilter(dashboard);
+    renderProjectUsage(dashboard);
     renderHeatmap(dashboard);
     renderTrend(dashboard);
     renderEfficiencyPanel(dashboard);
@@ -1251,6 +1365,7 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.efficiencyGrid.innerHTML = message;
     elements.modelMixList.innerHTML = message;
     elements.insightList.innerHTML = message;
+    elements.projectUsageList.innerHTML = message;
     elements.threadTable.innerHTML = message;
     elements.daySessionList.innerHTML = message;
     elements.costToday.textContent = "-";
@@ -1331,6 +1446,15 @@ elements.subagentToggle.addEventListener("change", () => {
   closeMobileFilters();
   loadDashboard();
 });
+
+for (const button of elements.projectSortButtons) {
+  button.addEventListener("click", () => {
+    state.projectSort = button.dataset.projectSort || "credits";
+    if (state.dashboard) {
+      renderProjectUsage(state.dashboard);
+    }
+  });
+}
 
 elements.refreshButton.addEventListener("click", refreshDashboard);
 elements.mobileFiltersButton?.addEventListener("click", openMobileFilters);

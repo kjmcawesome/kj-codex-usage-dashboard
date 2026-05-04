@@ -572,6 +572,70 @@ function shareOfTotal(total, value) {
   return value / total;
 }
 
+function createWorkspaceAggregate(session) {
+  return {
+    workspace_key: session.workspace_key,
+    workspace_label: session.workspace_label,
+    active_days: new Set(),
+    sessions: new Set(),
+    ...emptyTotals()
+  };
+}
+
+function getWorkspaceAggregate(workspaceMap, session) {
+  if (!workspaceMap.has(session.workspace_key)) {
+    workspaceMap.set(session.workspace_key, createWorkspaceAggregate(session));
+  }
+
+  return workspaceMap.get(session.workspace_key);
+}
+
+function serializeProjectUsage({
+  workspaceMap,
+  previousWorkspaceMap,
+  summary,
+  range
+}) {
+  const hasComparableRange = range.requestedDays !== "all";
+
+  return [...workspaceMap.values()]
+    .map((entry) => {
+      const previousEntry = previousWorkspaceMap.get(entry.workspace_key) || emptyTotals();
+      return {
+        workspace_key: entry.workspace_key,
+        workspace_label: entry.workspace_label,
+        total_tokens: entry.total_tokens,
+        input_tokens: entry.input_tokens,
+        cached_input_tokens: entry.cached_input_tokens,
+        output_tokens: entry.output_tokens,
+        reasoning_output_tokens: entry.reasoning_output_tokens,
+        estimated_cost_usd: entry.estimated_cost_usd,
+        unpriced_total_tokens: entry.unpriced_total_tokens,
+        active_days: entry.active_days.size,
+        workflows: entry.sessions.size,
+        effective_cost_per_million: calculateCostPerMillion(
+          entry.estimated_cost_usd,
+          entry.total_tokens
+        ),
+        token_share: shareOfTotal(summary.total_tokens, entry.total_tokens),
+        cost_share: shareOfTotal(summary.estimated_cost_usd, entry.estimated_cost_usd),
+        previous_total_tokens: hasComparableRange ? previousEntry.total_tokens || 0 : 0,
+        previous_estimated_cost_usd: hasComparableRange ? previousEntry.estimated_cost_usd || 0 : 0,
+        token_change_pct: hasComparableRange
+          ? calculatePctChange(entry.total_tokens || 0, previousEntry.total_tokens || 0)
+          : null,
+        cost_change_pct: hasComparableRange
+          ? calculatePctChange(entry.estimated_cost_usd || 0, previousEntry.estimated_cost_usd || 0)
+          : null
+      };
+    })
+    .sort((left, right) =>
+      (right.estimated_cost_usd - left.estimated_cost_usd) ||
+      (right.total_tokens - left.total_tokens)
+    )
+    .slice(0, 8);
+}
+
 function buildEfficiencyMetrics(summary, dayMap, habitMetrics, costBreakdownByModel) {
   let peakDay = null;
 
@@ -719,8 +783,18 @@ function filterContributions(index, options) {
   const currentWorkRangeEnd = new Date(now);
   const workspace = options.workspace || "all";
   const includeSubagents = options.includeSubagents ?? true;
+  const hasComparableRange = range.requestedDays !== "all";
+  const rangeLengthDays = hasComparableRange
+    ? countRangeDays(range.startDate, range.endDate)
+    : null;
+  const previousRangeEndDate = hasComparableRange ? addDays(range.startDate, -1) : null;
+  const previousRangeStartDate = hasComparableRange
+    ? addDays(previousRangeEndDate, -(rangeLengthDays - 1))
+    : null;
   const dayMap = new Map();
   const habitDayMap = new Map();
+  const workspaceMap = new Map();
+  const previousWorkspaceMap = new Map();
   const sessionMap = new Map();
   const modelCostMap = new Map();
   const currentWorkSessionMap = new Map();
@@ -779,6 +853,17 @@ function filterContributions(index, options) {
         if (!currentWorkTotals.last_active_at || event.timestamp > currentWorkTotals.last_active_at) {
           currentWorkTotals.last_active_at = event.timestamp;
         }
+      }
+
+      if (
+        hasComparableRange &&
+        eventDate >= previousRangeStartDate &&
+        eventDate <= previousRangeEndDate
+      ) {
+        const previousWorkspaceTotals = getWorkspaceAggregate(previousWorkspaceMap, session);
+        addTotals(previousWorkspaceTotals, pricedEvent);
+        previousWorkspaceTotals.active_days.add(event.date);
+        previousWorkspaceTotals.sessions.add(session.session_id);
       }
 
       if (eventDate < range.startDate || eventDate > range.endDate) {
@@ -843,6 +928,11 @@ function filterContributions(index, options) {
         (sessionTotals.model_totals.get(modelFamily) || 0) + (pricedEvent.total_tokens || 0)
       );
 
+      const workspaceTotals = getWorkspaceAggregate(workspaceMap, session);
+      addTotals(workspaceTotals, pricedEvent);
+      workspaceTotals.active_days.add(event.date);
+      workspaceTotals.sessions.add(session.session_id);
+
       addTotals(summary, pricedEvent);
     }
   }
@@ -865,6 +955,13 @@ function filterContributions(index, options) {
       ? sessionTotals.input_tokens / sessionTotals.output_tokens
       : null;
   }
+
+  const projectUsage = serializeProjectUsage({
+    workspaceMap,
+    previousWorkspaceMap,
+    summary,
+    range
+  });
 
   const threads = [...sessionMap.values()]
     .sort((left, right) =>
@@ -991,6 +1088,7 @@ function filterContributions(index, options) {
       hours: CURRENT_WORK_WINDOW_HOURS
     },
     current_work_sessions: currentWorkSessions,
+    project_usage: projectUsage,
     top_threads: threads,
     cost_breakdown_by_model: costBreakdownByModel,
     trend_days: buildTrendDays(habitDayMap, now),
@@ -1049,6 +1147,7 @@ export function buildDashboardPayload(index, options = {}) {
     heatmap_scale: filtered.heatmap_scale,
     current_work_range: filtered.current_work_range,
     current_work_sessions: filtered.current_work_sessions,
+    project_usage: filtered.project_usage,
     trend_days: filtered.trend_days,
     efficiency_metrics: filtered.efficiency_metrics,
     range_comparison: filtered.range_comparison,

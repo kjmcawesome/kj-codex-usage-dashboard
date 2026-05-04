@@ -151,6 +151,24 @@
         </section>
       </section>
 
+      <section class="panel project-usage-panel" id="project-usage-section">
+        <div class="panel-head project-usage-head">
+          <div>
+            <p class="panel-eyebrow">Project usage</p>
+            <h2>Where tokens land</h2>
+            <p class="ranking-note" id="project-usage-note">
+              Workspace-level token and estimated credit drivers for the selected range.
+            </p>
+          </div>
+          <div class="project-sort-controls" aria-label="Project sort">
+            <button class="project-sort-button is-active" type="button" data-project-sort="credits">Credits</button>
+            <button class="project-sort-button" type="button" data-project-sort="tokens">Tokens</button>
+            <button class="project-sort-button" type="button" data-project-sort="efficiency">Efficiency</button>
+          </div>
+        </div>
+        <div id="project-usage-list" class="project-usage-list"></div>
+      </section>
+
       <section class="panel selected-range-panel">
         <div class="panel-head">
           <div>
@@ -262,6 +280,7 @@
             <div>
               <p class="panel-eyebrow">Across selected range</p>
               <h2>Top workflows</h2>
+              <p class="ranking-note">Workflow detail for the active project/range filters.</p>
             </div>
           </div>
           <div id="thread-table" class="rank-table"></div>

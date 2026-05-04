@@ -633,6 +633,44 @@ select {
   gap: 12px;
 }
 
+.project-usage-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.project-usage-head {
+  align-items: center;
+}
+
+.project-sort-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.project-sort-button {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-muted);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.project-sort-button:hover,
+.project-sort-button.is-active {
+  color: #f5f7ff;
+  border-color: rgba(132, 145, 255, 0.46);
+  background: rgba(106, 114, 255, 0.2);
+}
+
 .momentum-panel-head {
   margin-bottom: 0;
   justify-content: space-between;
@@ -674,10 +712,11 @@ select {
 
 .cost-window-card,
 .habit-stat,
-.trend-strip,
-.rank-row,
-.session-card,
-.efficiency-stat,
+  .trend-strip,
+  .rank-row,
+  .project-usage-card,
+  .session-card,
+  .efficiency-stat,
 .mix-row,
 .insight-card,
 .mini-stat,
@@ -705,6 +744,7 @@ select {
 .habit-stat:hover,
 .trend-strip:hover,
 .rank-row:hover,
+.project-usage-card:hover,
 .session-card:hover,
 .efficiency-stat:hover,
 .mix-row:hover,
@@ -1164,9 +1204,95 @@ select {
 }
 
 .rank-table,
+.project-usage-list,
 .session-list {
   display: grid;
   gap: 8px;
+}
+
+.project-usage-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.project-usage-card {
+  border-radius: var(--radius-sm);
+  padding: 13px 14px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  gap: 11px;
+  min-width: 0;
+}
+
+.project-usage-card:focus-visible {
+  outline: 2px solid rgba(150, 166, 255, 0.52);
+  outline-offset: 3px;
+}
+
+.project-usage-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.project-title {
+  font-weight: 800;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-sub {
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.project-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.project-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5e7cff, #8b5cf6);
+  box-shadow: 0 0 18px rgba(111, 111, 255, 0.22);
+}
+
+.project-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.project-metric-grid div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.project-metric-grid span,
+.project-metric-grid small {
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.project-metric-grid strong {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 0.9rem;
+  color: #dfe5ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rank-row,
@@ -1537,6 +1663,7 @@ select {
 
 @media (max-width: 1180px) {
   .hero-top,
+  .project-usage-list,
   .lower-grid {
     grid-template-columns: 1fr;
   }
@@ -1597,6 +1724,7 @@ select {
   }
 
   .hero-progress-head,
+  .project-usage-head,
   .momentum-panel-head {
     flex-direction: column;
     align-items: flex-start;
@@ -1791,6 +1919,23 @@ select {
   .rank-row {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .project-sort-controls {
+    justify-content: flex-start;
+  }
+
+  .project-usage-main,
+  .project-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-usage-main {
+    display: grid;
+  }
+
+  .project-sub {
+    white-space: normal;
   }
 
   .rank-metrics {
