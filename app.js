@@ -11,7 +11,11 @@ const RANGE_OPTIONS = [
 ];
 
 const DEFAULT_DAYS = 30;
-const WEEKDAY_LABELS = ["", "", "Mon", "", "Wed", "", "Fri", ""];
+const WEEKDAY_LABELS = [
+  { label: "Mon", row: 3 },
+  { label: "Wed", row: 5 },
+  { label: "Fri", row: 7 }
+];
 const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
 const REFRESH_CHECK_LABEL = "Check for updates";
 const REFRESH_FORCE_LABEL = "Force rebuild";
@@ -822,10 +826,11 @@ function renderWorkspaceFilter(dashboard) {
 function renderWeekdayLabels() {
   elements.heatmapWeekdays.innerHTML = "";
 
-  for (const label of WEEKDAY_LABELS) {
+  for (const { label, row } of WEEKDAY_LABELS) {
     const span = document.createElement("span");
     span.className = "weekday-label";
     span.textContent = label;
+    span.style.gridRow = String(row);
     elements.heatmapWeekdays.append(span);
   }
 }
