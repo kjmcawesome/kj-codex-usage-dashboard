@@ -22,7 +22,7 @@
             <p class="eyebrow">Your usage</p>
             <h1>KJ Codex Usage Dashboard</h1>
             <p class="hero-note">
-              Token usage, estimated cost, and today’s momentum.
+              Token usage, estimated credits, and today's momentum.
             </p>
             <section class="hero-progress-card" aria-labelledby="hero-progress-label">
               <div class="hero-progress-head">
@@ -68,14 +68,14 @@
             <span id="today-status-pill" class="status-pill">Checking today</span>
             <div class="momentum-status-copy">
               <strong id="today-status-headline">Loading today’s momentum...</strong>
-              <span id="today-status-note">Pulling current token usage and estimated cost.</span>
+              <span id="today-status-note">Pulling current token usage and estimated credits.</span>
             </div>
           </div>
         </div>
 
         <div class="momentum-ribbon">
           <article class="cost-window-card">
-            <span class="cost-window-label">Today cost</span>
+            <span class="cost-window-label">Today credits</span>
             <strong id="cost-today">-</strong>
             <span id="cost-today-foot" class="cost-window-foot">-</span>
           </article>
@@ -142,7 +142,7 @@
                 <strong id="trend-total-tokens">-</strong>
               </div>
               <div class="trend-strip-stat">
-                <span class="trend-strip-label">Est. cost</span>
+                <span class="trend-strip-label">Est. credits</span>
                 <strong id="trend-total-cost">-</strong>
               </div>
             </div>
@@ -224,13 +224,13 @@
           </article>
 
           <article class="summary-card">
-            <span class="card-label">Estimated cost</span>
+            <span class="card-label">Estimated credits</span>
             <strong class="card-value" id="summary-cost">-</strong>
             <span class="card-foot" id="summary-cost-foot">Directional planning lens</span>
           </article>
 
           <article class="summary-card">
-            <span class="card-label">Eff. cost / 1M</span>
+            <span class="card-label">Credits / 1M</span>
             <strong class="card-value" id="summary-days">-</strong>
             <span class="card-foot" id="summary-days-foot">Selected-range efficiency</span>
           </article>
@@ -249,7 +249,7 @@
             <div>
               <p class="panel-eyebrow">Coaching view</p>
               <h2>Efficiency signals</h2>
-              <p class="ranking-note" id="efficiency-note">Transparent cost and usage checks for the current selection.</p>
+              <p class="ranking-note" id="efficiency-note">Transparent credit and usage checks for the current selection.</p>
             </div>
           </div>
           <div id="efficiency-grid" class="efficiency-grid"></div>
@@ -287,7 +287,7 @@
               <strong id="day-total">-</strong>
             </div>
             <div class="mini-stat">
-              <span>Estimated cost</span>
+              <span>Estimated credits</span>
               <strong id="day-cost">-</strong>
             </div>
             <div class="mini-stat">
@@ -317,7 +317,7 @@
               Workflow rows below show what drove the selected day.
             </p>
             <p class="day-explainer" id="day-cost-note">
-              Estimated cost uses published OpenAI API pricing as a directional planning lens.
+              Estimated credits use the Codex token-based rate card as a directional planning lens.
             </p>
             <div id="day-session-list" class="session-list"></div>
           </div>
@@ -328,13 +328,13 @@
         <summary class="budget-toggle">
           <div>
             <p class="panel-eyebrow">Budget details</p>
-            <h2>Estimated cost breakdown</h2>
-            <p class="ranking-note">Model-level pricing detail for the planning lens behind this snapshot.</p>
+            <h2>Estimated credit breakdown</h2>
+            <p class="ranking-note">Model-level Codex credit detail for the planning lens behind this snapshot.</p>
           </div>
         </summary>
         <div class="budget-details-body">
           <p class="section-note" id="cost-note">
-            Estimated cost uses published OpenAI API pricing as a directional planning lens.
+            Estimated credits use the Codex token-based rate card as a directional planning lens.
           </p>
           <div class="cost-table-shell">
             <table class="cost-table">
@@ -348,7 +348,7 @@
                   <th>Input rate</th>
                   <th>Reused rate</th>
                   <th>Output rate</th>
-                  <th>Est. cost</th>
+                  <th>Est. credits</th>
                   <th>Share</th>
                 </tr>
               </thead>

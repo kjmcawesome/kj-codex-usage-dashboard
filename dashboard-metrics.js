@@ -1,41 +1,52 @@
-const RATE_CARD_PUBLISHED_AT = "2026-03-25";
-const RATE_CARD_MODE = "standard";
+const RATE_CARD_PUBLISHED_AT = "2026-05-02";
+const RATE_CARD_MODE = "codex_credits";
 const CURRENT_WORK_WINDOW_HOURS = 72;
 const PROXY_PRICED_MODEL = "gpt-5.4 estimate";
+const MODEL_ALIASES = Object.freeze({
+  arcanine: "gpt-5.5",
+  "codex-auto-review": "gpt-5.3-codex"
+});
 const RATE_CARD = Object.freeze({
+  "gpt-5.5": {
+    input: 125.0,
+    cached_input: 12.5,
+    output: 750.0
+  },
+  "gpt-5.2": {
+    input: 43.75,
+    cached_input: 4.375,
+    output: 350.0
+  },
   "gpt-5.2-codex": {
-    input: 1.75,
-    cached_input: 0.175,
-    output: 14.0
+    input: 43.75,
+    cached_input: 4.375,
+    output: 350.0
   },
   "gpt-5.3-codex": {
-    input: 1.75,
-    cached_input: 0.175,
-    output: 14.0
+    input: 43.75,
+    cached_input: 4.375,
+    output: 350.0
   },
   "gpt-5.4": {
-    input: 2.5,
-    cached_input: 0.25,
-    output: 15.0
+    input: 62.5,
+    cached_input: 6.25,
+    output: 375.0
+  },
+  "gpt-5.4-mini": {
+    input: 18.75,
+    cached_input: 1.875,
+    output: 113.0
   },
   [PROXY_PRICED_MODEL]: {
-    input: 2.5,
-    cached_input: 0.25,
-    output: 15.0
+    input: 62.5,
+    cached_input: 6.25,
+    output: 375.0
   }
 });
 const RATE_CARD_SOURCES = Object.freeze([
   {
-    label: "OpenAI API pricing",
-    url: "https://developers.openai.com/api/docs/pricing"
-  },
-  {
-    label: "OpenAI API pricing overview",
-    url: "https://openai.com/api/pricing/"
-  },
-  {
-    label: "GPT-5.2-codex model pricing",
-    url: "https://developers.openai.com/api/docs/models/gpt-5.2-codex"
+    label: "Codex rate card",
+    url: "https://help.openai.com/en/articles/20001106-codex-rate-card"
   }
 ]);
 
@@ -93,12 +104,27 @@ function addTotals(target, source) {
 }
 
 function isSnapshotAlias(model, baseModel) {
-  return model === baseModel || model.startsWith(`${baseModel}-20`);
+  return model === baseModel
+    || model.startsWith(`${baseModel}-20`)
+    || model.startsWith(`${baseModel}-`);
 }
 
 function canonicalizePricedModel(model) {
   if (!model) {
     return null;
+  }
+
+  const explicitAlias = MODEL_ALIASES[model];
+  if (explicitAlias) {
+    return explicitAlias;
+  }
+
+  if (isSnapshotAlias(model, "gpt-5.5")) {
+    return "gpt-5.5";
+  }
+
+  if (isSnapshotAlias(model, "gpt-5.4-mini")) {
+    return "gpt-5.4-mini";
   }
 
   if (isSnapshotAlias(model, "gpt-5.4")) {
@@ -111,6 +137,10 @@ function canonicalizePricedModel(model) {
 
   if (isSnapshotAlias(model, "gpt-5.2-codex")) {
     return "gpt-5.2-codex";
+  }
+
+  if (isSnapshotAlias(model, "gpt-5.2")) {
+    return "gpt-5.2";
   }
 
   return null;
@@ -153,10 +183,10 @@ function buildRateCardPayload() {
 
 function buildCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct public-rate entry.`;
+    return `Estimated credits use the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not billed spend.`;
+  return `Estimated credits use the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend.`;
 }
 
 function formatDisplayDate(date) {
@@ -621,7 +651,7 @@ function buildInsights(efficiencyMetrics) {
   ) {
     insights.push({
       title: "Spend is rising faster than usage",
-      body: "Month-to-date cost is growing faster than tokens, which usually means a pricier model mix or more output-heavy sessions."
+      body: "Month-to-date credit use is growing faster than tokens, which usually means a pricier model mix or more output-heavy sessions."
     });
   }
 
@@ -637,8 +667,8 @@ function buildInsights(efficiencyMetrics) {
     efficiencyMetrics.top_model.share_of_total_cost >= 0.65
   ) {
     insights.push({
-      title: "Cost is concentrated in one model",
-      body: `${efficiencyMetrics.top_model.model} drove ${Math.round(efficiencyMetrics.top_model.share_of_total_cost * 100)}% of estimated cost on ${Math.round(efficiencyMetrics.top_model.share_of_total_tokens * 100)}% of tokens.`
+      title: "Credits are concentrated in one model",
+      body: `${efficiencyMetrics.top_model.model} drove ${Math.round(efficiencyMetrics.top_model.share_of_total_cost * 100)}% of estimated credits on ${Math.round(efficiencyMetrics.top_model.share_of_total_tokens * 100)}% of tokens.`
     });
   }
 
@@ -652,7 +682,7 @@ function buildInsights(efficiencyMetrics) {
   if (!insights.length) {
     insights.push({
       title: "Usage looks steady",
-      body: "No major efficiency or cost anomalies stand out in the current selection."
+      body: "No major efficiency or credit anomalies stand out in the current selection."
     });
   }
 
