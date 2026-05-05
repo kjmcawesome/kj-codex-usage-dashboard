@@ -183,10 +183,10 @@ function buildRateCardPayload() {
 
 function buildCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated credits use the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct rate-card entry.`;
+    return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return `Estimated credits use the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend.`;
+  return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend.`;
 }
 
 function formatDisplayDate(date) {
@@ -715,7 +715,7 @@ function buildInsights(efficiencyMetrics) {
   ) {
     insights.push({
       title: "Spend is rising faster than usage",
-      body: "Month-to-date credit use is growing faster than tokens, which usually means a pricier model mix or more output-heavy sessions."
+      body: "Month-to-date estimated cost is growing faster than tokens, which usually means a pricier model mix or more output-heavy sessions."
     });
   }
 
@@ -731,8 +731,8 @@ function buildInsights(efficiencyMetrics) {
     efficiencyMetrics.top_model.share_of_total_cost >= 0.65
   ) {
     insights.push({
-      title: "Credits are concentrated in one model",
-      body: `${efficiencyMetrics.top_model.model} drove ${Math.round(efficiencyMetrics.top_model.share_of_total_cost * 100)}% of estimated credits on ${Math.round(efficiencyMetrics.top_model.share_of_total_tokens * 100)}% of tokens.`
+      title: "Cost is concentrated in one model",
+      body: `${efficiencyMetrics.top_model.model} drove ${Math.round(efficiencyMetrics.top_model.share_of_total_cost * 100)}% of estimated cost on ${Math.round(efficiencyMetrics.top_model.share_of_total_tokens * 100)}% of tokens.`
     });
   }
 
@@ -746,7 +746,7 @@ function buildInsights(efficiencyMetrics) {
   if (!insights.length) {
     insights.push({
       title: "Usage looks steady",
-      body: "No major efficiency or credit anomalies stand out in the current selection."
+      body: "No major efficiency or cost anomalies stand out in the current selection."
     });
   }
 

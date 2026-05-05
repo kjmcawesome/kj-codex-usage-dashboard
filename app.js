@@ -236,10 +236,10 @@ function formatTrendDayNumber(value) {
 
 function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated credits use the Codex token-based rate card as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
+    return `Estimated cost uses the Codex token-based rate card as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return "Estimated credits use the Codex token-based rate card as a directional planning lens, not billed spend.";
+  return "Estimated cost uses the Codex token-based rate card as a directional planning lens, not billed spend.";
 }
 
 function todayDate(now = new Date()) {
@@ -712,7 +712,7 @@ function renderSummary(dashboard) {
     ? `${formatFullNumber(dashboard.summary.total_tokens)} tokens vs ${formatFullNumber(rangeComparison.previous_total_tokens)} in ${rangeComparison.label}`
     : rangeComparison.label;
   elements.summaryBurstFoot.textContent = rangeComparison.available
-    ? `${rangeComparison.cost_change_pct !== null ? `Credits ${formatSignedPercent(rangeComparison.cost_change_pct)}` : "No prior credit comparison"} · ${rangeComparison.label}`
+    ? `${rangeComparison.cost_change_pct !== null ? `Cost ${formatSignedPercent(rangeComparison.cost_change_pct)}` : "No prior cost comparison"} · ${rangeComparison.label}`
     : rangeComparison.label;
   elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
   updateRangeSelectionLabel(dashboard.selection.label);
@@ -728,7 +728,7 @@ function renderEfficiencyPanel(dashboard) {
 
   elements.efficiencyGrid.innerHTML = `
     <div class="efficiency-stat">
-      <span class="efficiency-stat-label">Credits / 1M</span>
+      <span class="efficiency-stat-label">Cost / 1M</span>
       <strong>${metrics.effective_cost_per_million !== null ? formatRate(metrics.effective_cost_per_million) : "—"}</strong>
       <span class="efficiency-stat-foot">Selected range</span>
     </div>
@@ -766,7 +766,7 @@ function renderEfficiencyPanel(dashboard) {
         const costShare = totalCost > 0 ? row.share_of_total_cost : 0;
         const tokenShare = row.share_of_total_tokens || 0;
         return `
-          <div class="mix-row" title="${row.model}: ${formatUsd(row.estimated_cost_usd)} estimated credits · ${formatFullNumber(row.total_tokens)} tokens · ${formatRate(row.effective_cost_per_million || 0)}">
+          <div class="mix-row" title="${row.model}: ${formatUsd(row.estimated_cost_usd)} estimated cost · ${formatFullNumber(row.total_tokens)} tokens · ${formatRate(row.effective_cost_per_million || 0)}">
             <div class="mix-copy">
               <span class="mix-label">${row.model}</span>
               <span class="mix-sub">${formatUsd(row.estimated_cost_usd)} · ${formatRate(row.effective_cost_per_million || 0)}</span>
@@ -780,7 +780,7 @@ function renderEfficiencyPanel(dashboard) {
                 <span class="mix-track-value">${formatPercent(tokenShare)}</span>
               </div>
               <div class="mix-track">
-                <span class="mix-track-label">Credits</span>
+                <span class="mix-track-label">Cost</span>
                 <div class="mix-bar-shell">
                   <span class="mix-bar" style="width:${Math.max(costShare * 100, costShare > 0 ? 6 : 0)}%; background:${color}; opacity:0.78;"></span>
                 </div>
@@ -905,10 +905,10 @@ function renderHeatmap(dashboard) {
     if (state.selectedDate === day.date) {
       button.classList.add("is-selected");
     }
-    button.title = `${formatDate(day.date)}\n${formatFullNumber(day.total_tokens)} total tokens\n${formatUsd(day.estimated_cost_usd)} estimated credits`;
+    button.title = `${formatDate(day.date)}\n${formatFullNumber(day.total_tokens)} total tokens\n${formatUsd(day.estimated_cost_usd)} estimated cost`;
     button.setAttribute(
       "aria-label",
-      `${formatDate(day.date)}: ${formatFullNumber(day.total_tokens)} total tokens and ${formatUsd(day.estimated_cost_usd)} estimated credits`
+      `${formatDate(day.date)}: ${formatFullNumber(day.total_tokens)} total tokens and ${formatUsd(day.estimated_cost_usd)} estimated cost`
     );
     button.addEventListener("click", () => {
       if (!day.in_range) {
@@ -980,7 +980,7 @@ function renderTrend(dashboard) {
       isPeak ? "is-peak" : "",
       isToday ? "is-today" : ""
     ].filter(Boolean).join(" ");
-    const hoverTitle = `${formatTrendDayLabel(day.date)}: ${formatFullNumber(totalTokens)} tokens · ${formatUsd(estimatedCost)} estimated credits`;
+    const hoverTitle = `${formatTrendDayLabel(day.date)}: ${formatFullNumber(totalTokens)} tokens · ${formatUsd(estimatedCost)} estimated cost`;
 
     return `
       <button
@@ -1084,9 +1084,9 @@ function renderProjectUsage(dashboard) {
   const projects = getSortedProjects(dashboard.project_usage || []);
   const rangeLabel = dashboard.selection.label.toLowerCase();
   const sortLabels = {
-    credits: "estimated credits",
+    credits: "estimated cost",
     tokens: "tokens",
-    efficiency: "credits per 1M tokens"
+    efficiency: "cost per 1M tokens"
   };
 
   elements.projectUsageNote.textContent =
@@ -1116,7 +1116,7 @@ function renderProjectUsage(dashboard) {
       : "No prior token baseline";
     const costTrend = project.cost_change_pct !== null
       ? formatSignedPercent(project.cost_change_pct)
-      : "No prior credit baseline";
+      : "No prior cost baseline";
     const efficiency = project.effective_cost_per_million !== null
       ? formatRate(project.effective_cost_per_million)
       : "—";
@@ -1136,23 +1136,23 @@ function renderProjectUsage(dashboard) {
           <small>${tokenSharePercent} of range</small>
         </div>
         <div>
-          <span>Est. credits</span>
+          <span>Est. cost</span>
           <strong>${formatUsd(project.estimated_cost_usd)}</strong>
           <small>${costSharePercent} of range</small>
         </div>
         <div>
-          <span>Credits / 1M</span>
+          <span>Cost / 1M</span>
           <strong>${efficiency}</strong>
           <small>Directional efficiency</small>
         </div>
         <div>
           <span>Vs prior</span>
           <strong>${tokenTrend}</strong>
-          <small>Credits ${costTrend}</small>
+          <small>Cost ${costTrend}</small>
         </div>
       </div>
     `;
-    card.title = `${formatProjectName(project)}: ${formatFullNumber(project.total_tokens)} tokens · ${formatUsd(project.estimated_cost_usd)} estimated credits`;
+    card.title = `${formatProjectName(project)}: ${formatFullNumber(project.total_tokens)} tokens · ${formatUsd(project.estimated_cost_usd)} estimated cost`;
     card.addEventListener("click", async () => {
       if (!project.workspace_key) {
         return;
@@ -1190,10 +1190,10 @@ function renderTopThreads(dashboard) {
       </div>
       <div class="rank-metrics">
         <span class="rank-value">${formatUsd(thread.estimated_cost_usd)}</span>
-        <span class="rank-value-sub">${formatCompactNumber(thread.total_tokens)} tokens · ${formatPercent(thread.cost_share || 0)} credit share</span>
+        <span class="rank-value-sub">${formatCompactNumber(thread.total_tokens)} tokens · ${formatPercent(thread.cost_share || 0)} cost share</span>
       </div>
     `;
-    row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated credits · ${thread.dominant_model_family || "Other"} dominant model`;
+    row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated cost · ${thread.dominant_model_family || "Other"} dominant model`;
     return row;
   });
 }
@@ -1237,9 +1237,9 @@ function renderDayPanel(dayPayload) {
       </div>
       <div class="session-metrics">
         <div class="metric-pair"><span>Total</span><strong>${formatFullNumber(session.total_tokens)}</strong></div>
-        <div class="metric-pair"><span>Est. credits</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
+        <div class="metric-pair"><span>Est. cost</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
         <div class="metric-pair"><span>Token share</span><strong>${formatPercent(session.token_share)}</strong></div>
-        <div class="metric-pair"><span>Credit share</span><strong>${formatPercent(session.cost_share)}</strong></div>
+        <div class="metric-pair"><span>Cost share</span><strong>${formatPercent(session.cost_share)}</strong></div>
         <div class="metric-pair"><span>Dominant model</span><strong>${session.dominant_model_family || "Other"}</strong></div>
         <div class="metric-pair"><span>Input / output</span><strong>${session.input_output_ratio !== null ? `${session.input_output_ratio.toFixed(1)}x` : "—"}</strong></div>
         <div class="metric-pair"><span>Input</span><strong>${formatFullNumber(session.input_tokens)}</strong></div>
