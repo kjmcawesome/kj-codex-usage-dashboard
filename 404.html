@@ -157,13 +157,12 @@
             <p class="panel-eyebrow">Project usage</p>
             <h2>Where tokens land</h2>
             <p class="ranking-note" id="project-usage-note">
-              Workspace-level token and estimated cost drivers for the selected range.
+              Projects ranked by token usage and estimated cost.
             </p>
           </div>
           <div class="project-sort-controls" aria-label="Project sort">
             <button class="project-sort-button is-active" type="button" data-project-sort="credits">Cost</button>
             <button class="project-sort-button" type="button" data-project-sort="tokens">Tokens</button>
-            <button class="project-sort-button" type="button" data-project-sort="efficiency">Efficiency</button>
           </div>
         </div>
         <div id="project-usage-list" class="project-usage-list"></div>
@@ -234,7 +233,7 @@
           </div>
         </div>
 
-        <section class="summary-grid range-summary-grid">
+        <section class="summary-grid range-summary-grid is-hidden-by-default" aria-hidden="true">
           <article class="summary-card">
             <span class="card-label">Usage</span>
             <strong class="card-value" id="summary-total">-</strong>
@@ -262,7 +261,7 @@
       </section>
 
       <section class="lower-grid">
-        <article class="panel ranking-panel">
+        <article class="panel ranking-panel is-hidden-by-default" aria-hidden="true">
           <div class="panel-head">
             <div>
               <p class="panel-eyebrow">Coaching view</p>

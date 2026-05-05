@@ -1070,11 +1070,6 @@ function getSortedProjects(projects) {
         (right.estimated_cost_usd - left.estimated_cost_usd);
     }
 
-    if (state.projectSort === "efficiency") {
-      return ((right.effective_cost_per_million || 0) - (left.effective_cost_per_million || 0)) ||
-        (right.estimated_cost_usd - left.estimated_cost_usd);
-    }
-
     return (right.estimated_cost_usd - left.estimated_cost_usd) ||
       (right.total_tokens - left.total_tokens);
   });
@@ -1085,12 +1080,11 @@ function renderProjectUsage(dashboard) {
   const rangeLabel = dashboard.selection.label.toLowerCase();
   const sortLabels = {
     credits: "estimated cost",
-    tokens: "tokens",
-    efficiency: "cost per 1M tokens"
+    tokens: "tokens"
   };
 
   elements.projectUsageNote.textContent =
-    `Workspace projects in ${rangeLabel}, sorted by ${sortLabels[state.projectSort]}. Click a project to focus the workflow view.`;
+    `Workspace projects in ${rangeLabel}, sorted by ${sortLabels[state.projectSort] || "estimated cost"}.`;
 
   for (const button of elements.projectSortButtons) {
     const isActive = button.dataset.projectSort === state.projectSort;
@@ -1111,15 +1105,6 @@ function renderProjectUsage(dashboard) {
     card.dataset.workspaceKey = project.workspace_key;
     const costSharePercent = formatPercent(project.cost_share || 0);
     const tokenSharePercent = formatPercent(project.token_share || 0);
-    const tokenTrend = project.token_change_pct !== null
-      ? formatSignedPercent(project.token_change_pct)
-      : "No prior token baseline";
-    const costTrend = project.cost_change_pct !== null
-      ? formatSignedPercent(project.cost_change_pct)
-      : "No prior cost baseline";
-    const efficiency = project.effective_cost_per_million !== null
-      ? formatRate(project.effective_cost_per_million)
-      : "—";
 
     card.innerHTML = `
       <div class="project-usage-main">
@@ -1140,16 +1125,6 @@ function renderProjectUsage(dashboard) {
           <strong>${formatUsd(project.estimated_cost_usd)}</strong>
           <small>${costSharePercent} of range</small>
         </div>
-        <div>
-          <span>Cost / 1M</span>
-          <strong>${efficiency}</strong>
-          <small>Directional efficiency</small>
-        </div>
-        <div>
-          <span>Vs prior</span>
-          <strong>${tokenTrend}</strong>
-          <small>Cost ${costTrend}</small>
-        </div>
       </div>
     `;
     card.title = `${formatProjectName(project)}: ${formatFullNumber(project.total_tokens)} tokens · ${formatUsd(project.estimated_cost_usd)} estimated cost`;
@@ -1161,7 +1136,7 @@ function renderProjectUsage(dashboard) {
       state.workspace = project.workspace_key;
       closeMobileFilters();
       await loadDashboard();
-      elements.selectedRangeTitle.scrollIntoView({ behavior: "smooth", block: "start" });
+      elements.threadTable.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     elements.projectUsageList.append(card);
   }
