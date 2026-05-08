@@ -4,6 +4,7 @@ import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createUsageService } from "./lib/usage-data.js";
+import { exportStaticSite } from "./scripts/export-static-site.js";
 
 const port = Number(process.env.PORT || 3184);
 
@@ -127,7 +128,14 @@ export function createAppServer({
       }
 
       if (req.method === "POST" && url.pathname === "/api/refresh") {
-        sendJson(res, req.method, 200, await usageService.refresh());
+        const result = await exportStaticSite();
+        sendJson(res, req.method, 200, {
+          ok: true,
+          generated_at: result.generated_at,
+          session_count: result.session_count,
+          workspace_count: result.workspace_count,
+          published: false
+        });
         return;
       }
 

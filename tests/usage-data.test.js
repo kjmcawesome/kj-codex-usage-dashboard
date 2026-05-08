@@ -151,8 +151,8 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.summary.cached_input_tokens, 100);
   assert.equal(allSessions.summary.reasoning_output_tokens, 34);
   assert.equal(allSessions.summary.unpriced_total_tokens, 50);
-  assertClose(allSessions.summary.estimated_cost_usd, 0.0032305);
-  assertClose(noSubagents.summary.estimated_cost_usd, 0.00278175);
+  assertClose(allSessions.summary.estimated_cost_usd, 0.09060625000000001);
+  assertClose(noSubagents.summary.estimated_cost_usd, 0.07938750000000001);
   assert.equal(allSessions.cost_mode, "estimated");
   assert.equal(allSessions.selection.mode, "preset");
   assert.equal(allSessions.selection.days, 365);
@@ -173,11 +173,11 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.habit_metrics.today_tokens, 0);
   assertClose(allSessions.habit_metrics.today_estimated_cost_usd, 0);
   assert.equal(allSessions.habit_metrics.last_14_days_tokens, 650);
-  assertClose(allSessions.habit_metrics.last_14_days_estimated_cost_usd, 0.0032305);
+  assertClose(allSessions.habit_metrics.last_14_days_estimated_cost_usd, 0.09060625000000001);
   assert.equal(allSessions.habit_metrics.last_7_days_tokens, 650);
   assert.equal(allSessions.habit_metrics.previous_7_days_tokens, 0);
   assert.equal(allSessions.habit_metrics.month_to_date_tokens, 650);
-  assertClose(allSessions.habit_metrics.month_to_date_estimated_cost_usd, 0.0032305);
+  assertClose(allSessions.habit_metrics.month_to_date_estimated_cost_usd, 0.09060625000000001);
   assert.equal(allSessions.habit_metrics.previous_month_comparable_tokens, 0);
   assert.equal(allSessions.habit_metrics.current_streak, 0);
   assert.equal(allSessions.habit_metrics.best_streak, 5);
@@ -188,7 +188,7 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.snapshot_windows.trailing_14d.token_change_pct, null);
   assert.equal(allSessions.snapshot_windows.month_to_date.total_tokens, 650);
   assert.equal(allSessions.snapshot_windows.month_to_date.cost_change_pct, null);
-  assertClose(allSessions.efficiency_metrics.effective_cost_per_million, 4.970000000000001);
+  assertClose(allSessions.efficiency_metrics.effective_cost_per_million, 139.39423076923077);
   assertClose(allSessions.efficiency_metrics.input_output_ratio, 3.0625);
   assertClose(allSessions.efficiency_metrics.peak_day_share, 190 / 650);
   assert.equal(allSessions.efficiency_metrics.month_to_date_token_growth_pct, null);
@@ -208,7 +208,8 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(heatmapDayByDate(allSessions, "2026-03-22").level, 2);
   assert.equal(heatmapDayByDate(allSessions, "2026-03-24").level, 2);
   assert.equal(habitBoardDayByDate(allSessions, "2026-03-20").level, 4);
-  assert.equal(allSessions.cost_breakdown_by_model.length, 3);
+  assert.equal(allSessions.cost_breakdown_by_model.length, 4);
+  assert.ok(allSessions.cost_breakdown_by_model.some((row) => row.model === "gpt-5.4 estimate"));
   assert.ok("share_of_total_tokens" in allSessions.cost_breakdown_by_model[0]);
   assert.ok("effective_cost_per_million" in allSessions.cost_breakdown_by_model[0]);
   assertClose(
@@ -218,6 +219,14 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.ok("dominant_model_family" in allSessions.top_threads[0]);
   assert.ok("token_share" in allSessions.top_threads[0]);
   assert.ok("cost_share" in allSessions.top_threads[0]);
+  assert.equal(allSessions.project_usage.length, 5);
+  assert.equal(allSessions.project_usage[0].workspace_label, "Codex projects");
+  assert.equal(allSessions.project_usage[0].total_tokens, 200);
+  assert.equal(allSessions.project_usage[0].active_days, 2);
+  assert.equal(allSessions.project_usage[0].workflows, 1);
+  assertClose(allSessions.project_usage[0].effective_cost_per_million, 128.40625);
+  assert.ok("token_share" in allSessions.project_usage[0]);
+  assert.ok("cost_share" in allSessions.project_usage[0]);
   assert.equal(allSessions.trend_days.length, 14);
   assert.equal(allSessions.trend_days[0].date, "2026-03-12");
   assert.equal(allSessions.trend_days.at(-1).date, "2026-03-25");
@@ -248,8 +257,8 @@ test("buildDashboardPayload supports custom date ranges", async () => {
   assert.equal(dashboard.selection.mode, "custom");
   assert.equal(dashboard.selection.label, "Mar 21, 2026 - Mar 23, 2026");
   assert.equal(dashboard.summary.total_tokens, 450);
-  assertClose(dashboard.summary.estimated_cost_usd, 0.0023755);
-  assertClose(dashboard.efficiency_metrics.effective_cost_per_million, 5.278888888888889);
+  assertClose(dashboard.summary.estimated_cost_usd, 0.0593875);
+  assertClose(dashboard.efficiency_metrics.effective_cost_per_million, 131.97222222222223);
   assertClose(dashboard.efficiency_metrics.peak_day_share, 190 / 450);
   assert.equal(dashboard.range_comparison.available, true);
   assert.equal(dashboard.range_comparison.previous_start_date, "2026-03-18");
@@ -280,8 +289,38 @@ test("buildDashboardPayload supports workspace-specific filtering", async () => 
 
   assert.equal(dashboard.summary.total_tokens, 190);
   assert.equal(dashboard.summary.sessions, 1);
-  assertClose(dashboard.summary.estimated_cost_usd, 0.0008995);
+  assertClose(dashboard.summary.estimated_cost_usd, 0.0224875);
   assert.equal(dashboard.current_work_sessions.length, 0);
+});
+
+test("buildDashboardPayload maps Arcanine usage to GPT-5.5 pricing", async () => {
+  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-arcanine-"));
+  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
+  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
+  const sourceSession = index.sessions.find((session) => session.primary_model === "gpt-5.4");
+
+  assert.ok(sourceSession);
+
+  index.sessions.push({
+    ...structuredClone(sourceSession),
+    session_id: "session-arcanine",
+    thread_name: "Arcanine workflow",
+    primary_model: "arcanine",
+    models_used: ["arcanine"],
+    events: sourceSession.events.map((event) => ({
+      ...structuredClone(event),
+      model: "arcanine"
+    }))
+  });
+
+  const dashboard = buildDashboardPayload(index, {
+    days: 365,
+    includeSubagents: true,
+    workspace: "all",
+    now: fixedNow()
+  });
+
+  assert.ok(dashboard.cost_breakdown_by_model.some((row) => row.model === "gpt-5.5"));
 });
 
 test("buildDayPayload returns per-day session drilldown", async () => {
@@ -304,14 +343,14 @@ test("buildDayPayload returns per-day session drilldown", async () => {
 
   assert.equal(withSubagents.summary.total_tokens, 180);
   assert.equal(withSubagents.sessions.length, 2);
-  assertClose(withSubagents.summary.estimated_cost_usd, 0.00106475);
+  assertClose(withSubagents.summary.estimated_cost_usd, 0.02661875);
   assert.equal(withSubagents.sessions[0].estimated_cost_usd >= withSubagents.sessions[1].estimated_cost_usd, true);
   assert.ok("dominant_model_family" in withSubagents.sessions[0]);
   assert.ok("token_share" in withSubagents.sessions[0]);
   assert.ok("cost_share" in withSubagents.sessions[0]);
   assert.equal(withoutSubagents.summary.total_tokens, 120);
   assert.equal(withoutSubagents.sessions.length, 1);
-  assertClose(withoutSubagents.summary.estimated_cost_usd, 0.000616);
+  assertClose(withoutSubagents.summary.estimated_cost_usd, 0.0154);
 });
 
 test("buildDayPayload still returns a clicked habit-board day outside the selected range", async () => {

@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="./" />
     <title>KJ Codex Usage Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./vendor/flatpickr/flatpickr.min.css" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -16,8 +22,27 @@
             <p class="eyebrow">Your usage</p>
             <h1>KJ Codex Usage Dashboard</h1>
             <p class="hero-note">
-              Token usage, estimated cost, and today’s momentum.
+              Token usage, estimated cost, and today's momentum.
             </p>
+            <section class="hero-progress-card" aria-labelledby="hero-progress-label">
+              <div class="hero-progress-head">
+                <div class="hero-progress-copy">
+                  <p class="hero-progress-kicker">
+                    <i data-lucide="activity" aria-hidden="true"></i>
+                    Daily cadence
+                  </p>
+                  <strong id="hero-progress-label">Monthly active-day pace</strong>
+                  <span id="hero-progress-note">Loading current month activity...</span>
+                </div>
+                <div class="hero-progress-side">
+                  <strong id="hero-progress-value">—</strong>
+                  <span id="hero-progress-foot">—</span>
+                </div>
+              </div>
+              <div class="hero-progress-track" aria-hidden="true">
+                <span id="hero-progress-fill"></span>
+              </div>
+            </section>
           </div>
           <div class="hero-meta">
             <div class="meta-card">
@@ -36,7 +61,7 @@
         <div class="panel-head momentum-panel-head">
           <div>
             <p class="panel-eyebrow">Daily momentum</p>
-            <h2>Keep the square green</h2>
+            <h2>Keep the squares lit</h2>
             <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
           </div>
           <div class="momentum-head-status">
@@ -126,6 +151,23 @@
         </section>
       </section>
 
+      <section class="panel project-usage-panel" id="project-usage-section">
+        <div class="panel-head project-usage-head">
+          <div>
+            <p class="panel-eyebrow">Project usage</p>
+            <h2>Where tokens land</h2>
+            <p class="ranking-note" id="project-usage-note">
+              Projects ranked by token usage and estimated cost.
+            </p>
+          </div>
+          <div class="project-sort-controls" aria-label="Project sort">
+            <button class="project-sort-button is-active" type="button" data-project-sort="credits">Cost</button>
+            <button class="project-sort-button" type="button" data-project-sort="tokens">Tokens</button>
+          </div>
+        </div>
+        <div id="project-usage-list" class="project-usage-list"></div>
+      </section>
+
       <section class="panel selected-range-panel">
         <div class="panel-head">
           <div>
@@ -137,39 +179,61 @@
           </div>
         </div>
 
-        <div class="controls-panel controls-panel-inline">
-          <div class="toolbar-group toolbar-group-range">
-            <div class="toolbar-field">
-              <span class="toolbar-label">Range</span>
-              <div class="range-controls">
-                <div class="range-chips" id="range-chips" aria-label="Date range"></div>
-                <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
-                <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
-                <strong id="active-range-pill" class="active-range-pill">Last 30 days</strong>
-              </div>
-            </div>
+        <div class="mobile-selection-bar">
+          <div class="mobile-selection-copy">
+            <span class="mobile-selection-label">Active filters</span>
+            <strong id="mobile-selection-summary">Last 30 days · All workspaces · Subagents on</strong>
           </div>
-
-          <div class="toolbar-group toolbar-group-filters">
-            <label class="control control-stacked">
-              <span>Workspace</span>
-              <select id="workspace-filter">
-                <option value="all">All workspaces</option>
-              </select>
-            </label>
-
-            <label class="toggle toggle-stacked">
-              <span>Subagents</span>
-              <span class="toggle-row">
-                <input id="subagent-toggle" type="checkbox" checked />
-                <span>Include subagents</span>
-              </span>
-            </label>
-          </div>
-          <button id="refresh-button" class="refresh-button" type="button">Check for updates</button>
+          <button id="mobile-filters-button" class="mobile-filters-button" type="button" aria-haspopup="dialog" aria-controls="mobile-filters-sheet">
+            Filters
+          </button>
         </div>
 
-        <section class="summary-grid range-summary-grid">
+        <div id="mobile-filters-sheet" class="mobile-filters-sheet" aria-hidden="true">
+          <div id="mobile-filters-backdrop" class="mobile-filters-backdrop"></div>
+          <div class="mobile-filters-dialog" role="dialog" aria-modal="true" aria-labelledby="mobile-filters-title">
+            <div class="mobile-filters-head">
+              <div>
+                <span class="mobile-filters-label">Selected range</span>
+                <h3 id="mobile-filters-title">Filters</h3>
+              </div>
+              <button id="mobile-filters-close" class="mobile-filters-close" type="button" aria-label="Close filters">Close</button>
+            </div>
+            <div class="controls-panel controls-panel-inline controls-panel-sheet">
+              <div class="toolbar-group toolbar-group-range">
+                <div class="toolbar-field">
+                  <span class="toolbar-label">Range</span>
+                  <div class="range-controls">
+                    <div class="range-chips" id="range-chips" aria-label="Date range"></div>
+                    <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
+                    <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
+                    <strong id="active-range-pill" class="active-range-pill">Last 30 days</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="toolbar-group toolbar-group-filters">
+                <label class="control control-stacked">
+                  <span>Workspace</span>
+                  <select id="workspace-filter">
+                    <option value="all">All workspaces</option>
+                  </select>
+                </label>
+
+                <label class="toggle toggle-stacked">
+                  <span>Subagents</span>
+                  <span class="toggle-row">
+                    <input id="subagent-toggle" type="checkbox" checked />
+                    <span>Include subagents</span>
+                  </span>
+                </label>
+              </div>
+              <button id="refresh-button" class="refresh-button" type="button">Check for updates</button>
+            </div>
+          </div>
+        </div>
+
+        <section class="summary-grid range-summary-grid is-hidden-by-default" aria-hidden="true">
           <article class="summary-card">
             <span class="card-label">Usage</span>
             <strong class="card-value" id="summary-total">-</strong>
@@ -183,7 +247,7 @@
           </article>
 
           <article class="summary-card">
-            <span class="card-label">Eff. cost / 1M</span>
+            <span class="card-label">Cost / 1M</span>
             <strong class="card-value" id="summary-days">-</strong>
             <span class="card-foot" id="summary-days-foot">Selected-range efficiency</span>
           </article>
@@ -197,7 +261,7 @@
       </section>
 
       <section class="lower-grid">
-        <article class="panel ranking-panel">
+        <article class="panel ranking-panel is-hidden-by-default" aria-hidden="true">
           <div class="panel-head">
             <div>
               <p class="panel-eyebrow">Coaching view</p>
@@ -215,78 +279,80 @@
             <div>
               <p class="panel-eyebrow">Across selected range</p>
               <h2>Top workflows</h2>
+              <p class="ranking-note">Workflow detail for the active project/range filters.</p>
             </div>
           </div>
           <div id="thread-table" class="rank-table"></div>
         </article>
       </section>
 
-      <aside class="panel day-panel">
-        <div class="panel-head">
-          <div>
-            <p class="panel-eyebrow">Day details</p>
-            <h2 id="day-title">Select a day</h2>
+      <div id="day-drawer-shell" class="day-drawer-shell" aria-hidden="true">
+        <div id="day-drawer-backdrop" class="day-drawer-backdrop"></div>
+        <aside class="panel day-drawer" role="dialog" aria-modal="true" aria-labelledby="day-title">
+          <div class="day-drawer-head">
+            <div>
+              <p class="panel-eyebrow">Day breakdown</p>
+              <h2 id="day-title">Select a day</h2>
+            </div>
+            <button id="day-drawer-close" class="day-drawer-close" type="button" aria-label="Close day breakdown">
+              Close
+            </button>
           </div>
-        </div>
 
-        <div class="day-summary-grid">
-          <div class="mini-stat">
-            <span>Total</span>
-            <strong id="day-total">-</strong>
+          <div class="day-summary-grid">
+            <div class="mini-stat">
+              <span>Total</span>
+              <strong id="day-total">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Estimated cost</span>
+              <strong id="day-cost">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Input</span>
+              <strong id="day-input">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Reused input</span>
+              <strong id="day-cached">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Output</span>
+              <strong id="day-output">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Reasoning</span>
+              <strong id="day-reasoning">-</strong>
+            </div>
+            <div class="mini-stat">
+              <span>Workflows</span>
+              <strong id="day-sessions">-</strong>
+            </div>
           </div>
-          <div class="mini-stat">
-            <span>Estimated cost</span>
-            <strong id="day-cost">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Input</span>
-            <strong id="day-input">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Reused input</span>
-            <strong id="day-cached">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Output</span>
-            <strong id="day-output">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Reasoning</span>
-            <strong id="day-reasoning">-</strong>
-          </div>
-          <div class="mini-stat">
-            <span>Workflows</span>
-            <strong id="day-sessions">-</strong>
-          </div>
-        </div>
 
-        <details id="day-details" class="day-details">
-          <summary class="day-details-toggle">
-            <span id="day-details-label">Expand details</span>
-          </summary>
-          <div class="day-details-body">
+          <div class="day-drawer-body">
             <p class="day-explainer">
-              Expand details to see the workflows and token buckets that drove this day.
+              Workflow rows below show what drove the selected day.
             </p>
             <p class="day-explainer" id="day-cost-note">
-              Estimated cost uses published OpenAI API pricing as a directional planning lens.
+              Estimated cost uses the Codex token-based rate card as a directional planning lens.
             </p>
             <div id="day-session-list" class="session-list"></div>
           </div>
-        </details>
-      </aside>
+        </aside>
+      </div>
 
       <details class="panel budget-panel">
         <summary class="budget-toggle">
           <div>
             <p class="panel-eyebrow">Budget details</p>
             <h2>Estimated cost breakdown</h2>
-            <p class="ranking-note">Model-level pricing detail for the planning lens behind this snapshot.</p>
+            <p class="ranking-note">Model-level Codex cost detail for the planning lens behind this snapshot.</p>
           </div>
         </summary>
         <div class="budget-details-body">
           <p class="section-note" id="cost-note">
-            Estimated cost uses published OpenAI API pricing as a directional planning lens.
+            Estimated cost uses the Codex token-based rate card as a directional planning lens.
           </p>
           <div class="cost-table-shell">
             <table class="cost-table">
@@ -313,6 +379,7 @@
     </div>
 
     <script src="./vendor/flatpickr/flatpickr.min.js"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
     <script type="module" src="./app.js"></script>
   </body>
 </html>

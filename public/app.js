@@ -11,7 +11,11 @@ const RANGE_OPTIONS = [
 ];
 
 const DEFAULT_DAYS = 30;
-const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
+const WEEKDAY_LABELS = [
+  { label: "Mon", row: 3 },
+  { label: "Wed", row: 5 },
+  { label: "Fri", row: 7 }
+];
 const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
 const REFRESH_CHECK_LABEL = "Check for updates";
 const REFRESH_FORCE_LABEL = "Force rebuild";
@@ -19,6 +23,7 @@ const REFRESH_REBUILDING_LABEL = "Rebuilding...";
 const REFRESH_WAITING_LABEL = "Waiting for publish...";
 const REFRESH_POLL_INTERVAL_MS = 2500;
 const REFRESH_POLL_TIMEOUT_MS = 60000;
+const MOBILE_BREAKPOINT = 760;
 
 const state = {
   rangeMode: "preset",
@@ -27,6 +32,7 @@ const state = {
   endDate: null,
   workspace: "all",
   includeSubagents: true,
+  projectSort: "credits",
   selectedDate: null,
   snapshot: null,
   snapshotNow: null,
@@ -40,12 +46,22 @@ const state = {
 const elements = {
   lastRefresh: document.querySelector("#last-refresh"),
   sourceNote: document.querySelector("#source-note"),
+  heroProgressLabel: document.querySelector("#hero-progress-label"),
+  heroProgressNote: document.querySelector("#hero-progress-note"),
+  heroProgressValue: document.querySelector("#hero-progress-value"),
+  heroProgressFoot: document.querySelector("#hero-progress-foot"),
+  heroProgressFill: document.querySelector("#hero-progress-fill"),
   selectedRangeTitle: document.querySelector("#selected-range-title"),
   selectedRangeNote: document.querySelector("#selected-range-note"),
   rangeChips: document.querySelector("#range-chips"),
   customRangeButton: document.querySelector("#custom-range-button"),
   customRangeInput: document.querySelector("#custom-range-input"),
   activeRangePill: document.querySelector("#active-range-pill"),
+  mobileSelectionSummary: document.querySelector("#mobile-selection-summary"),
+  mobileFiltersButton: document.querySelector("#mobile-filters-button"),
+  mobileFiltersSheet: document.querySelector("#mobile-filters-sheet"),
+  mobileFiltersBackdrop: document.querySelector("#mobile-filters-backdrop"),
+  mobileFiltersClose: document.querySelector("#mobile-filters-close"),
   workspaceFilter: document.querySelector("#workspace-filter"),
   subagentToggle: document.querySelector("#subagent-toggle"),
   refreshButton: document.querySelector("#refresh-button"),
@@ -57,6 +73,10 @@ const elements = {
   summaryDaysFoot: document.querySelector("#summary-days-foot"),
   summaryBurst: document.querySelector("#summary-burst"),
   summaryBurstFoot: document.querySelector("#summary-burst-foot"),
+  projectUsageSection: document.querySelector("#project-usage-section"),
+  projectUsageNote: document.querySelector("#project-usage-note"),
+  projectUsageList: document.querySelector("#project-usage-list"),
+  projectSortButtons: document.querySelectorAll(".project-sort-button"),
   efficiencyNote: document.querySelector("#efficiency-note"),
   efficiencyGrid: document.querySelector("#efficiency-grid"),
   modelMixList: document.querySelector("#model-mix-list"),
@@ -96,10 +116,11 @@ const elements = {
   dayOutput: document.querySelector("#day-output"),
   dayReasoning: document.querySelector("#day-reasoning"),
   daySessions: document.querySelector("#day-sessions"),
-  dayDetails: document.querySelector("#day-details"),
-  dayDetailsLabel: document.querySelector("#day-details-label"),
   dayCostNote: document.querySelector("#day-cost-note"),
-  daySessionList: document.querySelector("#day-session-list")
+  daySessionList: document.querySelector("#day-session-list"),
+  dayDrawerShell: document.querySelector("#day-drawer-shell"),
+  dayDrawerBackdrop: document.querySelector("#day-drawer-backdrop"),
+  dayDrawerClose: document.querySelector("#day-drawer-close")
 };
 
 function formatCompactNumber(value) {
@@ -127,21 +148,24 @@ function formatSignedPercent(value) {
 }
 
 function formatUsd(value) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(value || 0);
+  const amount = value || 0;
+  const formatted = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: amount >= 100 ? 0 : 2
+  }).format(amount);
+  return `${formatted} credits`;
 }
 
 function formatRate(value) {
-  return `${formatUsd(value)}/1M`;
+  const amount = value || 0;
+  const formatted = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: amount >= 100 ? 0 : 3
+  }).format(amount);
+  return `${formatted} credits/1M`;
 }
 
 function formatCompactUsd(value) {
   if ((value || 0) >= 100) {
-    return `$${Math.round(value || 0)}`;
+    return `${formatCompactNumber(value || 0)} credits`;
   }
 
   return formatUsd(value || 0);
@@ -212,10 +236,10 @@ function formatTrendDayNumber(value) {
 
 function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view did not match a priced model.`;
+    return `Estimated cost uses the Codex token-based rate card as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return "Estimated cost uses published OpenAI API pricing as a directional planning lens, not billed spend.";
+  return "Estimated cost uses the Codex token-based rate card as a directional planning lens, not billed spend.";
 }
 
 function todayDate(now = new Date()) {
@@ -251,10 +275,52 @@ function formatWorkflowContext(item) {
   return parts.join(" · ") || "Workflow";
 }
 
+function formatProjectName(project) {
+  return project.workspace_label || project.workspace_key || "Unknown project";
+}
+
+function renderIcons() {
+  if (window.lucide?.createIcons) {
+    window.lucide.createIcons();
+  }
+}
+
 function sleep(ms) {
   return new Promise((resolve) => {
     window.setTimeout(resolve, ms);
   });
+}
+
+function isMobileViewport() {
+  return window.innerWidth <= MOBILE_BREAKPOINT;
+}
+
+function openMobileFilters() {
+  if (!isMobileViewport()) {
+    return;
+  }
+
+  document.body.classList.add("mobile-filters-open");
+  elements.mobileFiltersSheet?.setAttribute("aria-hidden", "false");
+  elements.mobileFiltersButton?.setAttribute("aria-expanded", "true");
+}
+
+function closeMobileFilters() {
+  document.body.classList.remove("mobile-filters-open");
+  elements.mobileFiltersSheet?.setAttribute("aria-hidden", "true");
+  elements.mobileFiltersButton?.setAttribute("aria-expanded", "false");
+}
+
+function buildMobileSelectionSummary(dashboard) {
+  const workspaceLabel = state.workspace === "all"
+    ? "All workspaces"
+    : (elements.workspaceFilter.selectedOptions[0]?.textContent || "Filtered workspace");
+
+  return [
+    dashboard.selection.label,
+    workspaceLabel,
+    state.includeSubagents ? "Subagents on" : "Subagents off"
+  ].join(" · ");
 }
 
 function isPublicPagesSite() {
@@ -279,17 +345,11 @@ function syncRefreshButtonMode() {
     return;
   }
 
-  if (state.refreshHelperAvailable) {
-    setRefreshButtonLabel(
-      REFRESH_FORCE_LABEL,
-      "Rebuild the snapshot from local ~/.codex logs and publish it if anything changed"
-    );
-    return;
-  }
-
   setRefreshButtonLabel(
-    REFRESH_CHECK_LABEL,
-    "Fetch the latest published snapshot from the static site"
+    REFRESH_FORCE_LABEL,
+    state.refreshHelperAvailable
+      ? "Rebuild the snapshot from local ~/.codex logs. The local helper can also publish if needed."
+      : "Rebuild the local snapshot from ~/.codex logs"
   );
 }
 
@@ -329,9 +389,10 @@ async function probeRefreshHelper() {
   }
 }
 
-function setDayDetailsOpen(open) {
-  elements.dayDetails.open = open;
-  elements.dayDetailsLabel.textContent = open ? "Hide details" : "Expand details";
+function setDayDrawerOpen(open) {
+  elements.dayDrawerShell?.classList.toggle("is-open", open);
+  elements.dayDrawerShell?.setAttribute("aria-hidden", open ? "false" : "true");
+  document.body.classList.toggle("day-drawer-open", open);
 }
 
 async function waitForSnapshotGeneration(targetGeneratedAt, timeoutMs) {
@@ -390,6 +451,21 @@ async function forceRefreshViaHelper() {
   if (!observed) {
     await loadDashboard(true, { suppressButtonToggle: true });
   }
+}
+
+async function forceRefreshLocally() {
+  setRefreshButtonLabel(
+    REFRESH_REBUILDING_LABEL,
+    "Rebuilding the local snapshot from ~/.codex logs"
+  );
+
+  await fetchJson("/api/refresh", {
+    method: "POST",
+    cache: "no-store"
+  });
+
+  state.shouldResetHeatmapViewport = true;
+  await loadDashboard(true, { suppressButtonToggle: true });
 }
 
 function isDateKey(value) {
@@ -515,6 +591,7 @@ function renderRangeControls() {
       syncUrl();
       syncDatePicker(null);
       renderRangeControls();
+      closeMobileFilters();
       loadDashboard();
     });
     elements.rangeChips.append(button);
@@ -525,7 +602,7 @@ function renderRangeControls() {
 
 function renderHabitRail(dashboard) {
   const metrics = dashboard.habit_metrics;
-  const todayStatusLabel = metrics.today_has_usage ? "Green today" : "Not green yet";
+  const todayStatusLabel = metrics.today_has_usage ? "Lit today" : "Not lit yet";
   elements.todayStatusPill.textContent = todayStatusLabel;
   elements.todayStatusPill.classList.toggle("is-live", metrics.today_has_usage);
   elements.todayStatusPill.classList.toggle("is-idle", !metrics.today_has_usage);
@@ -533,18 +610,18 @@ function renderHabitRail(dashboard) {
   if (metrics.today_has_usage) {
     elements.todayStatusHeadline.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens so far today`;
     elements.todayStatusNote.textContent = metrics.current_streak > 1
-      ? `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · ${formatCountLabel(metrics.current_streak, "day")} streak is live`
-      : `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · streak is live`;
+      ? `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated today · ${formatCountLabel(metrics.current_streak, "day")} streak is live`
+      : `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated today · streak is live`;
   } else {
     elements.todayStatusHeadline.textContent = "One workflow starts the streak";
-    elements.todayStatusNote.textContent = "No usage yet today. Get the square green.";
+    elements.todayStatusNote.textContent = "No usage yet today. Light up today's square.";
   }
 
   const streakStartDate = buildStreakStartDate(metrics.current_streak);
   elements.habitCurrentStreak.textContent = formatFullNumber(metrics.current_streak);
   elements.habitCurrentNote.textContent = streakStartDate
     ? `Live since ${formatDate(streakStartDate)}`
-    : "Start with one green day";
+    : "Start with one active day";
   elements.habitBestStreak.textContent = formatFullNumber(metrics.best_streak);
   elements.habitBestNote.textContent = metrics.best_streak > 0
     ? "Best run in the last 365 days"
@@ -553,7 +630,7 @@ function renderHabitRail(dashboard) {
   const workweekRemaining = Math.max(metrics.workweek_goal - metrics.workweek_green_days, 0);
   elements.habitWorkweekNote.textContent = workweekRemaining === 0
     ? "Workweek goal hit"
-    : `${workweekRemaining} green day${workweekRemaining === 1 ? "" : "s"} to go`;
+    : `${workweekRemaining} active day${workweekRemaining === 1 ? "" : "s"} to go`;
 }
 
 function renderInsightCosts(dashboard) {
@@ -579,6 +656,32 @@ function renderInsightCosts(dashboard) {
     "same point last month"
   )}`;
   elements.costMonthFoot.title = `${formatFullNumber(snapshots.month_to_date.total_tokens)} tokens`;
+}
+
+function renderHeroProgress(dashboard) {
+  const boardDays = dashboard.habit_board?.days || [];
+  const metrics = dashboard.habit_metrics || {};
+  const now = todayDate(state.snapshotNow || new Date());
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const elapsedDays = Math.max(1, Math.round((now - monthStart) / 86400000) + 1);
+  const activeDaysThisMonth = boardDays.filter((day) => {
+    if (!day?.date) {
+      return false;
+    }
+
+    const date = new Date(`${day.date}T12:00:00`);
+    return date >= monthStart && date <= now && (day.total_tokens || 0) > 0;
+  }).length;
+  const ratio = elapsedDays ? activeDaysThisMonth / elapsedDays : 0;
+
+  elements.heroProgressLabel.textContent = "Monthly active-day pace";
+  elements.heroProgressNote.textContent = metrics.today_has_usage
+    ? "Days this month with any Codex usage so far."
+    : "No usage yet today. One workflow adds another active day to the month.";
+  elements.heroProgressValue.textContent = `${activeDaysThisMonth} / ${elapsedDays} days`;
+  elements.heroProgressFoot.textContent = `${formatPercent(ratio)} active so far this month`;
+  elements.heroProgressFill.style.width = `${Math.max(ratio > 0 ? 6 : 0, Math.round(ratio * 100))}%`;
+  elements.heroProgressFill.title = `${activeDaysThisMonth} active days out of ${elapsedDays} elapsed this month`;
 }
 
 function renderSummary(dashboard) {
@@ -613,6 +716,9 @@ function renderSummary(dashboard) {
     : rangeComparison.label;
   elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
   updateRangeSelectionLabel(dashboard.selection.label);
+  elements.mobileSelectionSummary.textContent = buildMobileSelectionSummary(dashboard);
+  elements.mobileSelectionSummary.title = elements.mobileSelectionSummary.textContent;
+  renderHeroProgress(dashboard);
 }
 
 function renderEfficiencyPanel(dashboard) {
@@ -622,7 +728,7 @@ function renderEfficiencyPanel(dashboard) {
 
   elements.efficiencyGrid.innerHTML = `
     <div class="efficiency-stat">
-      <span class="efficiency-stat-label">Eff. cost / 1M</span>
+      <span class="efficiency-stat-label">Cost / 1M</span>
       <strong>${metrics.effective_cost_per_million !== null ? formatRate(metrics.effective_cost_per_million) : "—"}</strong>
       <span class="efficiency-stat-foot">Selected range</span>
     </div>
@@ -720,10 +826,11 @@ function renderWorkspaceFilter(dashboard) {
 function renderWeekdayLabels() {
   elements.heatmapWeekdays.innerHTML = "";
 
-  for (const label of WEEKDAY_LABELS) {
+  for (const { label, row } of WEEKDAY_LABELS) {
     const span = document.createElement("span");
     span.className = "weekday-label";
     span.textContent = label;
+    span.style.gridRow = String(row);
     elements.heatmapWeekdays.append(span);
   }
 }
@@ -810,7 +917,7 @@ function renderHeatmap(dashboard) {
       state.selectedDate = day.date;
       elements.heatmapGrid.querySelector(".day-cell.is-selected")?.classList.remove("is-selected");
       button.classList.add("is-selected");
-      loadDay(day.date);
+      loadDay(day.date, { openDrawer: true });
     });
     elements.heatmapGrid.append(button);
   }
@@ -900,7 +1007,7 @@ function renderTrend(dashboard) {
       state.selectedDate = selectedDate;
       elements.heatmapGrid.querySelector(".day-cell.is-selected")?.classList.remove("is-selected");
       elements.heatmapGrid.querySelector(`.day-cell[data-date="${selectedDate}"]`)?.classList.add("is-selected");
-      loadDay(selectedDate);
+      loadDay(selectedDate, { openDrawer: true });
     });
   }
 }
@@ -956,6 +1063,85 @@ function renderCostBreakdown(dashboard) {
   `;
 }
 
+function getSortedProjects(projects) {
+  return [...projects].sort((left, right) => {
+    if (state.projectSort === "tokens") {
+      return (right.total_tokens - left.total_tokens) ||
+        (right.estimated_cost_usd - left.estimated_cost_usd);
+    }
+
+    return (right.estimated_cost_usd - left.estimated_cost_usd) ||
+      (right.total_tokens - left.total_tokens);
+  });
+}
+
+function renderProjectUsage(dashboard) {
+  const projects = getSortedProjects(dashboard.project_usage || []);
+  const rangeLabel = dashboard.selection.label.toLowerCase();
+  const sortLabels = {
+    credits: "estimated cost",
+    tokens: "tokens"
+  };
+
+  elements.projectUsageNote.textContent =
+    `Workspace projects in ${rangeLabel}, sorted by ${sortLabels[state.projectSort] || "estimated cost"}.`;
+
+  for (const button of elements.projectSortButtons) {
+    const isActive = button.dataset.projectSort === state.projectSort;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
+
+  if (!projects.length) {
+    elements.projectUsageList.innerHTML = '<div class="empty-state">No project usage in this selection.</div>';
+    return;
+  }
+
+  elements.projectUsageList.innerHTML = "";
+  for (const project of projects) {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "project-usage-card";
+    card.dataset.workspaceKey = project.workspace_key;
+    const costSharePercent = formatPercent(project.cost_share || 0);
+    const tokenSharePercent = formatPercent(project.token_share || 0);
+
+    card.innerHTML = `
+      <div class="project-usage-main">
+        <span class="project-title">${formatProjectName(project)}</span>
+        <span class="project-sub">${formatCountLabel(project.active_days || 0, "active day")} · ${formatCountLabel(project.workflows || 0, "workflow")}</span>
+      </div>
+      <div class="project-bar" aria-hidden="true">
+        <span style="width:${Math.max((project.cost_share || 0) * 100, project.cost_share > 0 ? 6 : 0)}%;"></span>
+      </div>
+      <div class="project-metric-grid">
+        <div>
+          <span>Tokens</span>
+          <strong>${formatCompactNumber(project.total_tokens)}</strong>
+          <small>${tokenSharePercent} of range</small>
+        </div>
+        <div>
+          <span>Est. cost</span>
+          <strong>${formatUsd(project.estimated_cost_usd)}</strong>
+          <small>${costSharePercent} of range</small>
+        </div>
+      </div>
+    `;
+    card.title = `${formatProjectName(project)}: ${formatFullNumber(project.total_tokens)} tokens · ${formatUsd(project.estimated_cost_usd)} estimated cost`;
+    card.addEventListener("click", async () => {
+      if (!project.workspace_key) {
+        return;
+      }
+
+      state.workspace = project.workspace_key;
+      closeMobileFilters();
+      await loadDashboard();
+      elements.threadTable.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    elements.projectUsageList.append(card);
+  }
+}
+
 function renderRankRows(container, rows, formatter) {
   if (!rows.length) {
     container.innerHTML = '<div class="empty-state">No usage in this selection.</div>';
@@ -988,7 +1174,6 @@ function renderTopThreads(dashboard) {
 }
 
 function renderDayPanel(dayPayload) {
-  setDayDetailsOpen(false);
   elements.dayTitle.textContent = formatDate(dayPayload.date);
   elements.dayTotal.textContent = formatCompactNumber(dayPayload.summary.total_tokens);
   elements.dayTotal.title = formatFullNumber(dayPayload.summary.total_tokens);
@@ -1001,13 +1186,20 @@ function renderDayPanel(dayPayload) {
   elements.daySessions.textContent = formatFullNumber(dayPayload.sessions.length);
   elements.dayCostNote.textContent = buildEstimatedCostNote(dayPayload.summary.unpriced_total_tokens);
 
-  if (!dayPayload.sessions.length) {
+  const sessions = [...(dayPayload.sessions || [])].sort((left, right) => {
+    if ((right.estimated_cost_usd || 0) !== (left.estimated_cost_usd || 0)) {
+      return (right.estimated_cost_usd || 0) - (left.estimated_cost_usd || 0);
+    }
+    return (right.total_tokens || 0) - (left.total_tokens || 0);
+  });
+
+  if (!sessions.length) {
     elements.daySessionList.innerHTML = '<div class="empty-state">No workflows contributed usage on this day.</div>';
     return;
   }
 
   elements.daySessionList.innerHTML = "";
-  for (const session of dayPayload.sessions) {
+  for (const session of sessions) {
     const card = document.createElement("article");
     card.className = "session-card";
     card.innerHTML = `
@@ -1036,7 +1228,7 @@ function renderDayPanel(dayPayload) {
   }
 }
 
-async function loadDay(date) {
+async function loadDay(date, { openDrawer = false } = {}) {
   try {
     const payload = buildDayPayload(state.snapshot, date, {
       days: state.rangeMode === "preset" ? state.days : undefined,
@@ -1047,9 +1239,14 @@ async function loadDay(date) {
       now: state.snapshotNow
     });
     renderDayPanel(payload);
+    if (openDrawer) {
+      setDayDrawerOpen(true);
+    }
   } catch (error) {
-    setDayDetailsOpen(false);
     elements.daySessionList.innerHTML = `<div class="empty-state">${error.message}</div>`;
+    if (openDrawer) {
+      setDayDrawerOpen(true);
+    }
   }
 }
 
@@ -1081,6 +1278,7 @@ function syncDatePicker(dashboard) {
         state.endDate = dateKeyFromDate(selectedDates[1]);
         syncUrl();
         renderRangeControls();
+        closeMobileFilters();
         loadDashboard();
         state.datePicker.close();
       }
@@ -1128,11 +1326,13 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     renderInsightCosts(dashboard);
     renderSummary(dashboard);
     renderWorkspaceFilter(dashboard);
+    renderProjectUsage(dashboard);
     renderHeatmap(dashboard);
     renderTrend(dashboard);
     renderEfficiencyPanel(dashboard);
     renderCostBreakdown(dashboard);
     renderTopThreads(dashboard);
+    renderIcons();
     syncDatePicker(dashboard);
     await loadDay(state.selectedDate);
   } catch (error) {
@@ -1145,6 +1345,7 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.efficiencyGrid.innerHTML = message;
     elements.modelMixList.innerHTML = message;
     elements.insightList.innerHTML = message;
+    elements.projectUsageList.innerHTML = message;
     elements.threadTable.innerHTML = message;
     elements.daySessionList.innerHTML = message;
     elements.costToday.textContent = "-";
@@ -1164,6 +1365,11 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.heatmapSummary.textContent = detail;
     elements.heatmapGrid.innerHTML = "";
     elements.heatmapMonths.innerHTML = "";
+    elements.heroProgressValue.textContent = "—";
+    elements.heroProgressFoot.textContent = "—";
+    elements.heroProgressNote.textContent = "A fresh snapshot is required before the hero can render.";
+    elements.heroProgressFill.style.width = "0%";
+    renderIcons();
   } finally {
     if (!suppressButtonToggle) {
       elements.refreshButton.disabled = false;
@@ -1181,16 +1387,18 @@ async function refreshDashboard() {
       return;
     }
 
+    await forceRefreshLocally();
+  } catch (error) {
     if (state.refreshHelperAvailable && state.refreshHelperUrl) {
-      await forceRefreshViaHelper();
-      return;
+      try {
+        await forceRefreshViaHelper();
+        return;
+      } catch {
+        state.refreshHelperAvailable = false;
+        state.refreshHelperUrl = null;
+      }
     }
 
-    state.shouldResetHeatmapViewport = true;
-    await loadDashboard(true, { suppressButtonToggle: true });
-  } catch (error) {
-    state.refreshHelperAvailable = false;
-    state.refreshHelperUrl = null;
     await loadDashboard(true, { suppressButtonToggle: true });
     window.alert(error instanceof Error ? error.message : String(error));
   } finally {
@@ -1208,26 +1416,51 @@ elements.customRangeButton.addEventListener("click", () => {
 elements.workspaceFilter.addEventListener("change", () => {
   state.workspace = elements.workspaceFilter.value;
   state.shouldResetHeatmapViewport = true;
+  closeMobileFilters();
   loadDashboard();
 });
 
 elements.subagentToggle.addEventListener("change", () => {
   state.includeSubagents = elements.subagentToggle.checked;
   state.shouldResetHeatmapViewport = true;
+  closeMobileFilters();
   loadDashboard();
 });
 
+for (const button of elements.projectSortButtons) {
+  button.addEventListener("click", () => {
+    state.projectSort = button.dataset.projectSort || "credits";
+    if (state.dashboard) {
+      renderProjectUsage(state.dashboard);
+    }
+  });
+}
+
 elements.refreshButton.addEventListener("click", refreshDashboard);
-elements.dayDetails.addEventListener("toggle", () => {
-  elements.dayDetailsLabel.textContent = elements.dayDetails.open ? "Hide details" : "Expand details";
+elements.mobileFiltersButton?.addEventListener("click", openMobileFilters);
+elements.mobileFiltersClose?.addEventListener("click", closeMobileFilters);
+elements.mobileFiltersBackdrop?.addEventListener("click", closeMobileFilters);
+elements.dayDrawerClose?.addEventListener("click", () => setDayDrawerOpen(false));
+elements.dayDrawerBackdrop?.addEventListener("click", () => setDayDrawerOpen(false));
+window.addEventListener("resize", () => {
+  if (!isMobileViewport()) {
+    closeMobileFilters();
+  }
+});
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeMobileFilters();
+    setDayDrawerOpen(false);
+  }
 });
 
 initializeStateFromUrl();
 renderRangeControls();
 renderWeekdayLabels();
 syncDatePicker(null);
-setDayDetailsOpen(false);
+setDayDrawerOpen(false);
 syncRefreshButtonMode();
+renderIcons();
 loadDashboard(true);
 probeRefreshHelper();
 window.addEventListener("focus", probeRefreshHelper);

@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { createServer } from "node:http";
 
 import {
+  buildPublicDashboardUrl,
+  createPublicRedirectServer,
   ensureRefreshHelper,
   isHealthyRefreshHelper
 } from "../scripts/start-local.js";
@@ -80,4 +82,38 @@ test("ensureRefreshHelper starts a local helper when no healthy helper is alread
   assert.equal(startCalls, 1);
   assert.equal(result.reused, false);
   assert.equal(result.server, fakeServer);
+});
+
+test("buildPublicDashboardUrl preserves query string and public base path", () => {
+  assert.equal(
+    buildPublicDashboardUrl("/?days=30&workspace=all"),
+    "https://kjmcawesome.github.io/kj-codex-usage-dashboard/?days=30&workspace=all"
+  );
+
+  assert.equal(
+    buildPublicDashboardUrl("/index.html?days=90"),
+    "https://kjmcawesome.github.io/kj-codex-usage-dashboard/?days=90"
+  );
+});
+
+test("public redirect server sends browser traffic to the live dashboard", async () => {
+  const server = createPublicRedirectServer();
+  await new Promise((resolvePromise) => server.listen(0, "127.0.0.1", resolvePromise));
+
+  try {
+    const address = server.address();
+    const response = await fetch(`http://127.0.0.1:${address.port}/?days=30&workspace=all`, {
+      redirect: "manual"
+    });
+
+    assert.equal(response.status, 302);
+    assert.equal(
+      response.headers.get("location"),
+      "https://kjmcawesome.github.io/kj-codex-usage-dashboard/?days=30&workspace=all"
+    );
+  } finally {
+    await new Promise((resolvePromise, rejectPromise) =>
+      server.close((error) => (error ? rejectPromise(error) : resolvePromise()))
+    );
+  }
 });

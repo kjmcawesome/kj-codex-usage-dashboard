@@ -1,35 +1,52 @@
-const RATE_CARD_PUBLISHED_AT = "2026-03-25";
-const RATE_CARD_MODE = "standard";
+const RATE_CARD_PUBLISHED_AT = "2026-05-02";
+const RATE_CARD_MODE = "codex_credits";
 const CURRENT_WORK_WINDOW_HOURS = 72;
+const PROXY_PRICED_MODEL = "gpt-5.4 estimate";
+const MODEL_ALIASES = Object.freeze({
+  arcanine: "gpt-5.5",
+  "codex-auto-review": "gpt-5.3-codex"
+});
 const RATE_CARD = Object.freeze({
+  "gpt-5.5": {
+    input: 125.0,
+    cached_input: 12.5,
+    output: 750.0
+  },
+  "gpt-5.2": {
+    input: 43.75,
+    cached_input: 4.375,
+    output: 350.0
+  },
   "gpt-5.2-codex": {
-    input: 1.75,
-    cached_input: 0.175,
-    output: 14.0
+    input: 43.75,
+    cached_input: 4.375,
+    output: 350.0
   },
   "gpt-5.3-codex": {
-    input: 1.75,
-    cached_input: 0.175,
-    output: 14.0
+    input: 43.75,
+    cached_input: 4.375,
+    output: 350.0
   },
   "gpt-5.4": {
-    input: 2.5,
-    cached_input: 0.25,
-    output: 15.0
+    input: 62.5,
+    cached_input: 6.25,
+    output: 375.0
+  },
+  "gpt-5.4-mini": {
+    input: 18.75,
+    cached_input: 1.875,
+    output: 113.0
+  },
+  [PROXY_PRICED_MODEL]: {
+    input: 62.5,
+    cached_input: 6.25,
+    output: 375.0
   }
 });
 const RATE_CARD_SOURCES = Object.freeze([
   {
-    label: "OpenAI API pricing",
-    url: "https://developers.openai.com/api/docs/pricing"
-  },
-  {
-    label: "OpenAI API pricing overview",
-    url: "https://openai.com/api/pricing/"
-  },
-  {
-    label: "GPT-5.2-codex model pricing",
-    url: "https://developers.openai.com/api/docs/models/gpt-5.2-codex"
+    label: "Codex rate card",
+    url: "https://help.openai.com/en/articles/20001106-codex-rate-card"
   }
 ]);
 
@@ -87,12 +104,27 @@ function addTotals(target, source) {
 }
 
 function isSnapshotAlias(model, baseModel) {
-  return model === baseModel || model.startsWith(`${baseModel}-20`);
+  return model === baseModel
+    || model.startsWith(`${baseModel}-20`)
+    || model.startsWith(`${baseModel}-`);
 }
 
 function canonicalizePricedModel(model) {
   if (!model) {
     return null;
+  }
+
+  const explicitAlias = MODEL_ALIASES[model];
+  if (explicitAlias) {
+    return explicitAlias;
+  }
+
+  if (isSnapshotAlias(model, "gpt-5.5")) {
+    return "gpt-5.5";
+  }
+
+  if (isSnapshotAlias(model, "gpt-5.4-mini")) {
+    return "gpt-5.4-mini";
   }
 
   if (isSnapshotAlias(model, "gpt-5.4")) {
@@ -107,20 +139,17 @@ function canonicalizePricedModel(model) {
     return "gpt-5.2-codex";
   }
 
+  if (isSnapshotAlias(model, "gpt-5.2")) {
+    return "gpt-5.2";
+  }
+
   return null;
 }
 
 function estimateCost(totals, model) {
-  const pricedModel = canonicalizePricedModel(model);
-  const rates = pricedModel ? RATE_CARD[pricedModel] : null;
-
-  if (!rates) {
-    return {
-      estimated_cost_usd: 0,
-      unpriced_total_tokens: totals.total_tokens || 0,
-      priced_model: null
-    };
-  }
+  const canonicalPricedModel = canonicalizePricedModel(model);
+  const pricedModel = canonicalPricedModel || PROXY_PRICED_MODEL;
+  const rates = RATE_CARD[pricedModel];
 
   const uncachedInputTokens = Math.max(0, (totals.input_tokens || 0) - (totals.cached_input_tokens || 0));
   const billedOutputTokens = (totals.output_tokens || 0) + (totals.reasoning_output_tokens || 0);
@@ -131,7 +160,7 @@ function estimateCost(totals, model) {
 
   return {
     estimated_cost_usd: estimatedCostUsd,
-    unpriced_total_tokens: 0,
+    unpriced_total_tokens: canonicalPricedModel ? 0 : (totals.total_tokens || 0),
     priced_model: pricedModel
   };
 }
@@ -154,10 +183,10 @@ function buildRateCardPayload() {
 
 function buildCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not your billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view did not match a priced model and are excluded.`;
+    return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return `Estimated cost uses published OpenAI API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat it as a directional planning lens, not your billed spend.`;
+  return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend.`;
 }
 
 function formatDisplayDate(date) {
@@ -543,6 +572,70 @@ function shareOfTotal(total, value) {
   return value / total;
 }
 
+function createWorkspaceAggregate(session) {
+  return {
+    workspace_key: session.workspace_key,
+    workspace_label: session.workspace_label,
+    active_days: new Set(),
+    sessions: new Set(),
+    ...emptyTotals()
+  };
+}
+
+function getWorkspaceAggregate(workspaceMap, session) {
+  if (!workspaceMap.has(session.workspace_key)) {
+    workspaceMap.set(session.workspace_key, createWorkspaceAggregate(session));
+  }
+
+  return workspaceMap.get(session.workspace_key);
+}
+
+function serializeProjectUsage({
+  workspaceMap,
+  previousWorkspaceMap,
+  summary,
+  range
+}) {
+  const hasComparableRange = range.requestedDays !== "all";
+
+  return [...workspaceMap.values()]
+    .map((entry) => {
+      const previousEntry = previousWorkspaceMap.get(entry.workspace_key) || emptyTotals();
+      return {
+        workspace_key: entry.workspace_key,
+        workspace_label: entry.workspace_label,
+        total_tokens: entry.total_tokens,
+        input_tokens: entry.input_tokens,
+        cached_input_tokens: entry.cached_input_tokens,
+        output_tokens: entry.output_tokens,
+        reasoning_output_tokens: entry.reasoning_output_tokens,
+        estimated_cost_usd: entry.estimated_cost_usd,
+        unpriced_total_tokens: entry.unpriced_total_tokens,
+        active_days: entry.active_days.size,
+        workflows: entry.sessions.size,
+        effective_cost_per_million: calculateCostPerMillion(
+          entry.estimated_cost_usd,
+          entry.total_tokens
+        ),
+        token_share: shareOfTotal(summary.total_tokens, entry.total_tokens),
+        cost_share: shareOfTotal(summary.estimated_cost_usd, entry.estimated_cost_usd),
+        previous_total_tokens: hasComparableRange ? previousEntry.total_tokens || 0 : 0,
+        previous_estimated_cost_usd: hasComparableRange ? previousEntry.estimated_cost_usd || 0 : 0,
+        token_change_pct: hasComparableRange
+          ? calculatePctChange(entry.total_tokens || 0, previousEntry.total_tokens || 0)
+          : null,
+        cost_change_pct: hasComparableRange
+          ? calculatePctChange(entry.estimated_cost_usd || 0, previousEntry.estimated_cost_usd || 0)
+          : null
+      };
+    })
+    .sort((left, right) =>
+      (right.estimated_cost_usd - left.estimated_cost_usd) ||
+      (right.total_tokens - left.total_tokens)
+    )
+    .slice(0, 8);
+}
+
 function buildEfficiencyMetrics(summary, dayMap, habitMetrics, costBreakdownByModel) {
   let peakDay = null;
 
@@ -622,7 +715,7 @@ function buildInsights(efficiencyMetrics) {
   ) {
     insights.push({
       title: "Spend is rising faster than usage",
-      body: "Month-to-date cost is growing faster than tokens, which usually means a pricier model mix or more output-heavy sessions."
+      body: "Month-to-date estimated cost is growing faster than tokens, which usually means a pricier model mix or more output-heavy sessions."
     });
   }
 
@@ -690,8 +783,18 @@ function filterContributions(index, options) {
   const currentWorkRangeEnd = new Date(now);
   const workspace = options.workspace || "all";
   const includeSubagents = options.includeSubagents ?? true;
+  const hasComparableRange = range.requestedDays !== "all";
+  const rangeLengthDays = hasComparableRange
+    ? countRangeDays(range.startDate, range.endDate)
+    : null;
+  const previousRangeEndDate = hasComparableRange ? addDays(range.startDate, -1) : null;
+  const previousRangeStartDate = hasComparableRange
+    ? addDays(previousRangeEndDate, -(rangeLengthDays - 1))
+    : null;
   const dayMap = new Map();
   const habitDayMap = new Map();
+  const workspaceMap = new Map();
+  const previousWorkspaceMap = new Map();
   const sessionMap = new Map();
   const modelCostMap = new Map();
   const currentWorkSessionMap = new Map();
@@ -750,6 +853,17 @@ function filterContributions(index, options) {
         if (!currentWorkTotals.last_active_at || event.timestamp > currentWorkTotals.last_active_at) {
           currentWorkTotals.last_active_at = event.timestamp;
         }
+      }
+
+      if (
+        hasComparableRange &&
+        eventDate >= previousRangeStartDate &&
+        eventDate <= previousRangeEndDate
+      ) {
+        const previousWorkspaceTotals = getWorkspaceAggregate(previousWorkspaceMap, session);
+        addTotals(previousWorkspaceTotals, pricedEvent);
+        previousWorkspaceTotals.active_days.add(event.date);
+        previousWorkspaceTotals.sessions.add(session.session_id);
       }
 
       if (eventDate < range.startDate || eventDate > range.endDate) {
@@ -814,6 +928,11 @@ function filterContributions(index, options) {
         (sessionTotals.model_totals.get(modelFamily) || 0) + (pricedEvent.total_tokens || 0)
       );
 
+      const workspaceTotals = getWorkspaceAggregate(workspaceMap, session);
+      addTotals(workspaceTotals, pricedEvent);
+      workspaceTotals.active_days.add(event.date);
+      workspaceTotals.sessions.add(session.session_id);
+
       addTotals(summary, pricedEvent);
     }
   }
@@ -836,6 +955,13 @@ function filterContributions(index, options) {
       ? sessionTotals.input_tokens / sessionTotals.output_tokens
       : null;
   }
+
+  const projectUsage = serializeProjectUsage({
+    workspaceMap,
+    previousWorkspaceMap,
+    summary,
+    range
+  });
 
   const threads = [...sessionMap.values()]
     .sort((left, right) =>
@@ -962,6 +1088,7 @@ function filterContributions(index, options) {
       hours: CURRENT_WORK_WINDOW_HOURS
     },
     current_work_sessions: currentWorkSessions,
+    project_usage: projectUsage,
     top_threads: threads,
     cost_breakdown_by_model: costBreakdownByModel,
     trend_days: buildTrendDays(habitDayMap, now),
@@ -1020,6 +1147,7 @@ export function buildDashboardPayload(index, options = {}) {
     heatmap_scale: filtered.heatmap_scale,
     current_work_range: filtered.current_work_range,
     current_work_sessions: filtered.current_work_sessions,
+    project_usage: filtered.project_usage,
     trend_days: filtered.trend_days,
     efficiency_metrics: filtered.efficiency_metrics,
     range_comparison: filtered.range_comparison,
