@@ -84,7 +84,7 @@ This installs a macOS LaunchAgent that runs the Pages publish script every 30 mi
 - `total_tokens` comes directly from Codex log snapshots and is treated as the source of truth.
 - `cached_input_tokens` is a subset of input tokens, not an extra additive bucket.
 - `reasoning_output_tokens` is tracked separately in the logs and is not included inside `total_tokens`.
-- Estimated cost is derived from the published Codex token-based rate card and shown as a USD-equivalent directional estimate.
+- Estimated cost is derived from the published OpenAI API token-pricing table and shown as a USD-equivalent directional estimate.
 - Cost estimates use uncached input at the model input rate, cached input at the cached-input rate, and `output_tokens + reasoning_output_tokens` at the model output rate.
 - Exact billed cost is not available from local Codex logs, so the dashboard treats these as directional estimates.
 - Range state is encoded in the page URL using either preset `days` or explicit `start_date` / `end_date`.

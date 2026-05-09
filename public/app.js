@@ -24,8 +24,6 @@ const REFRESH_WAITING_LABEL = "Waiting for publish...";
 const REFRESH_POLL_INTERVAL_MS = 2500;
 const REFRESH_POLL_TIMEOUT_MS = 60000;
 const MOBILE_BREAKPOINT = 760;
-const RATE_CARD_UNITS_PER_USD = 25;
-
 const state = {
   rangeMode: "preset",
   days: DEFAULT_DAYS,
@@ -166,10 +164,6 @@ function formatRate(value) {
     minimumFractionDigits: amount > 0 && amount < 1 ? 2 : 0,
     maximumFractionDigits: amount >= 100 ? 0 : 2
   }).format(amount)}/1M`;
-}
-
-function formatCreditRateAsUsd(value) {
-  return formatRate((value || 0) / RATE_CARD_UNITS_PER_USD);
 }
 
 function formatCompactUsd(value) {
@@ -1036,9 +1030,9 @@ function renderCostBreakdown(dashboard) {
       <td>${formatFullNumber(row.uncached_input_tokens)}</td>
       <td>${formatFullNumber(row.cached_input_tokens)}</td>
       <td>${formatFullNumber(row.billed_output_tokens)}</td>
-      <td>${formatCreditRateAsUsd(row.rates.input)}</td>
-      <td>${formatCreditRateAsUsd(row.rates.cached_input)}</td>
-      <td>${formatCreditRateAsUsd(row.rates.output)}</td>
+      <td>${formatRate(row.rates.input)}</td>
+      <td>${formatRate(row.rates.cached_input)}</td>
+      <td>${formatRate(row.rates.output)}</td>
       <td class="cost-cell-strong">${formatUsd(row.estimated_cost_usd)}</td>
       <td>${formatPercent(row.share_of_total_cost)}</td>
     </tr>
