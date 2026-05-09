@@ -24,7 +24,7 @@ const REFRESH_WAITING_LABEL = "Waiting for publish...";
 const REFRESH_POLL_INTERVAL_MS = 2500;
 const REFRESH_POLL_TIMEOUT_MS = 60000;
 const MOBILE_BREAKPOINT = 760;
-const CREDITS_PER_USD = 25;
+const RATE_CARD_UNITS_PER_USD = 25;
 
 const state = {
   rangeMode: "preset",
@@ -33,7 +33,7 @@ const state = {
   endDate: null,
   workspace: "all",
   includeSubagents: true,
-  projectSort: "credits",
+  projectSort: "cost",
   selectedDate: null,
   snapshot: null,
   snapshotNow: null,
@@ -169,7 +169,7 @@ function formatRate(value) {
 }
 
 function formatCreditRateAsUsd(value) {
-  return formatRate((value || 0) / CREDITS_PER_USD);
+  return formatRate((value || 0) / RATE_CARD_UNITS_PER_USD);
 }
 
 function formatCompactUsd(value) {
@@ -241,10 +241,10 @@ function formatTrendDayNumber(value) {
 
 function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses the Codex token-based rate card, converted from credits at ${CREDITS_PER_USD} credits per $1. Treat this as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
+    return `Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return `Estimated cost uses the Codex token-based rate card, converted from credits at ${CREDITS_PER_USD} credits per $1. Treat this as a directional planning lens, not billed spend.`;
+  return "Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend.";
 }
 
 function todayDate(now = new Date()) {
@@ -615,8 +615,8 @@ function renderHabitRail(dashboard) {
   if (metrics.today_has_usage) {
     elements.todayStatusHeadline.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens so far today`;
     elements.todayStatusNote.textContent = metrics.current_streak > 1
-      ? `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated today · ${formatCountLabel(metrics.current_streak, "day")} streak is live`
-      : `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated today · streak is live`;
+      ? `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · ${formatCountLabel(metrics.current_streak, "day")} streak is live`
+      : `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · streak is live`;
   } else {
     elements.todayStatusHeadline.textContent = "One workflow starts the streak";
     elements.todayStatusNote.textContent = "No usage yet today. Light up today's square.";
@@ -844,8 +844,11 @@ function buildHeatmapHeadline(dashboard) {
   const totalTokens = dashboard.habit_board.days.reduce((sum, day) =>
     sum + (day.in_range ? (day.total_tokens || 0) : 0), 0
   );
+  const totalCost = dashboard.habit_board.days.reduce((sum, day) =>
+    sum + (day.in_range ? (day.estimated_cost_usd || 0) : 0), 0
+  );
 
-  return `${formatFullNumber(totalTokens)} tokens across the last 365 days`;
+  return `${formatFullNumber(totalTokens)} tokens · ${formatUsd(totalCost)} estimated cost across the last 365 days`;
 }
 
 function heatmapWeekWidth() {
@@ -1084,7 +1087,7 @@ function renderProjectUsage(dashboard) {
   const projects = getSortedProjects(dashboard.project_usage || []);
   const rangeLabel = dashboard.selection.label.toLowerCase();
   const sortLabels = {
-    credits: "estimated cost",
+    cost: "estimated cost",
     tokens: "tokens"
   };
 
@@ -1434,7 +1437,7 @@ elements.subagentToggle.addEventListener("change", () => {
 
 for (const button of elements.projectSortButtons) {
   button.addEventListener("click", () => {
-    state.projectSort = button.dataset.projectSort || "credits";
+    state.projectSort = button.dataset.projectSort || "cost";
     if (state.dashboard) {
       renderProjectUsage(state.dashboard);
     }
