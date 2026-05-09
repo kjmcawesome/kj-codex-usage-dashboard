@@ -1,5 +1,6 @@
 const RATE_CARD_PUBLISHED_AT = "2026-05-02";
 const RATE_CARD_MODE = "codex_credits";
+const CREDITS_PER_USD = 25;
 const CURRENT_WORK_WINDOW_HOURS = 72;
 const PROXY_PRICED_MODEL = "gpt-5.4 estimate";
 const MODEL_ALIASES = Object.freeze({
@@ -47,6 +48,10 @@ const RATE_CARD_SOURCES = Object.freeze([
   {
     label: "Codex rate card",
     url: "https://help.openai.com/en/articles/20001106-codex-rate-card"
+  },
+  {
+    label: "OpenAI API pricing",
+    url: "https://openai.com/api/pricing/"
   }
 ]);
 
@@ -153,10 +158,11 @@ function estimateCost(totals, model) {
 
   const uncachedInputTokens = Math.max(0, (totals.input_tokens || 0) - (totals.cached_input_tokens || 0));
   const billedOutputTokens = (totals.output_tokens || 0) + (totals.reasoning_output_tokens || 0);
-  const estimatedCostUsd =
+  const estimatedCredits =
     ((uncachedInputTokens / 1000000) * rates.input) +
     (((totals.cached_input_tokens || 0) / 1000000) * rates.cached_input) +
     ((billedOutputTokens / 1000000) * rates.output);
+  const estimatedCostUsd = estimatedCredits / CREDITS_PER_USD;
 
   return {
     estimated_cost_usd: estimatedCostUsd,
@@ -175,6 +181,7 @@ function priceEvent(event) {
 function buildRateCardPayload() {
   return {
     mode: RATE_CARD_MODE,
+    credits_per_usd: CREDITS_PER_USD,
     published_at: RATE_CARD_PUBLISHED_AT,
     models: RATE_CARD,
     sources: RATE_CARD_SOURCES
@@ -183,10 +190,10 @@ function buildRateCardPayload() {
 
 function buildCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct rate-card entry.`;
+    return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}, converted from credits at ${CREDITS_PER_USD} credits per $1. Treat this as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend.`;
+  return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}, converted from credits at ${CREDITS_PER_USD} credits per $1. Treat this as a directional planning lens, not billed spend.`;
 }
 
 function formatDisplayDate(date) {

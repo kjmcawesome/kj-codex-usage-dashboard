@@ -24,6 +24,7 @@ const REFRESH_WAITING_LABEL = "Waiting for publish...";
 const REFRESH_POLL_INTERVAL_MS = 2500;
 const REFRESH_POLL_TIMEOUT_MS = 60000;
 const MOBILE_BREAKPOINT = 760;
+const RATE_CARD_UNITS_PER_USD = 25;
 
 const state = {
   rangeMode: "preset",
@@ -149,25 +150,29 @@ function formatSignedPercent(value) {
 
 function formatUsd(value) {
   const amount = value || 0;
-  const formatted = new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: amount > 0 && amount < 1 ? 2 : 0,
     maximumFractionDigits: amount >= 100 ? 0 : 2
   }).format(amount);
-  return `${formatted} credits`;
 }
 
 function formatRate(value) {
   const amount = value || 0;
-  const formatted = new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: amount >= 100 ? 0 : 3
-  }).format(amount);
-  return `${formatted} credits/1M`;
+  return `${new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: amount > 0 && amount < 1 ? 2 : 0,
+    maximumFractionDigits: amount >= 100 ? 0 : 2
+  }).format(amount)}/1M`;
+}
+
+function formatCreditRateAsUsd(value) {
+  return formatRate((value || 0) / RATE_CARD_UNITS_PER_USD);
 }
 
 function formatCompactUsd(value) {
-  if ((value || 0) >= 100) {
-    return `${formatCompactNumber(value || 0)} credits`;
-  }
-
   return formatUsd(value || 0);
 }
 
@@ -236,10 +241,10 @@ function formatTrendDayNumber(value) {
 
 function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses the Codex token-based rate card as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
+    return `Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return "Estimated cost uses the Codex token-based rate card as a directional planning lens, not billed spend.";
+  return "Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend.";
 }
 
 function todayDate(now = new Date()) {
@@ -610,8 +615,8 @@ function renderHabitRail(dashboard) {
   if (metrics.today_has_usage) {
     elements.todayStatusHeadline.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens so far today`;
     elements.todayStatusNote.textContent = metrics.current_streak > 1
-      ? `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated today · ${formatCountLabel(metrics.current_streak, "day")} streak is live`
-      : `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated today · streak is live`;
+      ? `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · ${formatCountLabel(metrics.current_streak, "day")} streak is live`
+      : `${formatCompactUsd(metrics.today_estimated_cost_usd)} estimated cost today · streak is live`;
   } else {
     elements.todayStatusHeadline.textContent = "One workflow starts the streak";
     elements.todayStatusNote.textContent = "No usage yet today. Light up today's square.";
@@ -839,8 +844,11 @@ function buildHeatmapHeadline(dashboard) {
   const totalTokens = dashboard.habit_board.days.reduce((sum, day) =>
     sum + (day.in_range ? (day.total_tokens || 0) : 0), 0
   );
+  const totalCost = dashboard.habit_board.days.reduce((sum, day) =>
+    sum + (day.in_range ? (day.estimated_cost_usd || 0) : 0), 0
+  );
 
-  return `${formatFullNumber(totalTokens)} tokens across the last 365 days`;
+  return `${formatFullNumber(totalTokens)} tokens · ${formatUsd(totalCost)} estimated cost across the last 365 days`;
 }
 
 function heatmapWeekWidth() {
@@ -1028,9 +1036,9 @@ function renderCostBreakdown(dashboard) {
       <td>${formatFullNumber(row.uncached_input_tokens)}</td>
       <td>${formatFullNumber(row.cached_input_tokens)}</td>
       <td>${formatFullNumber(row.billed_output_tokens)}</td>
-      <td>${formatRate(row.rates.input)}</td>
-      <td>${formatRate(row.rates.cached_input)}</td>
-      <td>${formatRate(row.rates.output)}</td>
+      <td>${formatCreditRateAsUsd(row.rates.input)}</td>
+      <td>${formatCreditRateAsUsd(row.rates.cached_input)}</td>
+      <td>${formatCreditRateAsUsd(row.rates.output)}</td>
       <td class="cost-cell-strong">${formatUsd(row.estimated_cost_usd)}</td>
       <td>${formatPercent(row.share_of_total_cost)}</td>
     </tr>
@@ -1079,7 +1087,7 @@ function renderProjectUsage(dashboard) {
   const projects = getSortedProjects(dashboard.project_usage || []);
   const rangeLabel = dashboard.selection.label.toLowerCase();
   const sortLabels = {
-    credits: "estimated cost",
+    cost: "estimated cost",
     tokens: "tokens"
   };
 
