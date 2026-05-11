@@ -1,6 +1,5 @@
-const RATE_CARD_PUBLISHED_AT = "2026-05-02";
-const RATE_CARD_MODE = "codex_credits";
-const CREDITS_PER_USD = 25;
+const RATE_CARD_PUBLISHED_AT = "2026-05-08";
+const RATE_CARD_MODE = "api_token_pricing_usd";
 const CURRENT_WORK_WINDOW_HOURS = 72;
 const PROXY_PRICED_MODEL = "gpt-5.4 estimate";
 const MODEL_ALIASES = Object.freeze({
@@ -9,49 +8,45 @@ const MODEL_ALIASES = Object.freeze({
 });
 const RATE_CARD = Object.freeze({
   "gpt-5.5": {
-    input: 125.0,
-    cached_input: 12.5,
-    output: 750.0
+    input: 5.0,
+    cached_input: 0.5,
+    output: 30.0
   },
   "gpt-5.2": {
-    input: 43.75,
-    cached_input: 4.375,
-    output: 350.0
+    input: 1.75,
+    cached_input: 0.175,
+    output: 14.0
   },
   "gpt-5.2-codex": {
-    input: 43.75,
-    cached_input: 4.375,
-    output: 350.0
+    input: 1.75,
+    cached_input: 0.175,
+    output: 14.0
   },
   "gpt-5.3-codex": {
-    input: 43.75,
-    cached_input: 4.375,
-    output: 350.0
+    input: 1.75,
+    cached_input: 0.175,
+    output: 14.0
   },
   "gpt-5.4": {
-    input: 62.5,
-    cached_input: 6.25,
-    output: 375.0
+    input: 2.5,
+    cached_input: 0.25,
+    output: 15.0
   },
   "gpt-5.4-mini": {
-    input: 18.75,
-    cached_input: 1.875,
-    output: 113.0
+    input: 0.75,
+    cached_input: 0.075,
+    output: 4.5
   },
   [PROXY_PRICED_MODEL]: {
-    input: 62.5,
-    cached_input: 6.25,
-    output: 375.0
+    input: 2.5,
+    cached_input: 0.25,
+    output: 15.0
   }
 });
 const RATE_CARD_SOURCES = Object.freeze([
   {
-    label: "Codex rate card",
-    url: "https://help.openai.com/en/articles/20001106-codex-rate-card"
-  },
-  {
     label: "OpenAI API pricing",
-    url: "https://openai.com/api/pricing/"
+    url: "https://developers.openai.com/api/docs/pricing"
   }
 ]);
 
@@ -158,11 +153,10 @@ function estimateCost(totals, model) {
 
   const uncachedInputTokens = Math.max(0, (totals.input_tokens || 0) - (totals.cached_input_tokens || 0));
   const billedOutputTokens = (totals.output_tokens || 0) + (totals.reasoning_output_tokens || 0);
-  const estimatedCredits =
+  const estimatedCostUsd =
     ((uncachedInputTokens / 1000000) * rates.input) +
     (((totals.cached_input_tokens || 0) / 1000000) * rates.cached_input) +
     ((billedOutputTokens / 1000000) * rates.output);
-  const estimatedCostUsd = estimatedCredits / CREDITS_PER_USD;
 
   return {
     estimated_cost_usd: estimatedCostUsd,
@@ -181,7 +175,6 @@ function priceEvent(event) {
 function buildRateCardPayload() {
   return {
     mode: RATE_CARD_MODE,
-    credits_per_usd: CREDITS_PER_USD,
     published_at: RATE_CARD_PUBLISHED_AT,
     models: RATE_CARD,
     sources: RATE_CARD_SOURCES
@@ -190,10 +183,10 @@ function buildRateCardPayload() {
 
 function buildCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}, converted from credits at ${CREDITS_PER_USD} credits per $1. Treat this as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct rate-card entry.`;
+    return `Estimated cost uses published Codex and API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend. ${unpricedTotalTokens.toLocaleString("en-US")} tokens in this view used the ${PROXY_PRICED_MODEL} proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
-  return `Estimated cost uses the Codex token-based rate card as of ${RATE_CARD_PUBLISHED_AT}, converted from credits at ${CREDITS_PER_USD} credits per $1. Treat this as a directional planning lens, not billed spend.`;
+  return `Estimated cost uses published Codex and API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend.`;
 }
 
 function formatDisplayDate(date) {
@@ -1127,7 +1120,7 @@ export function buildDashboardPayload(index, options = {}) {
     timezone: index.timezone,
     credits_mode: "none",
     credits_spent: null,
-    credits_note: "Local Codex session logs expose exact tokens but not exact billed credits.",
+    credits_note: "Local Codex session logs expose exact tokens but not exact billed spend.",
     cost_mode: "estimated",
     estimated_cost_note: buildCostNote(filtered.summary.unpriced_total_tokens),
     rate_card: buildRateCardPayload(),
