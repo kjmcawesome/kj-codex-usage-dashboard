@@ -275,7 +275,7 @@ function formatWorkflowContext(item) {
 }
 
 function formatProjectName(project) {
-  return project.workspace_label || project.workspace_key || "Unknown project";
+  return project.project_label || project.workspace_label || project.workspace_key || "Unknown project";
 }
 
 function sumHabitWindow(dashboard, days) {
