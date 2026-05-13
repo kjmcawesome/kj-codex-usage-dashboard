@@ -19,19 +19,19 @@
       <header class="hero">
         <div class="hero-top">
           <div class="hero-copy">
-            <p class="eyebrow">Your usage</p>
+            <p class="eyebrow">Tokenmaxxing</p>
             <h1>KJ Codex Usage Dashboard</h1>
             <p class="hero-note">
-              Token usage, estimated cost, and today's momentum.
+              Codex momentum, project token volume, and estimated cost context.
             </p>
             <section class="hero-progress-card" aria-labelledby="hero-progress-label">
               <div class="hero-progress-head">
                 <div class="hero-progress-copy">
                   <p class="hero-progress-kicker">
                     <i data-lucide="activity" aria-hidden="true"></i>
-                    Daily cadence
+                    Codex cadence
                   </p>
-                  <strong id="hero-progress-label">Monthly active-day pace</strong>
+                  <strong id="hero-progress-label">Monthly tokenmaxxing pace</strong>
                   <span id="hero-progress-note">Loading current month activity...</span>
                 </div>
                 <div class="hero-progress-side">
@@ -60,7 +60,7 @@
       <section class="panel momentum-panel">
         <div class="panel-head momentum-panel-head">
           <div>
-            <p class="panel-eyebrow">Daily momentum</p>
+            <p class="panel-eyebrow">Codex momentum</p>
             <h2>Keep the squares lit</h2>
             <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
           </div>
@@ -68,24 +68,24 @@
             <span id="today-status-pill" class="status-pill">Checking today</span>
             <div class="momentum-status-copy">
               <strong id="today-status-headline">Loading today’s momentum...</strong>
-              <span id="today-status-note">Pulling current token usage and estimated cost.</span>
+              <span id="today-status-note">Pulling today’s token volume and estimated cost.</span>
             </div>
           </div>
         </div>
 
         <div class="momentum-ribbon">
           <article class="cost-window-card">
-            <span class="cost-window-label">Today cost</span>
+            <span class="cost-window-label">Today tokens</span>
             <strong id="cost-today">-</strong>
             <span id="cost-today-foot" class="cost-window-foot">-</span>
           </article>
           <article class="cost-window-card">
-            <span class="cost-window-label">Last 14 days</span>
+            <span class="cost-window-label">30-day tokens</span>
             <strong id="cost-14d">-</strong>
             <span id="cost-14d-foot" class="cost-window-foot">-</span>
           </article>
           <article class="cost-window-card">
-            <span class="cost-window-label">Month to date</span>
+            <span class="cost-window-label">Month-to-date tokens</span>
             <strong id="cost-month">-</strong>
             <span id="cost-month-foot" class="cost-window-foot">-</span>
           </article>
@@ -155,14 +155,14 @@
         <div class="panel-head project-usage-head">
           <div>
             <p class="panel-eyebrow">Project usage</p>
-            <h2>Where tokens land</h2>
+            <h2>Tokenmaxxing by project</h2>
             <p class="ranking-note" id="project-usage-note">
-              Projects ranked by token usage and estimated cost.
+              Projects ranked by token volume, with estimated cost for context.
             </p>
           </div>
           <div class="project-sort-controls" aria-label="Project sort">
-            <button class="project-sort-button is-active" type="button" data-project-sort="cost">Cost</button>
-            <button class="project-sort-button" type="button" data-project-sort="tokens">Tokens</button>
+            <button class="project-sort-button is-active" type="button" data-project-sort="tokens">Tokens</button>
+            <button class="project-sort-button" type="button" data-project-sort="cost">Cost</button>
           </div>
         </div>
         <div id="project-usage-list" class="project-usage-list"></div>
@@ -335,7 +335,7 @@
               Workflow rows below show what drove the selected day.
             </p>
             <p class="day-explainer" id="day-cost-note">
-              Estimated cost uses the Codex token-based rate card as a directional planning lens.
+              Estimated cost uses OpenAI API token pricing as a directional planning lens.
             </p>
             <div id="day-session-list" class="session-list"></div>
           </div>
@@ -345,14 +345,14 @@
       <details class="panel budget-panel">
         <summary class="budget-toggle">
           <div>
-            <p class="panel-eyebrow">Budget details</p>
+            <p class="panel-eyebrow">Cost details</p>
             <h2>Estimated cost breakdown</h2>
-            <p class="ranking-note">Model-level Codex cost detail for the planning lens behind this snapshot.</p>
+            <p class="ranking-note">Model-level estimated cost detail behind the token usage snapshot.</p>
           </div>
         </summary>
         <div class="budget-details-body">
           <p class="section-note" id="cost-note">
-            Estimated cost uses the Codex token-based rate card as a directional planning lens.
+            Estimated cost uses OpenAI API token pricing as a directional planning lens.
           </p>
           <div class="cost-table-shell">
             <table class="cost-table">
@@ -380,6 +380,6 @@
 
     <script src="./vendor/flatpickr/flatpickr.min.js"></script>
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
-    <script type="module" src="./app.js?v=20260508-usd-cost"></script>
+    <script type="module" src="./app.js?v=20260513-tokenmaxxing"></script>
   </body>
 </html>
