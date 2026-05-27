@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-05-27T19:00:05.906Z",
+  "generated_at": "2026-05-27T19:30:06.787Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -108464,11 +108464,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 223558771,
-      "input_tokens": 222970671,
-      "cached_input_tokens": 210084480,
-      "output_tokens": 588100,
-      "reasoning_output_tokens": 221526,
+      "total_tokens": 223921309,
+      "input_tokens": 223331479,
+      "cached_input_tokens": 210267008,
+      "output_tokens": 589830,
+      "reasoning_output_tokens": 222554,
       "events": [
         {
           "timestamp": "2026-04-23T16:29:22.594Z",
@@ -124259,6 +124259,26 @@
           "cached_input_tokens": 182144,
           "output_tokens": 784,
           "reasoning_output_tokens": 470
+        },
+        {
+          "timestamp": "2026-05-27T19:25:22.677Z",
+          "date": "2026-05-27",
+          "model": "arcanine",
+          "total_tokens": 180138,
+          "input_tokens": 179297,
+          "cached_input_tokens": 4480,
+          "output_tokens": 841,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-05-27T19:25:38.608Z",
+          "date": "2026-05-27",
+          "model": "arcanine",
+          "total_tokens": 182400,
+          "input_tokens": 181511,
+          "cached_input_tokens": 178048,
+          "output_tokens": 889,
+          "reasoning_output_tokens": 512
         }
       ],
       "estimated_cost_usd": null,
@@ -136619,6 +136639,194 @@
       "unpriced_total_tokens": null
     },
     {
+      "session_id": "019e6ace-fe5a-7d23-9319-da62185871f0",
+      "thread_name": "Find Gong call for Chris",
+      "parent_session_id": null,
+      "session_started_at": "2026-05-27T19:00:11.136Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.134.0-alpha.1",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.5",
+      "models_used": [
+        "gpt-5.5"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 1283456,
+      "input_tokens": 1276536,
+      "cached_input_tokens": 1061888,
+      "output_tokens": 6920,
+      "reasoning_output_tokens": 3214,
+      "events": [
+        {
+          "timestamp": "2026-05-27T19:01:07.034Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 30010,
+          "input_tokens": 29415,
+          "cached_input_tokens": 3456,
+          "output_tokens": 595,
+          "reasoning_output_tokens": 221
+        },
+        {
+          "timestamp": "2026-05-27T19:01:10.994Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 38370,
+          "input_tokens": 38222,
+          "cached_input_tokens": 29056,
+          "output_tokens": 148,
+          "reasoning_output_tokens": 46
+        },
+        {
+          "timestamp": "2026-05-27T19:01:12.784Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 42094,
+          "input_tokens": 42060,
+          "cached_input_tokens": 37760,
+          "output_tokens": 34,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-05-27T19:01:37.632Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 44657,
+          "input_tokens": 44013,
+          "cached_input_tokens": 41856,
+          "output_tokens": 644,
+          "reasoning_output_tokens": 400
+        },
+        {
+          "timestamp": "2026-05-27T19:03:45.912Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 48965,
+          "input_tokens": 48406,
+          "cached_input_tokens": 43904,
+          "output_tokens": 559,
+          "reasoning_output_tokens": 267
+        },
+        {
+          "timestamp": "2026-05-27T19:05:57.241Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 69530,
+          "input_tokens": 68836,
+          "cached_input_tokens": 48000,
+          "output_tokens": 694,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-05-27T19:06:12.528Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 70331,
+          "input_tokens": 69689,
+          "cached_input_tokens": 68480,
+          "output_tokens": 642,
+          "reasoning_output_tokens": 141
+        },
+        {
+          "timestamp": "2026-05-27T19:06:17.701Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 71316,
+          "input_tokens": 70989,
+          "cached_input_tokens": 69504,
+          "output_tokens": 327,
+          "reasoning_output_tokens": 175
+        },
+        {
+          "timestamp": "2026-05-27T19:06:24.278Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 74484,
+          "input_tokens": 73990,
+          "cached_input_tokens": 70528,
+          "output_tokens": 494,
+          "reasoning_output_tokens": 136
+        },
+        {
+          "timestamp": "2026-05-27T19:21:56.120Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 73146,
+          "input_tokens": 72592,
+          "cached_input_tokens": 29056,
+          "output_tokens": 554,
+          "reasoning_output_tokens": 343
+        },
+        {
+          "timestamp": "2026-05-27T19:22:10.834Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 118396,
+          "input_tokens": 117406,
+          "cached_input_tokens": 72576,
+          "output_tokens": 990,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-05-27T19:26:17.980Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 117672,
+          "input_tokens": 117547,
+          "cached_input_tokens": 72576,
+          "output_tokens": 125,
+          "reasoning_output_tokens": 47
+        },
+        {
+          "timestamp": "2026-05-27T19:28:21.406Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 117981,
+          "input_tokens": 117799,
+          "cached_input_tokens": 117120,
+          "output_tokens": 182,
+          "reasoning_output_tokens": 9
+        },
+        {
+          "timestamp": "2026-05-27T19:28:38.787Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 118392,
+          "input_tokens": 118127,
+          "cached_input_tokens": 117632,
+          "output_tokens": 265,
+          "reasoning_output_tokens": 30
+        },
+        {
+          "timestamp": "2026-05-27T19:29:00.625Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 123451,
+          "input_tokens": 123182,
+          "cached_input_tokens": 117632,
+          "output_tokens": 269,
+          "reasoning_output_tokens": 137
+        },
+        {
+          "timestamp": "2026-05-27T19:29:07.010Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 124661,
+          "input_tokens": 124263,
+          "cached_input_tokens": 122752,
+          "output_tokens": 398,
+          "reasoning_output_tokens": 230
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019dda3f-ad9a-76b2-b017-d9d4ba778067",
       "thread_name": "Find Gong discovery calls",
       "parent_session_id": null,
@@ -144523,10 +144731,10 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 284266434,
-      "input_tokens": 283506259,
-      "cached_input_tokens": 249218048,
-      "output_tokens": 760175,
+      "total_tokens": 284362417,
+      "input_tokens": 283602171,
+      "cached_input_tokens": 249313152,
+      "output_tokens": 760246,
       "reasoning_output_tokens": 304734,
       "events": [
         {
@@ -164218,6 +164426,16 @@
           "cached_input_tokens": 95104,
           "output_tokens": 71,
           "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-05-27T19:26:03.152Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 95983,
+          "input_tokens": 95912,
+          "cached_input_tokens": 95104,
+          "output_tokens": 71,
+          "reasoning_output_tokens": 0
         }
       ],
       "estimated_cost_usd": null,
@@ -169179,11 +169397,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 177482665,
-      "input_tokens": 177173125,
-      "cached_input_tokens": 155871872,
-      "output_tokens": 309540,
-      "reasoning_output_tokens": 127876,
+      "total_tokens": 178207640,
+      "input_tokens": 177895611,
+      "cached_input_tokens": 156518528,
+      "output_tokens": 312029,
+      "reasoning_output_tokens": 128918,
       "events": [
         {
           "timestamp": "2026-05-05T16:12:43.494Z",
@@ -181334,6 +181552,86 @@
           "cached_input_tokens": 5504,
           "output_tokens": 114,
           "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-05-27T19:21:03.587Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 66159,
+          "input_tokens": 66011,
+          "cached_input_tokens": 65408,
+          "output_tokens": 148,
+          "reasoning_output_tokens": 78
+        },
+        {
+          "timestamp": "2026-05-27T19:21:05.144Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 69274,
+          "input_tokens": 69244,
+          "cached_input_tokens": 65920,
+          "output_tokens": 30,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-05-27T19:21:06.882Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 70838,
+          "input_tokens": 70807,
+          "cached_input_tokens": 68992,
+          "output_tokens": 31,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-05-27T19:21:20.135Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 72887,
+          "input_tokens": 72438,
+          "cached_input_tokens": 70528,
+          "output_tokens": 449,
+          "reasoning_output_tokens": 141
+        },
+        {
+          "timestamp": "2026-05-27T19:21:36.093Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 80922,
+          "input_tokens": 80440,
+          "cached_input_tokens": 72064,
+          "output_tokens": 482,
+          "reasoning_output_tokens": 68
+        },
+        {
+          "timestamp": "2026-05-27T19:21:53.627Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 112608,
+          "input_tokens": 111762,
+          "cached_input_tokens": 80256,
+          "output_tokens": 846,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-05-27T19:22:01.248Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 113339,
+          "input_tokens": 113112,
+          "cached_input_tokens": 111488,
+          "output_tokens": 227,
+          "reasoning_output_tokens": 34
+        },
+        {
+          "timestamp": "2026-05-27T19:22:06.221Z",
+          "date": "2026-05-27",
+          "model": "gpt-5.5",
+          "total_tokens": 138948,
+          "input_tokens": 138672,
+          "cached_input_tokens": 112000,
+          "output_tokens": 276,
+          "reasoning_output_tokens": 205
         }
       ],
       "estimated_cost_usd": null,
@@ -297430,6 +297728,6 @@
     }
   ],
   "source": {
-    "log_files": 628
+    "log_files": 629
   }
 }
