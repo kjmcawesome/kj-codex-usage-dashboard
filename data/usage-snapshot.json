@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-05-29T20:00:37.087Z",
+  "generated_at": "2026-05-29T20:30:07.034Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -177137,11 +177137,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 207417227,
-      "input_tokens": 207056689,
-      "cached_input_tokens": 183106560,
-      "output_tokens": 360538,
-      "reasoning_output_tokens": 152610,
+      "total_tokens": 207887625,
+      "input_tokens": 207525695,
+      "cached_input_tokens": 183533696,
+      "output_tokens": 361930,
+      "reasoning_output_tokens": 153453,
       "events": [
         {
           "timestamp": "2026-05-05T16:12:43.494Z",
@@ -191342,6 +191342,36 @@
           "cached_input_tokens": 131968,
           "output_tokens": 617,
           "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-05-29T20:02:52.969Z",
+          "date": "2026-05-29",
+          "model": "gpt-5.5",
+          "total_tokens": 148541,
+          "input_tokens": 147771,
+          "cached_input_tokens": 128384,
+          "output_tokens": 770,
+          "reasoning_output_tokens": 373
+        },
+        {
+          "timestamp": "2026-05-29T20:02:57.448Z",
+          "date": "2026-05-29",
+          "model": "gpt-5.5",
+          "total_tokens": 151847,
+          "input_tokens": 151767,
+          "cached_input_tokens": 147328,
+          "output_tokens": 80,
+          "reasoning_output_tokens": 12
+        },
+        {
+          "timestamp": "2026-05-29T20:03:07.459Z",
+          "date": "2026-05-29",
+          "model": "gpt-5.5",
+          "total_tokens": 170010,
+          "input_tokens": 169468,
+          "cached_input_tokens": 151424,
+          "output_tokens": 542,
+          "reasoning_output_tokens": 458
         }
       ],
       "estimated_cost_usd": null,
@@ -308050,6 +308080,31 @@
       "unpriced_total_tokens": null
     },
     {
+      "session_id": "019e756d-eb4e-7383-85fa-a3274ea8340b",
+      "thread_name": "Update forecast allocations",
+      "parent_session_id": null,
+      "session_started_at": "2026-05-29T20:29:58.479Z",
+      "cwd": "/Users/kj/Documents/Codex/2026-05-29/doing-some-forecast-work-please-take",
+      "workspace_key": "/Users/kj/Documents/Codex",
+      "workspace_label": "Codex",
+      "originator": "Codex Desktop",
+      "cli_version": "0.135.0-alpha.1",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.5",
+      "models_used": [
+        "gpt-5.5"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "events": []
+    },
+    {
       "session_id": "019e5091-a176-7e82-8fd2-e5d2b62fb01a",
       "thread_name": "Update land pipeline recap",
       "parent_session_id": null,
@@ -309599,6 +309654,6 @@
     }
   ],
   "source": {
-    "log_files": 653
+    "log_files": 654
   }
 }
