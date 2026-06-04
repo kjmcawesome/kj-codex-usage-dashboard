@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-06-04T16:30:06.422Z",
+  "generated_at": "2026-06-04T17:00:05.575Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -186483,11 +186483,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 274093245,
-      "input_tokens": 273609838,
-      "cached_input_tokens": 245413248,
-      "output_tokens": 483407,
-      "reasoning_output_tokens": 198121,
+      "total_tokens": 274402821,
+      "input_tokens": 273918823,
+      "cached_input_tokens": 245559424,
+      "output_tokens": 483998,
+      "reasoning_output_tokens": 198359,
       "events": [
         {
           "timestamp": "2026-05-05T16:12:43.494Z",
@@ -204858,6 +204858,26 @@
           "cached_input_tokens": 140672,
           "output_tokens": 637,
           "reasoning_output_tokens": 416
+        },
+        {
+          "timestamp": "2026-06-04T16:48:22.527Z",
+          "date": "2026-06-04",
+          "model": "gpt-5.5",
+          "total_tokens": 143389,
+          "input_tokens": 143071,
+          "cached_input_tokens": 3456,
+          "output_tokens": 318,
+          "reasoning_output_tokens": 61
+        },
+        {
+          "timestamp": "2026-06-04T16:48:29.209Z",
+          "date": "2026-06-04",
+          "model": "gpt-5.5",
+          "total_tokens": 166187,
+          "input_tokens": 165914,
+          "cached_input_tokens": 142720,
+          "output_tokens": 273,
+          "reasoning_output_tokens": 177
         }
       ],
       "estimated_cost_usd": null,
@@ -257703,6 +257723,64 @@
           "cached_input_tokens": 29056,
           "output_tokens": 2725,
           "reasoning_output_tokens": 1724
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019e9379-71df-7ed2-a163-e570cc142987",
+      "thread_name": "Record upcoming meetings",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-04T16:31:10.390Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.136.0-alpha.1",
+      "model_provider": "openai",
+      "primary_model": "jumpluff",
+      "models_used": [
+        "jumpluff"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 90369,
+      "input_tokens": 89750,
+      "cached_input_tokens": 60032,
+      "output_tokens": 619,
+      "reasoning_output_tokens": 386,
+      "events": [
+        {
+          "timestamp": "2026-06-04T16:31:24.205Z",
+          "date": "2026-06-04",
+          "model": "jumpluff",
+          "total_tokens": 28339,
+          "input_tokens": 28208,
+          "cached_input_tokens": 2432,
+          "output_tokens": 131,
+          "reasoning_output_tokens": 51
+        },
+        {
+          "timestamp": "2026-06-04T16:31:26.082Z",
+          "date": "2026-06-04",
+          "model": "jumpluff",
+          "total_tokens": 29689,
+          "input_tokens": 29629,
+          "cached_input_tokens": 28032,
+          "output_tokens": 60,
+          "reasoning_output_tokens": 22
+        },
+        {
+          "timestamp": "2026-06-04T16:31:34.536Z",
+          "date": "2026-06-04",
+          "model": "jumpluff",
+          "total_tokens": 32341,
+          "input_tokens": 31913,
+          "cached_input_tokens": 29568,
+          "output_tokens": 428,
+          "reasoning_output_tokens": 313
         }
       ],
       "estimated_cost_usd": null,
@@ -327435,6 +327513,6 @@
     }
   ],
   "source": {
-    "log_files": 697
+    "log_files": 698
   }
 }
