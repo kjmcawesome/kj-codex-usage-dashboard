@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-06-04T23:30:05.786Z",
+  "generated_at": "2026-06-05T00:10:11.247Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -187625,11 +187625,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 279383657,
-      "input_tokens": 278890993,
-      "cached_input_tokens": 249388672,
-      "output_tokens": 492664,
-      "reasoning_output_tokens": 201986,
+      "total_tokens": 279838220,
+      "input_tokens": 279345095,
+      "cached_input_tokens": 249815936,
+      "output_tokens": 493125,
+      "reasoning_output_tokens": 202072,
       "events": [
         {
           "timestamp": "2026-05-05T16:12:43.494Z",
@@ -206340,6 +206340,26 @@
           "cached_input_tokens": 206720,
           "output_tokens": 126,
           "reasoning_output_tokens": 51
+        },
+        {
+          "timestamp": "2026-06-04T23:52:21.554Z",
+          "date": "2026-06-04",
+          "model": "gpt-5.5",
+          "total_tokens": 220962,
+          "input_tokens": 220612,
+          "cached_input_tokens": 206720,
+          "output_tokens": 350,
+          "reasoning_output_tokens": 52
+        },
+        {
+          "timestamp": "2026-06-04T23:52:26.023Z",
+          "date": "2026-06-04",
+          "model": "gpt-5.5",
+          "total_tokens": 233601,
+          "input_tokens": 233490,
+          "cached_input_tokens": 220544,
+          "output_tokens": 111,
+          "reasoning_output_tokens": 34
         }
       ],
       "estimated_cost_usd": null,
@@ -316627,6 +316647,44 @@
       "events": []
     },
     {
+      "session_id": "019e9508-418a-7af2-95d1-427f9424d80f",
+      "thread_name": "Team KJ Lead SLA Daily Digest",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-04T23:46:46.889Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.136.0-alpha.1",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 28736,
+      "input_tokens": 28257,
+      "cached_input_tokens": 2432,
+      "output_tokens": 479,
+      "reasoning_output_tokens": 122,
+      "events": [
+        {
+          "timestamp": "2026-06-04T23:47:01.568Z",
+          "date": "2026-06-04",
+          "model": "gpt-5.4",
+          "total_tokens": 28736,
+          "input_tokens": 28257,
+          "cached_input_tokens": 2432,
+          "output_tokens": 479,
+          "reasoning_output_tokens": 122
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019e21dd-c452-7673-b1a0-86b9e027c3a6",
       "thread_name": "Team KJ Lead SLA Monitor",
       "parent_session_id": null,
@@ -329143,6 +329201,6 @@
     }
   ],
   "source": {
-    "log_files": 703
+    "log_files": 704
   }
 }
