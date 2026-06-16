@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-06-16T18:04:30.275Z",
+  "generated_at": "2026-06-16T18:30:04.454Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -35138,6 +35138,92 @@
           "cached_input_tokens": 2432,
           "output_tokens": 48,
           "reasoning_output_tokens": 30
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019ed1a1-1701-7a12-9d91-c828ff0e25a7",
+      "thread_name": "019ed1a1-1701-7a12-9d91-c828ff0e25a7",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-16T18:10:55.882Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "codex-auto-review",
+      "models_used": [
+        "codex-auto-review"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": true,
+      "total_tokens": 21337,
+      "input_tokens": 21256,
+      "cached_input_tokens": 2432,
+      "output_tokens": 81,
+      "reasoning_output_tokens": 63,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:11:02.228Z",
+          "date": "2026-06-16",
+          "model": "codex-auto-review",
+          "total_tokens": 21337,
+          "input_tokens": 21256,
+          "cached_input_tokens": 2432,
+          "output_tokens": 81,
+          "reasoning_output_tokens": 63
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019ed1a1-e83a-7703-a37e-ff1944329a59",
+      "thread_name": "019ed1a1-e83a-7703-a37e-ff1944329a59",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-16T18:11:49.500Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "codex-auto-review",
+      "models_used": [
+        "codex-auto-review"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": true,
+      "total_tokens": 62150,
+      "input_tokens": 61925,
+      "cached_input_tokens": 34048,
+      "output_tokens": 225,
+      "reasoning_output_tokens": 189,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:11:54.472Z",
+          "date": "2026-06-16",
+          "model": "codex-auto-review",
+          "total_tokens": 29428,
+          "input_tokens": 29296,
+          "cached_input_tokens": 4992,
+          "output_tokens": 132,
+          "reasoning_output_tokens": 114
+        },
+        {
+          "timestamp": "2026-06-16T18:12:31.692Z",
+          "date": "2026-06-16",
+          "model": "codex-auto-review",
+          "total_tokens": 32722,
+          "input_tokens": 32629,
+          "cached_input_tokens": 29056,
+          "output_tokens": 93,
+          "reasoning_output_tokens": 75
         }
       ],
       "estimated_cost_usd": null,
@@ -200084,11 +200170,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 350531719,
-      "input_tokens": 349924093,
-      "cached_input_tokens": 311758080,
-      "output_tokens": 607626,
-      "reasoning_output_tokens": 245782,
+      "total_tokens": 351866268,
+      "input_tokens": 351256031,
+      "cached_input_tokens": 312728320,
+      "output_tokens": 610237,
+      "reasoning_output_tokens": 246755,
       "events": [
         {
           "timestamp": "2026-05-05T16:12:43.494Z",
@@ -223269,6 +223355,86 @@
           "cached_input_tokens": 151936,
           "output_tokens": 66,
           "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-06-16T18:05:11.912Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.5",
+          "total_tokens": 155509,
+          "input_tokens": 155080,
+          "cached_input_tokens": 2432,
+          "output_tokens": 429,
+          "reasoning_output_tokens": 69
+        },
+        {
+          "timestamp": "2026-06-16T18:05:49.421Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.5",
+          "total_tokens": 156965,
+          "input_tokens": 156574,
+          "cached_input_tokens": 2432,
+          "output_tokens": 391,
+          "reasoning_output_tokens": 111
+        },
+        {
+          "timestamp": "2026-06-16T18:07:14.647Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.5",
+          "total_tokens": 163512,
+          "input_tokens": 163198,
+          "cached_input_tokens": 156544,
+          "output_tokens": 314,
+          "reasoning_output_tokens": 228
+        },
+        {
+          "timestamp": "2026-06-16T18:07:19.891Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.5",
+          "total_tokens": 163935,
+          "input_tokens": 163827,
+          "cached_input_tokens": 162688,
+          "output_tokens": 108,
+          "reasoning_output_tokens": 11
+        },
+        {
+          "timestamp": "2026-06-16T18:08:18.030Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.5",
+          "total_tokens": 166458,
+          "input_tokens": 166175,
+          "cached_input_tokens": 154496,
+          "output_tokens": 283,
+          "reasoning_output_tokens": 213
+        },
+        {
+          "timestamp": "2026-06-16T18:08:30.595Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.5",
+          "total_tokens": 168576,
+          "input_tokens": 168217,
+          "cached_input_tokens": 155008,
+          "output_tokens": 359,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-06-16T18:08:44.960Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.5",
+          "total_tokens": 169427,
+          "input_tokens": 169053,
+          "cached_input_tokens": 167808,
+          "output_tokens": 374,
+          "reasoning_output_tokens": 94
+        },
+        {
+          "timestamp": "2026-06-16T18:08:57.168Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.5",
+          "total_tokens": 190167,
+          "input_tokens": 189814,
+          "cached_input_tokens": 168832,
+          "output_tokens": 353,
+          "reasoning_output_tokens": 247
         }
       ],
       "estimated_cost_usd": null,
@@ -232251,12 +232417,45 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 88249,
+      "input_tokens": 87304,
+      "cached_input_tokens": 38528,
+      "output_tokens": 945,
+      "reasoning_output_tokens": 203,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:05:34.976Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 28843,
+          "input_tokens": 28363,
+          "cached_input_tokens": 4992,
+          "output_tokens": 480,
+          "reasoning_output_tokens": 114
+        },
+        {
+          "timestamp": "2026-06-16T18:11:02.250Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29664,
+          "input_tokens": 29485,
+          "cached_input_tokens": 28544,
+          "output_tokens": 179,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-06-16T18:11:09.294Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29742,
+          "input_tokens": 29456,
+          "cached_input_tokens": 4992,
+          "output_tokens": 286,
+          "reasoning_output_tokens": 89
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019d26ac-420f-7af2-893d-e5d01709c996",
@@ -351929,12 +352128,155 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 722417,
+      "input_tokens": 716421,
+      "cached_input_tokens": 660736,
+      "output_tokens": 5996,
+      "reasoning_output_tokens": 2130,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:05:37.089Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29845,
+          "input_tokens": 29148,
+          "cached_input_tokens": 4992,
+          "output_tokens": 697,
+          "reasoning_output_tokens": 290
+        },
+        {
+          "timestamp": "2026-06-16T18:10:56.030Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 37688,
+          "input_tokens": 37234,
+          "cached_input_tokens": 36736,
+          "output_tokens": 454,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-06-16T18:11:00.684Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 40099,
+          "input_tokens": 39956,
+          "cached_input_tokens": 36736,
+          "output_tokens": 143,
+          "reasoning_output_tokens": 10
+        },
+        {
+          "timestamp": "2026-06-16T18:11:03.479Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 40210,
+          "input_tokens": 40112,
+          "cached_input_tokens": 39808,
+          "output_tokens": 98,
+          "reasoning_output_tokens": 17
+        },
+        {
+          "timestamp": "2026-06-16T18:11:11.902Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 43521,
+          "input_tokens": 43184,
+          "cached_input_tokens": 39808,
+          "output_tokens": 337,
+          "reasoning_output_tokens": 60
+        },
+        {
+          "timestamp": "2026-06-16T18:11:18.365Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 51832,
+          "input_tokens": 51563,
+          "cached_input_tokens": 42880,
+          "output_tokens": 269,
+          "reasoning_output_tokens": 16
+        },
+        {
+          "timestamp": "2026-06-16T18:11:36.161Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 57847,
+          "input_tokens": 56928,
+          "cached_input_tokens": 51072,
+          "output_tokens": 919,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-06-16T18:11:45.208Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 58347,
+          "input_tokens": 57924,
+          "cached_input_tokens": 56704,
+          "output_tokens": 423,
+          "reasoning_output_tokens": 20
+        },
+        {
+          "timestamp": "2026-06-16T18:11:51.458Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 58709,
+          "input_tokens": 58424,
+          "cached_input_tokens": 57728,
+          "output_tokens": 285,
+          "reasoning_output_tokens": 138
+        },
+        {
+          "timestamp": "2026-06-16T18:11:57.170Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 58961,
+          "input_tokens": 58722,
+          "cached_input_tokens": 58240,
+          "output_tokens": 239,
+          "reasoning_output_tokens": 119
+        },
+        {
+          "timestamp": "2026-06-16T18:12:11.322Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 59713,
+          "input_tokens": 59019,
+          "cached_input_tokens": 58240,
+          "output_tokens": 694,
+          "reasoning_output_tokens": 24
+        },
+        {
+          "timestamp": "2026-06-16T18:12:20.833Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 60156,
+          "input_tokens": 59771,
+          "cached_input_tokens": 58752,
+          "output_tokens": 385,
+          "reasoning_output_tokens": 297
+        },
+        {
+          "timestamp": "2026-06-16T18:12:25.700Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 60362,
+          "input_tokens": 60169,
+          "cached_input_tokens": 59264,
+          "output_tokens": 193,
+          "reasoning_output_tokens": 22
+        },
+        {
+          "timestamp": "2026-06-16T18:12:42.709Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 65127,
+          "input_tokens": 64267,
+          "cached_input_tokens": 59776,
+          "output_tokens": 860,
+          "reasoning_output_tokens": 601
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019ed103-6c73-75c0-9c8f-5252bf1a6aef",
@@ -351954,12 +352296,115 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 514361,
+      "input_tokens": 508491,
+      "cached_input_tokens": 449792,
+      "output_tokens": 5870,
+      "reasoning_output_tokens": 3792,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:05:35.770Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29653,
+          "input_tokens": 29143,
+          "cached_input_tokens": 4992,
+          "output_tokens": 510,
+          "reasoning_output_tokens": 160
+        },
+        {
+          "timestamp": "2026-06-16T18:05:47.221Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 37265,
+          "input_tokens": 36962,
+          "cached_input_tokens": 29056,
+          "output_tokens": 303,
+          "reasoning_output_tokens": 98
+        },
+        {
+          "timestamp": "2026-06-16T18:10:54.928Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 42466,
+          "input_tokens": 42331,
+          "cached_input_tokens": 36736,
+          "output_tokens": 135,
+          "reasoning_output_tokens": 21
+        },
+        {
+          "timestamp": "2026-06-16T18:11:02.646Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 45360,
+          "input_tokens": 45031,
+          "cached_input_tokens": 41856,
+          "output_tokens": 329,
+          "reasoning_output_tokens": 142
+        },
+        {
+          "timestamp": "2026-06-16T18:11:33.641Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 58106,
+          "input_tokens": 56465,
+          "cached_input_tokens": 44928,
+          "output_tokens": 1641,
+          "reasoning_output_tokens": 1532
+        },
+        {
+          "timestamp": "2026-06-16T18:11:39.277Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 58355,
+          "input_tokens": 58183,
+          "cached_input_tokens": 56192,
+          "output_tokens": 172,
+          "reasoning_output_tokens": 10
+        },
+        {
+          "timestamp": "2026-06-16T18:12:06.197Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 59836,
+          "input_tokens": 58432,
+          "cached_input_tokens": 57728,
+          "output_tokens": 1404,
+          "reasoning_output_tokens": 1178
+        },
+        {
+          "timestamp": "2026-06-16T18:12:16.207Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 60401,
+          "input_tokens": 59949,
+          "cached_input_tokens": 58240,
+          "output_tokens": 452,
+          "reasoning_output_tokens": 45
+        },
+        {
+          "timestamp": "2026-06-16T18:12:28.621Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 61059,
+          "input_tokens": 60459,
+          "cached_input_tokens": 59776,
+          "output_tokens": 600,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-06-16T18:12:36.050Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 61860,
+          "input_tokens": 61536,
+          "cached_input_tokens": 60288,
+          "output_tokens": 324,
+          "reasoning_output_tokens": 90
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019ed113-42c6-7482-9474-42a22c02e70a",
@@ -351979,12 +352424,95 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 327038,
+      "input_tokens": 323516,
+      "cached_input_tokens": 268800,
+      "output_tokens": 3522,
+      "reasoning_output_tokens": 1176,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:05:19.907Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29757,
+          "input_tokens": 29143,
+          "cached_input_tokens": 4992,
+          "output_tokens": 614,
+          "reasoning_output_tokens": 302
+        },
+        {
+          "timestamp": "2026-06-16T18:05:41.290Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 31798,
+          "input_tokens": 31519,
+          "cached_input_tokens": 29056,
+          "output_tokens": 279,
+          "reasoning_output_tokens": 74
+        },
+        {
+          "timestamp": "2026-06-16T18:05:49.072Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 41144,
+          "input_tokens": 40891,
+          "cached_input_tokens": 31104,
+          "output_tokens": 253,
+          "reasoning_output_tokens": 47
+        },
+        {
+          "timestamp": "2026-06-16T18:07:08.061Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 43612,
+          "input_tokens": 43276,
+          "cached_input_tokens": 29056,
+          "output_tokens": 336,
+          "reasoning_output_tokens": 126
+        },
+        {
+          "timestamp": "2026-06-16T18:07:19.595Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 44192,
+          "input_tokens": 43731,
+          "cached_input_tokens": 42880,
+          "output_tokens": 461,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-06-16T18:07:33.725Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 44859,
+          "input_tokens": 44269,
+          "cached_input_tokens": 43392,
+          "output_tokens": 590,
+          "reasoning_output_tokens": 76
+        },
+        {
+          "timestamp": "2026-06-16T18:07:51.600Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 45693,
+          "input_tokens": 44936,
+          "cached_input_tokens": 43904,
+          "output_tokens": 757,
+          "reasoning_output_tokens": 506
+        },
+        {
+          "timestamp": "2026-06-16T18:07:59.571Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 45983,
+          "input_tokens": 45751,
+          "cached_input_tokens": 44416,
+          "output_tokens": 232,
+          "reasoning_output_tokens": 45
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019ed121-ae7a-7890-8217-77b06a33b34d",
@@ -351997,17 +352525,132 @@
       "originator": "Codex Desktop",
       "cli_version": "0.140.0-alpha.2",
       "model_provider": "openai",
-      "primary_model": null,
-      "models_used": [],
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 483479,
+      "input_tokens": 476252,
+      "cached_input_tokens": 426112,
+      "output_tokens": 7227,
+      "reasoning_output_tokens": 2158,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:05:11.496Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29509,
+          "input_tokens": 29136,
+          "cached_input_tokens": 4992,
+          "output_tokens": 373,
+          "reasoning_output_tokens": 124
+        },
+        {
+          "timestamp": "2026-06-16T18:05:38.806Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29738,
+          "input_tokens": 29601,
+          "cached_input_tokens": 29056,
+          "output_tokens": 137,
+          "reasoning_output_tokens": 8
+        },
+        {
+          "timestamp": "2026-06-16T18:05:48.805Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 34870,
+          "input_tokens": 34590,
+          "cached_input_tokens": 29056,
+          "output_tokens": 280,
+          "reasoning_output_tokens": 63
+        },
+        {
+          "timestamp": "2026-06-16T18:06:48.861Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 42012,
+          "input_tokens": 41696,
+          "cached_input_tokens": 34176,
+          "output_tokens": 316,
+          "reasoning_output_tokens": 206
+        },
+        {
+          "timestamp": "2026-06-16T18:06:55.863Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 45717,
+          "input_tokens": 45514,
+          "cached_input_tokens": 41344,
+          "output_tokens": 203,
+          "reasoning_output_tokens": 136
+        },
+        {
+          "timestamp": "2026-06-16T18:07:35.535Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 47811,
+          "input_tokens": 45776,
+          "cached_input_tokens": 45440,
+          "output_tokens": 2035,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-06-16T18:08:07.236Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 49488,
+          "input_tokens": 47886,
+          "cached_input_tokens": 45440,
+          "output_tokens": 1602,
+          "reasoning_output_tokens": 71
+        },
+        {
+          "timestamp": "2026-06-16T18:08:15.760Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 49816,
+          "input_tokens": 49563,
+          "cached_input_tokens": 47488,
+          "output_tokens": 253,
+          "reasoning_output_tokens": 114
+        },
+        {
+          "timestamp": "2026-06-16T18:08:38.154Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 50850,
+          "input_tokens": 50002,
+          "cached_input_tokens": 49024,
+          "output_tokens": 848,
+          "reasoning_output_tokens": 202
+        },
+        {
+          "timestamp": "2026-06-16T18:08:45.087Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 50996,
+          "input_tokens": 50908,
+          "cached_input_tokens": 49536,
+          "output_tokens": 88,
+          "reasoning_output_tokens": 11
+        },
+        {
+          "timestamp": "2026-06-16T18:09:07.904Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 52672,
+          "input_tokens": 51580,
+          "cached_input_tokens": 50560,
+          "output_tokens": 1092,
+          "reasoning_output_tokens": 707
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019ed12b-9f9c-7892-ab90-b31ce8673efb",
@@ -352020,17 +352663,152 @@
       "originator": "Codex Desktop",
       "cli_version": "0.140.0-alpha.2",
       "model_provider": "openai",
-      "primary_model": null,
-      "models_used": [],
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 621424,
+      "input_tokens": 615024,
+      "cached_input_tokens": 565632,
+      "output_tokens": 6400,
+      "reasoning_output_tokens": 1852,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:05:42.451Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29551,
+          "input_tokens": 29136,
+          "cached_input_tokens": 4992,
+          "output_tokens": 415,
+          "reasoning_output_tokens": 112
+        },
+        {
+          "timestamp": "2026-06-16T18:10:54.780Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 34787,
+          "input_tokens": 34663,
+          "cached_input_tokens": 34176,
+          "output_tokens": 124,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-06-16T18:10:56.785Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 34832,
+          "input_tokens": 34796,
+          "cached_input_tokens": 34176,
+          "output_tokens": 36,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-06-16T18:11:08.371Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 37062,
+          "input_tokens": 36500,
+          "cached_input_tokens": 34688,
+          "output_tokens": 562,
+          "reasoning_output_tokens": 279
+        },
+        {
+          "timestamp": "2026-06-16T18:11:40.963Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 51533,
+          "input_tokens": 49806,
+          "cached_input_tokens": 36224,
+          "output_tokens": 1727,
+          "reasoning_output_tokens": 54
+        },
+        {
+          "timestamp": "2026-06-16T18:11:43.817Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 51700,
+          "input_tokens": 51613,
+          "cached_input_tokens": 49536,
+          "output_tokens": 87,
+          "reasoning_output_tokens": 34
+        },
+        {
+          "timestamp": "2026-06-16T18:11:54.029Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 52272,
+          "input_tokens": 51780,
+          "cached_input_tokens": 51072,
+          "output_tokens": 492,
+          "reasoning_output_tokens": 247
+        },
+        {
+          "timestamp": "2026-06-16T18:12:00.151Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 52698,
+          "input_tokens": 52519,
+          "cached_input_tokens": 51584,
+          "output_tokens": 179,
+          "reasoning_output_tokens": 41
+        },
+        {
+          "timestamp": "2026-06-16T18:12:18.572Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 54221,
+          "input_tokens": 53283,
+          "cached_input_tokens": 52096,
+          "output_tokens": 938,
+          "reasoning_output_tokens": 57
+        },
+        {
+          "timestamp": "2026-06-16T18:12:23.510Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 54579,
+          "input_tokens": 54405,
+          "cached_input_tokens": 53120,
+          "output_tokens": 174,
+          "reasoning_output_tokens": 38
+        },
+        {
+          "timestamp": "2026-06-16T18:12:34.132Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 55564,
+          "input_tokens": 55058,
+          "cached_input_tokens": 54144,
+          "output_tokens": 506,
+          "reasoning_output_tokens": 196
+        },
+        {
+          "timestamp": "2026-06-16T18:12:39.829Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 55830,
+          "input_tokens": 55622,
+          "cached_input_tokens": 54656,
+          "output_tokens": 208,
+          "reasoning_output_tokens": 77
+        },
+        {
+          "timestamp": "2026-06-16T18:12:58.444Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 56795,
+          "input_tokens": 55843,
+          "cached_input_tokens": 55168,
+          "output_tokens": 952,
+          "reasoning_output_tokens": 717
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019ed163-7914-7980-865d-8fc5499dce26",
@@ -352043,17 +352821,122 @@
       "originator": "Codex Desktop",
       "cli_version": "0.140.0-alpha.2",
       "model_provider": "openai",
-      "primary_model": null,
-      "models_used": [],
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 551539,
+      "input_tokens": 544264,
+      "cached_input_tokens": 480000,
+      "output_tokens": 7275,
+      "reasoning_output_tokens": 2280,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:05:42.778Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29875,
+          "input_tokens": 29141,
+          "cached_input_tokens": 4992,
+          "output_tokens": 734,
+          "reasoning_output_tokens": 362
+        },
+        {
+          "timestamp": "2026-06-16T18:10:58.931Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 36356,
+          "input_tokens": 35937,
+          "cached_input_tokens": 29056,
+          "output_tokens": 419,
+          "reasoning_output_tokens": 181
+        },
+        {
+          "timestamp": "2026-06-16T18:11:00.998Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 46000,
+          "input_tokens": 45952,
+          "cached_input_tokens": 35712,
+          "output_tokens": 48,
+          "reasoning_output_tokens": 12
+        },
+        {
+          "timestamp": "2026-06-16T18:11:10.998Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 48403,
+          "input_tokens": 47954,
+          "cached_input_tokens": 45440,
+          "output_tokens": 449,
+          "reasoning_output_tokens": 60
+        },
+        {
+          "timestamp": "2026-06-16T18:11:54.504Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 62687,
+          "input_tokens": 60647,
+          "cached_input_tokens": 47488,
+          "output_tokens": 2040,
+          "reasoning_output_tokens": 439
+        },
+        {
+          "timestamp": "2026-06-16T18:12:31.719Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 64378,
+          "input_tokens": 62766,
+          "cached_input_tokens": 60288,
+          "output_tokens": 1612,
+          "reasoning_output_tokens": 29
+        },
+        {
+          "timestamp": "2026-06-16T18:12:41.400Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 64857,
+          "input_tokens": 64457,
+          "cached_input_tokens": 62336,
+          "output_tokens": 400,
+          "reasoning_output_tokens": 163
+        },
+        {
+          "timestamp": "2026-06-16T18:12:50.539Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 65756,
+          "input_tokens": 65425,
+          "cached_input_tokens": 64384,
+          "output_tokens": 331,
+          "reasoning_output_tokens": 264
+        },
+        {
+          "timestamp": "2026-06-16T18:13:00.451Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 66112,
+          "input_tokens": 65815,
+          "cached_input_tokens": 64896,
+          "output_tokens": 297,
+          "reasoning_output_tokens": 7
+        },
+        {
+          "timestamp": "2026-06-16T18:13:20.515Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 67115,
+          "input_tokens": 66170,
+          "cached_input_tokens": 65408,
+          "output_tokens": 945,
+          "reasoning_output_tokens": 763
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019ed193-5863-74f0-ae2f-486e3b121df1",
@@ -352066,17 +352949,450 @@
       "originator": "Codex Desktop",
       "cli_version": "0.140.0-alpha.2",
       "model_provider": "openai",
-      "primary_model": null,
-      "models_used": [],
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 591850,
+      "input_tokens": 586522,
+      "cached_input_tokens": 546304,
+      "output_tokens": 5328,
+      "reasoning_output_tokens": 2246,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:06:32.390Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29673,
+          "input_tokens": 29141,
+          "cached_input_tokens": 24448,
+          "output_tokens": 532,
+          "reasoning_output_tokens": 154
+        },
+        {
+          "timestamp": "2026-06-16T18:06:38.283Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 34205,
+          "input_tokens": 34074,
+          "cached_input_tokens": 29056,
+          "output_tokens": 131,
+          "reasoning_output_tokens": 50
+        },
+        {
+          "timestamp": "2026-06-16T18:06:43.218Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 36271,
+          "input_tokens": 36169,
+          "cached_input_tokens": 33664,
+          "output_tokens": 102,
+          "reasoning_output_tokens": 23
+        },
+        {
+          "timestamp": "2026-06-16T18:06:52.371Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 38740,
+          "input_tokens": 38417,
+          "cached_input_tokens": 35712,
+          "output_tokens": 323,
+          "reasoning_output_tokens": 123
+        },
+        {
+          "timestamp": "2026-06-16T18:07:11.711Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 53931,
+          "input_tokens": 52986,
+          "cached_input_tokens": 38272,
+          "output_tokens": 945,
+          "reasoning_output_tokens": 835
+        },
+        {
+          "timestamp": "2026-06-16T18:07:22.595Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 54394,
+          "input_tokens": 54011,
+          "cached_input_tokens": 52608,
+          "output_tokens": 383,
+          "reasoning_output_tokens": 272
+        },
+        {
+          "timestamp": "2026-06-16T18:07:31.998Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 54771,
+          "input_tokens": 54474,
+          "cached_input_tokens": 53632,
+          "output_tokens": 297,
+          "reasoning_output_tokens": 114
+        },
+        {
+          "timestamp": "2026-06-16T18:07:55.316Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 55933,
+          "input_tokens": 54878,
+          "cached_input_tokens": 54144,
+          "output_tokens": 1055,
+          "reasoning_output_tokens": 20
+        },
+        {
+          "timestamp": "2026-06-16T18:08:00.826Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 56709,
+          "input_tokens": 56587,
+          "cached_input_tokens": 54656,
+          "output_tokens": 122,
+          "reasoning_output_tokens": 8
+        },
+        {
+          "timestamp": "2026-06-16T18:08:13.643Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 57254,
+          "input_tokens": 56892,
+          "cached_input_tokens": 56192,
+          "output_tokens": 362,
+          "reasoning_output_tokens": 133
+        },
+        {
+          "timestamp": "2026-06-16T18:08:29.865Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 57932,
+          "input_tokens": 57312,
+          "cached_input_tokens": 56704,
+          "output_tokens": 620,
+          "reasoning_output_tokens": 453
+        },
+        {
+          "timestamp": "2026-06-16T18:08:47.171Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 62037,
+          "input_tokens": 61581,
+          "cached_input_tokens": 57216,
+          "output_tokens": 456,
+          "reasoning_output_tokens": 61
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019ed1a5-adcc-7d52-a0b4-20fa3b92f7fc",
+      "thread_name": "Team KJ Lead SLA Monitor",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-16T18:15:56.742Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 1973631,
+      "input_tokens": 1961998,
+      "cached_input_tokens": 1780224,
+      "output_tokens": 11633,
+      "reasoning_output_tokens": 4529,
+      "events": [
+        {
+          "timestamp": "2026-06-16T18:16:11.743Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 29352,
+          "input_tokens": 28803,
+          "cached_input_tokens": 4992,
+          "output_tokens": 549,
+          "reasoning_output_tokens": 208
+        },
+        {
+          "timestamp": "2026-06-16T18:16:18.222Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 33376,
+          "input_tokens": 33144,
+          "cached_input_tokens": 4992,
+          "output_tokens": 232,
+          "reasoning_output_tokens": 55
+        },
+        {
+          "timestamp": "2026-06-16T18:16:21.201Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 37349,
+          "input_tokens": 37264,
+          "cached_input_tokens": 32640,
+          "output_tokens": 85,
+          "reasoning_output_tokens": 24
+        },
+        {
+          "timestamp": "2026-06-16T18:16:26.165Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 38734,
+          "input_tokens": 38560,
+          "cached_input_tokens": 36736,
+          "output_tokens": 174,
+          "reasoning_output_tokens": 27
+        },
+        {
+          "timestamp": "2026-06-16T18:16:29.283Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 40340,
+          "input_tokens": 40256,
+          "cached_input_tokens": 38272,
+          "output_tokens": 84,
+          "reasoning_output_tokens": 24
+        },
+        {
+          "timestamp": "2026-06-16T18:16:40.006Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 41403,
+          "input_tokens": 40926,
+          "cached_input_tokens": 39808,
+          "output_tokens": 477,
+          "reasoning_output_tokens": 85
+        },
+        {
+          "timestamp": "2026-06-16T18:16:49.126Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 44765,
+          "input_tokens": 44339,
+          "cached_input_tokens": 40832,
+          "output_tokens": 426,
+          "reasoning_output_tokens": 260
+        },
+        {
+          "timestamp": "2026-06-16T18:17:12.955Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 53784,
+          "input_tokens": 52748,
+          "cached_input_tokens": 43904,
+          "output_tokens": 1036,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-06-16T18:17:45.183Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 55463,
+          "input_tokens": 55417,
+          "cached_input_tokens": 52608,
+          "output_tokens": 46,
+          "reasoning_output_tokens": 7
+        },
+        {
+          "timestamp": "2026-06-16T18:18:18.496Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 66994,
+          "input_tokens": 66940,
+          "cached_input_tokens": 4992,
+          "output_tokens": 54,
+          "reasoning_output_tokens": 15
+        },
+        {
+          "timestamp": "2026-06-16T18:18:50.876Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 72263,
+          "input_tokens": 72217,
+          "cached_input_tokens": 66432,
+          "output_tokens": 46,
+          "reasoning_output_tokens": 7
+        },
+        {
+          "timestamp": "2026-06-16T18:19:24.212Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 72548,
+          "input_tokens": 72445,
+          "cached_input_tokens": 72064,
+          "output_tokens": 103,
+          "reasoning_output_tokens": 7
+        },
+        {
+          "timestamp": "2026-06-16T18:19:31.458Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 72649,
+          "input_tokens": 72597,
+          "cached_input_tokens": 72064,
+          "output_tokens": 52,
+          "reasoning_output_tokens": 13
+        },
+        {
+          "timestamp": "2026-06-16T18:19:34.523Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 72767,
+          "input_tokens": 72698,
+          "cached_input_tokens": 72064,
+          "output_tokens": 69,
+          "reasoning_output_tokens": 25
+        },
+        {
+          "timestamp": "2026-06-16T18:19:37.636Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 73129,
+          "input_tokens": 73038,
+          "cached_input_tokens": 72576,
+          "output_tokens": 91,
+          "reasoning_output_tokens": 54
+        },
+        {
+          "timestamp": "2026-06-16T18:19:57.697Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 74746,
+          "input_tokens": 73749,
+          "cached_input_tokens": 72576,
+          "output_tokens": 997,
+          "reasoning_output_tokens": 516
+        },
+        {
+          "timestamp": "2026-06-16T18:20:10.243Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 75403,
+          "input_tokens": 74890,
+          "cached_input_tokens": 73600,
+          "output_tokens": 513,
+          "reasoning_output_tokens": 59
+        },
+        {
+          "timestamp": "2026-06-16T18:20:15.814Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 76351,
+          "input_tokens": 76165,
+          "cached_input_tokens": 74624,
+          "output_tokens": 186,
+          "reasoning_output_tokens": 36
+        },
+        {
+          "timestamp": "2026-06-16T18:20:40.185Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 77774,
+          "input_tokens": 76517,
+          "cached_input_tokens": 75648,
+          "output_tokens": 1257,
+          "reasoning_output_tokens": 302
+        },
+        {
+          "timestamp": "2026-06-16T18:21:05.281Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 79060,
+          "input_tokens": 77996,
+          "cached_input_tokens": 76160,
+          "output_tokens": 1064,
+          "reasoning_output_tokens": 390
+        },
+        {
+          "timestamp": "2026-06-16T18:21:38.005Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 81008,
+          "input_tokens": 80951,
+          "cached_input_tokens": 77696,
+          "output_tokens": 57,
+          "reasoning_output_tokens": 18
+        },
+        {
+          "timestamp": "2026-06-16T18:22:10.904Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 85841,
+          "input_tokens": 85794,
+          "cached_input_tokens": 80768,
+          "output_tokens": 47,
+          "reasoning_output_tokens": 8
+        },
+        {
+          "timestamp": "2026-06-16T18:22:13.852Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 99940,
+          "input_tokens": 99866,
+          "cached_input_tokens": 85376,
+          "output_tokens": 74,
+          "reasoning_output_tokens": 30
+        },
+        {
+          "timestamp": "2026-06-16T18:22:35.702Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 102247,
+          "input_tokens": 101195,
+          "cached_input_tokens": 99712,
+          "output_tokens": 1052,
+          "reasoning_output_tokens": 581
+        },
+        {
+          "timestamp": "2026-06-16T18:22:51.170Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 102991,
+          "input_tokens": 102328,
+          "cached_input_tokens": 100736,
+          "output_tokens": 663,
+          "reasoning_output_tokens": 204
+        },
+        {
+          "timestamp": "2026-06-16T18:23:05.372Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 103632,
+          "input_tokens": 103031,
+          "cached_input_tokens": 102272,
+          "output_tokens": 601,
+          "reasoning_output_tokens": 370
+        },
+        {
+          "timestamp": "2026-06-16T18:23:19.033Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 104329,
+          "input_tokens": 103737,
+          "cached_input_tokens": 102784,
+          "output_tokens": 592,
+          "reasoning_output_tokens": 8
+        },
+        {
+          "timestamp": "2026-06-16T18:23:39.646Z",
+          "date": "2026-06-16",
+          "model": "gpt-5.4",
+          "total_tokens": 105393,
+          "input_tokens": 104387,
+          "cached_input_tokens": 103296,
+          "output_tokens": 1006,
+          "reasoning_output_tokens": 680
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019dc15f-4327-7382-a771-370067d3144c",
@@ -361767,6 +363083,6 @@
     }
   ],
   "source": {
-    "log_files": 851
+    "log_files": 854
   }
 }
