@@ -49,6 +49,22 @@ const RATE_CARD_SOURCES = Object.freeze([
     url: "https://developers.openai.com/api/docs/pricing"
   }
 ]);
+const WATER_ESTIMATE_PUBLISHED_AT = "2026-06-17";
+const BASIC_QUERY_TOTAL_TOKENS = 1000;
+const WATER_ESTIMATE_LITERS_PER_BASIC_QUERY = Object.freeze({
+  low: 0.0003218,
+  high: 0.025
+});
+const WATER_ESTIMATE_SOURCES = Object.freeze([
+  {
+    label: "Sam Altman, The Gentle Singularity",
+    url: "https://blog.samaltman.com/the-gentle-singularity"
+  },
+  {
+    label: "Making AI Less Thirsty",
+    url: "https://arxiv.org/abs/2304.03271"
+  }
+]);
 
 function todayDate(now = new Date()) {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -187,6 +203,26 @@ function buildCostNote(unpricedTotalTokens) {
   }
 
   return `Estimated cost uses published Codex and API pricing as of ${RATE_CARD_PUBLISHED_AT}. Treat this as a directional planning lens, not billed spend.`;
+}
+
+function buildWaterEstimate(totalTokens) {
+  const basicQueryEquivalents = (totalTokens || 0) / BASIC_QUERY_TOTAL_TOKENS;
+
+  return {
+    mode: "estimated_basic_query_equivalent",
+    published_at: WATER_ESTIMATE_PUBLISHED_AT,
+    basic_query_total_tokens: BASIC_QUERY_TOTAL_TOKENS,
+    basic_query_equivalents: basicQueryEquivalents,
+    low_liters: basicQueryEquivalents * WATER_ESTIMATE_LITERS_PER_BASIC_QUERY.low,
+    high_liters: basicQueryEquivalents * WATER_ESTIMATE_LITERS_PER_BASIC_QUERY.high,
+    low_liters_per_basic_query: WATER_ESTIMATE_LITERS_PER_BASIC_QUERY.low,
+    high_liters_per_basic_query: WATER_ESTIMATE_LITERS_PER_BASIC_QUERY.high,
+    sources: WATER_ESTIMATE_SOURCES
+  };
+}
+
+function buildWaterEstimateNote() {
+  return `Water estimate converts selected-range tokens into ${BASIC_QUERY_TOTAL_TOKENS.toLocaleString("en-US")}-token basic-query equivalents. The low end uses Sam Altman's per-query water figure; the high end uses the public AI water-footprint study's rough 10-25 ml per query range. Treat this as an order-of-magnitude estimate, not measured OpenAI facility usage.`;
 }
 
 function formatDisplayDate(date) {
@@ -1207,6 +1243,8 @@ export function buildDashboardPayload(index, options = {}) {
     cost_mode: "estimated",
     estimated_cost_note: buildCostNote(filtered.summary.unpriced_total_tokens),
     rate_card: buildRateCardPayload(),
+    water_estimate_note: buildWaterEstimateNote(),
+    water_estimate: buildWaterEstimate(filtered.summary.total_tokens),
     range: {
       days: filtered.range.requestedDays,
       start_date: dateKeyFromDate(filtered.range.startDate),
