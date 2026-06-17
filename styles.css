@@ -716,7 +716,6 @@ select {
 
 .cost-window-card,
 .habit-stat,
-  .water-stat,
   .trend-strip,
   .rank-row,
   .project-usage-card,
@@ -736,8 +735,7 @@ select {
 }
 
 .cost-window-card,
-.habit-stat,
-.water-stat {
+.habit-stat {
   border-radius: 16px;
   padding: 11px 12px;
   display: grid;
@@ -748,7 +746,6 @@ select {
 
 .cost-window-card:hover,
 .habit-stat:hover,
-.water-stat:hover,
 .trend-strip:hover,
 .rank-row:hover,
 .project-usage-card:hover,
@@ -763,7 +760,6 @@ select {
 
 .cost-window-label,
 .habit-stat-label,
-.water-stat-label,
 .panel-stat-label,
 .trend-strip-label,
 .efficiency-stat-label,
@@ -776,7 +772,6 @@ select {
 
 .cost-window-card strong,
 .habit-stat strong,
-.water-stat strong,
 .panel-stat strong,
 .trend-strip-stat strong,
 .rank-value,
@@ -791,7 +786,6 @@ select {
 
 .cost-window-card strong,
 .habit-stat strong,
-.water-stat strong,
 .trend-strip-stat strong,
 .rank-value,
 .mini-stat strong {
@@ -801,7 +795,6 @@ select {
 
 .cost-window-foot,
 .habit-stat-foot,
-.water-stat-foot,
 .ranking-note,
 .heatmap-summary,
 .activity-note,
@@ -821,7 +814,6 @@ select {
 
 .cost-window-foot,
 .habit-stat-foot,
-.water-stat-foot,
 .efficiency-stat-foot,
 .insight-card p,
 .day-explainer,

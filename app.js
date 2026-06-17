@@ -80,11 +80,6 @@ const elements = {
   efficiencyGrid: document.querySelector("#efficiency-grid"),
   modelMixList: document.querySelector("#model-mix-list"),
   insightList: document.querySelector("#insight-list"),
-  waterEstimateRange: document.querySelector("#water-estimate-range"),
-  waterEstimateFoot: document.querySelector("#water-estimate-foot"),
-  waterQueryEquivalent: document.querySelector("#water-query-equivalent"),
-  waterQueryFoot: document.querySelector("#water-query-foot"),
-  waterEstimateNote: document.querySelector("#water-estimate-note"),
   costNote: document.querySelector("#cost-note"),
   costBreakdownBody: document.querySelector("#cost-breakdown-body"),
   costBreakdownFoot: document.querySelector("#cost-breakdown-foot"),
@@ -173,23 +168,6 @@ function formatRate(value) {
 
 function formatCompactUsd(value) {
   return formatUsd(value || 0);
-}
-
-function formatLiters(value) {
-  const amount = value || 0;
-  if (amount === 0) {
-    return "0 L";
-  }
-  if (amount < 0.01) {
-    return `${Math.round(amount * 1000000).toLocaleString("en-US")} uL`;
-  }
-  if (amount < 1) {
-    return `${Math.round(amount * 1000).toLocaleString("en-US")} mL`;
-  }
-
-  return `${new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: amount >= 10 ? 1 : 2
-  }).format(amount)} L`;
 }
 
 function formatAxisUsd(value) {
@@ -757,26 +735,10 @@ function renderSummary(dashboard) {
     ? `${rangeComparison.cost_change_pct !== null ? `Cost ${formatSignedPercent(rangeComparison.cost_change_pct)}` : "No prior cost comparison"} · ${rangeComparison.label}`
     : rangeComparison.label;
   elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
-  renderWaterEstimate(dashboard);
   updateRangeSelectionLabel(dashboard.selection.label);
   elements.mobileSelectionSummary.textContent = buildMobileSelectionSummary(dashboard);
   elements.mobileSelectionSummary.title = elements.mobileSelectionSummary.textContent;
   renderHeroProgress(dashboard);
-}
-
-function renderWaterEstimate(dashboard) {
-  const estimate = dashboard.water_estimate || {};
-  const lowLiters = estimate.low_liters || 0;
-  const highLiters = estimate.high_liters || 0;
-  const queryEquivalents = estimate.basic_query_equivalents || 0;
-
-  elements.waterEstimateRange.textContent = `${formatLiters(lowLiters)} - ${formatLiters(highLiters)}`;
-  elements.waterEstimateRange.title = `${lowLiters.toFixed(6)} - ${highLiters.toFixed(6)} liters`;
-  elements.waterEstimateFoot.textContent = `${dashboard.selection.label} · order-of-magnitude range`;
-  elements.waterQueryEquivalent.textContent = formatCompactNumber(queryEquivalents);
-  elements.waterQueryEquivalent.title = `${queryEquivalents.toFixed(2)} basic-query equivalents`;
-  elements.waterQueryFoot.textContent = `${formatFullNumber(estimate.basic_query_total_tokens || 1000)} total tokens per basic query`;
-  elements.waterEstimateNote.textContent = dashboard.water_estimate_note || "Water estimate is directional and not measured facility usage.";
 }
 
 function renderEfficiencyPanel(dashboard) {
@@ -1406,11 +1368,6 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.efficiencyGrid.innerHTML = message;
     elements.modelMixList.innerHTML = message;
     elements.insightList.innerHTML = message;
-    elements.waterEstimateRange.textContent = "-";
-    elements.waterEstimateFoot.textContent = "-";
-    elements.waterQueryEquivalent.textContent = "-";
-    elements.waterQueryFoot.textContent = "-";
-    elements.waterEstimateNote.textContent = detail;
     elements.projectUsageList.innerHTML = message;
     elements.threadTable.innerHTML = message;
     elements.daySessionList.innerHTML = message;
