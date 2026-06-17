@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-06-17T22:30:04.131Z",
+  "generated_at": "2026-06-17T23:00:03.191Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -35962,6 +35962,44 @@
           "cached_input_tokens": 27520,
           "output_tokens": 72,
           "reasoning_output_tokens": 54
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019ed7cc-b436-7d52-a923-9d09e7154ce4",
+      "thread_name": "019ed7cc-b436-7d52-a923-9d09e7154ce4",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-17T22:56:18.987Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "codex-auto-review",
+      "models_used": [
+        "codex-auto-review"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": true,
+      "total_tokens": 28304,
+      "input_tokens": 28204,
+      "cached_input_tokens": 13696,
+      "output_tokens": 100,
+      "reasoning_output_tokens": 82,
+      "events": [
+        {
+          "timestamp": "2026-06-17T22:56:33.031Z",
+          "date": "2026-06-17",
+          "model": "codex-auto-review",
+          "total_tokens": 28304,
+          "input_tokens": 28204,
+          "cached_input_tokens": 13696,
+          "output_tokens": 100,
+          "reasoning_output_tokens": 82
         }
       ],
       "estimated_cost_usd": null,
@@ -361468,6 +361506,132 @@
       "unpriced_total_tokens": null
     },
     {
+      "session_id": "019ed7b6-8aed-7a52-9cc2-4c3a56c58183",
+      "thread_name": "Team KJ Lead SLA Monitor",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-17T22:32:05.457Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 147599,
+      "input_tokens": 146434,
+      "cached_input_tokens": 129024,
+      "output_tokens": 1165,
+      "reasoning_output_tokens": 272,
+      "events": [
+        {
+          "timestamp": "2026-06-17T22:32:24.145Z",
+          "date": "2026-06-17",
+          "model": "gpt-5.4",
+          "total_tokens": 30167,
+          "input_tokens": 29697,
+          "cached_input_tokens": 24960,
+          "output_tokens": 470,
+          "reasoning_output_tokens": 146
+        },
+        {
+          "timestamp": "2026-06-17T22:32:29.590Z",
+          "date": "2026-06-17",
+          "model": "gpt-5.4",
+          "total_tokens": 35771,
+          "input_tokens": 35596,
+          "cached_input_tokens": 29568,
+          "output_tokens": 175,
+          "reasoning_output_tokens": 28
+        },
+        {
+          "timestamp": "2026-06-17T22:32:39.290Z",
+          "date": "2026-06-17",
+          "model": "gpt-5.4",
+          "total_tokens": 40042,
+          "input_tokens": 39737,
+          "cached_input_tokens": 35200,
+          "output_tokens": 305,
+          "reasoning_output_tokens": 88
+        },
+        {
+          "timestamp": "2026-06-17T22:32:46.171Z",
+          "date": "2026-06-17",
+          "model": "gpt-5.4",
+          "total_tokens": 41619,
+          "input_tokens": 41404,
+          "cached_input_tokens": 39296,
+          "output_tokens": 215,
+          "reasoning_output_tokens": 10
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019ed7c3-8f74-7412-a619-245cc49027ba",
+      "thread_name": "Team KJ Lead SLA Monitor",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-17T22:46:18.610Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 104677,
+      "input_tokens": 103629,
+      "cached_input_tokens": 69760,
+      "output_tokens": 1048,
+      "reasoning_output_tokens": 252,
+      "events": [
+        {
+          "timestamp": "2026-06-17T22:58:05.729Z",
+          "date": "2026-06-17",
+          "model": "gpt-5.4",
+          "total_tokens": 30167,
+          "input_tokens": 29690,
+          "cached_input_tokens": 4992,
+          "output_tokens": 477,
+          "reasoning_output_tokens": 157
+        },
+        {
+          "timestamp": "2026-06-17T22:59:55.788Z",
+          "date": "2026-06-17",
+          "model": "gpt-5.4",
+          "total_tokens": 35939,
+          "input_tokens": 35643,
+          "cached_input_tokens": 29568,
+          "output_tokens": 296,
+          "reasoning_output_tokens": 32
+        },
+        {
+          "timestamp": "2026-06-17T23:00:03.893Z",
+          "date": "2026-06-17",
+          "model": "gpt-5.4",
+          "total_tokens": 38571,
+          "input_tokens": 38296,
+          "cached_input_tokens": 35200,
+          "output_tokens": 275,
+          "reasoning_output_tokens": 63
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019dc15f-4327-7382-a771-370067d3144c",
       "thread_name": "Team ramp Slack report",
       "parent_session_id": null,
@@ -371156,6 +371320,6 @@
     }
   ],
   "source": {
-    "log_files": 906
+    "log_files": 909
   }
 }
