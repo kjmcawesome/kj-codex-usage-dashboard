@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-06-19T15:04:39.754Z",
+  "generated_at": "2026-06-19T16:31:30.693Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -205406,11 +205406,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 386033865,
-      "input_tokens": 385381286,
-      "cached_input_tokens": 341691520,
-      "output_tokens": 652579,
-      "reasoning_output_tokens": 263095,
+      "total_tokens": 386365069,
+      "input_tokens": 385711627,
+      "cached_input_tokens": 341999360,
+      "output_tokens": 653442,
+      "reasoning_output_tokens": 263336,
       "events": [
         {
           "timestamp": "2026-05-05T16:12:43.494Z",
@@ -230721,6 +230721,36 @@
           "cached_input_tokens": 106880,
           "output_tokens": 237,
           "reasoning_output_tokens": 172
+        },
+        {
+          "timestamp": "2026-06-19T16:00:41.860Z",
+          "date": "2026-06-19",
+          "model": "gpt-5.5",
+          "total_tokens": 108733,
+          "input_tokens": 108492,
+          "cached_input_tokens": 89472,
+          "output_tokens": 241,
+          "reasoning_output_tokens": 184
+        },
+        {
+          "timestamp": "2026-06-19T16:15:05.371Z",
+          "date": "2026-06-19",
+          "model": "gpt-5.5",
+          "total_tokens": 110927,
+          "input_tokens": 110393,
+          "cached_input_tokens": 108416,
+          "output_tokens": 534,
+          "reasoning_output_tokens": 35
+        },
+        {
+          "timestamp": "2026-06-19T16:15:12.235Z",
+          "date": "2026-06-19",
+          "model": "gpt-5.5",
+          "total_tokens": 111544,
+          "input_tokens": 111456,
+          "cached_input_tokens": 109952,
+          "output_tokens": 88,
+          "reasoning_output_tokens": 22
         }
       ],
       "estimated_cost_usd": null,
@@ -377255,6 +377285,104 @@
       "unpriced_total_tokens": null
     },
     {
+      "session_id": "019ee069-94ce-7c83-a357-64d21b8d03b7",
+      "thread_name": "Team KJ Lead SLA Monitor",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-19T15:04:36.495Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 64383,
+      "input_tokens": 63700,
+      "cached_input_tokens": 59136,
+      "output_tokens": 683,
+      "reasoning_output_tokens": 200,
+      "events": [
+        {
+          "timestamp": "2026-06-19T15:14:16.917Z",
+          "date": "2026-06-19",
+          "model": "gpt-5.4",
+          "total_tokens": 30198,
+          "input_tokens": 29697,
+          "cached_input_tokens": 29568,
+          "output_tokens": 501,
+          "reasoning_output_tokens": 171
+        },
+        {
+          "timestamp": "2026-06-19T15:14:28.557Z",
+          "date": "2026-06-19",
+          "model": "gpt-5.4",
+          "total_tokens": 34185,
+          "input_tokens": 34003,
+          "cached_input_tokens": 29568,
+          "output_tokens": 182,
+          "reasoning_output_tokens": 29
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019ee080-f797-7300-b1d2-6a7c58a20f3c",
+      "thread_name": "Team KJ Lead SLA Monitor",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-19T15:30:09.399Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "events": []
+    },
+    {
+      "session_id": "019ee09c-5383-7dc0-b189-ab5932fa9926",
+      "thread_name": "Team KJ Lead SLA Monitor",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-19T16:00:02.250Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.140.0-alpha.2",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "events": []
+    },
+    {
       "session_id": "019dc15f-4327-7382-a771-370067d3144c",
       "thread_name": "Team ramp Slack report",
       "parent_session_id": null,
@@ -386943,6 +387071,6 @@
     }
   ],
   "source": {
-    "log_files": 971
+    "log_files": 974
   }
 }
