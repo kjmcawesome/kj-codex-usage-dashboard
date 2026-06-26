@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-06-26T21:30:04.764Z",
+  "generated_at": "2026-06-26T22:00:03.687Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -428927,6 +428927,44 @@
       "unpriced_total_tokens": null
     },
     {
+      "session_id": "019f05ec-047e-7710-bf1f-ab45e40d71c2",
+      "thread_name": "Team KJ Lead SLA Monitor",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-26T21:53:01.702Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-manager-workbench",
+      "workspace_label": "team-manager-workbench",
+      "originator": "Codex Desktop",
+      "cli_version": "0.143.0-alpha.21",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.4",
+      "models_used": [
+        "gpt-5.4"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 30309,
+      "input_tokens": 29900,
+      "cached_input_tokens": 0,
+      "output_tokens": 409,
+      "reasoning_output_tokens": 185,
+      "events": [
+        {
+          "timestamp": "2026-06-26T21:53:22.932Z",
+          "date": "2026-06-26",
+          "model": "gpt-5.4",
+          "total_tokens": 30309,
+          "input_tokens": 29900,
+          "cached_input_tokens": 0,
+          "output_tokens": 409,
+          "reasoning_output_tokens": 185
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019dc15f-4327-7382-a771-370067d3144c",
       "thread_name": "Team ramp Slack report",
       "parent_session_id": null,
@@ -429700,6 +429738,64 @@
           "cached_input_tokens": 54656,
           "output_tokens": 301,
           "reasoning_output_tokens": 74
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019f05ec-0437-7c21-ae4f-ba145c770d84",
+      "thread_name": "Team ramp Slack report",
+      "parent_session_id": null,
+      "session_started_at": "2026-06-26T21:53:01.508Z",
+      "cwd": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_key": "/Users/kj/Documents/Codex projects/team-jeffery-usage-dashboard",
+      "workspace_label": "team-jeffery-usage-dashboard",
+      "originator": "Codex Desktop",
+      "cli_version": "0.143.0-alpha.21",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.6-sol",
+      "models_used": [
+        "gpt-5.6-sol"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 96017,
+      "input_tokens": 95464,
+      "cached_input_tokens": 70912,
+      "output_tokens": 553,
+      "reasoning_output_tokens": 128,
+      "events": [
+        {
+          "timestamp": "2026-06-26T21:53:14.473Z",
+          "date": "2026-06-26",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 31724,
+          "input_tokens": 31460,
+          "cached_input_tokens": 8960,
+          "output_tokens": 264,
+          "reasoning_output_tokens": 73
+        },
+        {
+          "timestamp": "2026-06-26T21:53:17.329Z",
+          "date": "2026-06-26",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 32035,
+          "input_tokens": 31847,
+          "cached_input_tokens": 30464,
+          "output_tokens": 188,
+          "reasoning_output_tokens": 16
+        },
+        {
+          "timestamp": "2026-06-26T21:53:19.245Z",
+          "date": "2026-06-26",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 32258,
+          "input_tokens": 32157,
+          "cached_input_tokens": 31488,
+          "output_tokens": 101,
+          "reasoning_output_tokens": 39
         }
       ],
       "estimated_cost_usd": null,
@@ -438683,6 +438779,6 @@
     }
   ],
   "source": {
-    "log_files": 1237
+    "log_files": 1239
   }
 }
