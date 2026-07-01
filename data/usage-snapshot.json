@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-07-01T16:02:58.052Z",
+  "generated_at": "2026-07-01T16:38:25.988Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -319543,17 +319543,62 @@
       "originator": "Codex Desktop",
       "cli_version": "0.143.0-alpha.21",
       "model_provider": "openai",
-      "primary_model": null,
-      "models_used": [],
+      "primary_model": "gpt-5.6",
+      "models_used": [
+        "gpt-5.6"
+      ],
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 0,
-      "input_tokens": 0,
-      "cached_input_tokens": 0,
-      "output_tokens": 0,
-      "reasoning_output_tokens": 0,
-      "events": []
+      "total_tokens": 140493,
+      "input_tokens": 139659,
+      "cached_input_tokens": 108544,
+      "output_tokens": 834,
+      "reasoning_output_tokens": 127,
+      "events": [
+        {
+          "timestamp": "2026-07-01T16:03:24.078Z",
+          "date": "2026-07-01",
+          "model": "gpt-5.6",
+          "total_tokens": 31447,
+          "input_tokens": 31278,
+          "cached_input_tokens": 9472,
+          "output_tokens": 169,
+          "reasoning_output_tokens": 15
+        },
+        {
+          "timestamp": "2026-07-01T16:03:32.971Z",
+          "date": "2026-07-01",
+          "model": "gpt-5.6",
+          "total_tokens": 33768,
+          "input_tokens": 33489,
+          "cached_input_tokens": 30976,
+          "output_tokens": 279,
+          "reasoning_output_tokens": 72
+        },
+        {
+          "timestamp": "2026-07-01T16:03:35.643Z",
+          "date": "2026-07-01",
+          "model": "gpt-5.6",
+          "total_tokens": 35742,
+          "input_tokens": 35587,
+          "cached_input_tokens": 33024,
+          "output_tokens": 155,
+          "reasoning_output_tokens": 10
+        },
+        {
+          "timestamp": "2026-07-01T16:03:42.931Z",
+          "date": "2026-07-01",
+          "model": "gpt-5.6",
+          "total_tokens": 39536,
+          "input_tokens": 39305,
+          "cached_input_tokens": 35072,
+          "output_tokens": 231,
+          "reasoning_output_tokens": 30
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
     },
     {
       "session_id": "019e3bef-bfdd-72b0-b1fc-6d541192ca2b",
