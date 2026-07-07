@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-07-07T15:13:34.763Z",
+  "generated_at": "2026-07-07T15:39:01.707Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -327355,6 +327355,84 @@
       "unpriced_total_tokens": null
     },
     {
+      "session_id": "019f3d2b-9acb-7ba3-a51d-0b560d1cac24",
+      "thread_name": "Refresh DN Outbound Motion Dashboard",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-07T15:21:35.827Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.143.0-alpha.32",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.6",
+      "models_used": [
+        "gpt-5.6"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 235060,
+      "input_tokens": 233272,
+      "cached_input_tokens": 175872,
+      "output_tokens": 1788,
+      "reasoning_output_tokens": 618,
+      "events": [
+        {
+          "timestamp": "2026-07-07T15:21:55.854Z",
+          "date": "2026-07-07",
+          "model": "gpt-5.6",
+          "total_tokens": 31920,
+          "input_tokens": 31617,
+          "cached_input_tokens": 9984,
+          "output_tokens": 303,
+          "reasoning_output_tokens": 73
+        },
+        {
+          "timestamp": "2026-07-07T15:22:03.782Z",
+          "date": "2026-07-07",
+          "model": "gpt-5.6",
+          "total_tokens": 37413,
+          "input_tokens": 36789,
+          "cached_input_tokens": 31488,
+          "output_tokens": 624,
+          "reasoning_output_tokens": 233
+        },
+        {
+          "timestamp": "2026-07-07T15:22:13.227Z",
+          "date": "2026-07-07",
+          "model": "gpt-5.6",
+          "total_tokens": 43512,
+          "input_tokens": 43079,
+          "cached_input_tokens": 36608,
+          "output_tokens": 433,
+          "reasoning_output_tokens": 235
+        },
+        {
+          "timestamp": "2026-07-07T15:22:16.307Z",
+          "date": "2026-07-07",
+          "model": "gpt-5.6",
+          "total_tokens": 56108,
+          "input_tokens": 55895,
+          "cached_input_tokens": 42752,
+          "output_tokens": 213,
+          "reasoning_output_tokens": 36
+        },
+        {
+          "timestamp": "2026-07-07T15:39:01.390Z",
+          "date": "2026-07-07",
+          "model": "gpt-5.6",
+          "total_tokens": 66107,
+          "input_tokens": 65892,
+          "cached_input_tokens": 55040,
+          "output_tokens": 215,
+          "reasoning_output_tokens": 41
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019e3bef-bfdd-72b0-b1fc-6d541192ca2b",
       "thread_name": "Refresh DN Outbound Production Dashboard",
       "parent_session_id": null,
@@ -466559,6 +466637,6 @@
     }
   ],
   "source": {
-    "log_files": 1314
+    "log_files": 1315
   }
 }
