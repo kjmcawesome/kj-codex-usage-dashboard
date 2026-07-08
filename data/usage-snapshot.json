@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-07-08T22:30:05.500Z",
+  "generated_at": "2026-07-08T23:04:34.871Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -348119,6 +348119,54 @@
       "events": []
     },
     {
+      "session_id": "019f43f0-3c6f-7d81-a42a-43c0fb89c927",
+      "thread_name": "Remove Nauzli from lead queue",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-08T22:54:05.496Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "codex_work_desktop",
+      "cli_version": "0.143.0-alpha.37",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.6-sol",
+      "models_used": [
+        "gpt-5.6-sol"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 70588,
+      "input_tokens": 69773,
+      "cached_input_tokens": 40448,
+      "output_tokens": 815,
+      "reasoning_output_tokens": 412,
+      "events": [
+        {
+          "timestamp": "2026-07-08T22:54:14.086Z",
+          "date": "2026-07-08",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 31097,
+          "input_tokens": 30766,
+          "cached_input_tokens": 9984,
+          "output_tokens": 331,
+          "reasoning_output_tokens": 190
+        },
+        {
+          "timestamp": "2026-07-08T22:54:21.028Z",
+          "date": "2026-07-08",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 39491,
+          "input_tokens": 39007,
+          "cached_input_tokens": 30464,
+          "output_tokens": 484,
+          "reasoning_output_tokens": 222
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019e2335-5feb-7a22-ab7f-b772e0ab7b62",
       "thread_name": "Replace run of show module",
       "parent_session_id": null,
@@ -476607,6 +476655,6 @@
     }
   ],
   "source": {
-    "log_files": 1335
+    "log_files": 1336
   }
 }
