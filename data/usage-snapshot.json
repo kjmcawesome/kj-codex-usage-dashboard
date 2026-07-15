@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-07-15T16:30:04.573Z",
+  "generated_at": "2026-07-15T17:00:02.525Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -383057,6 +383057,84 @@
       "events": []
     },
     {
+      "session_id": "019f66a9-4449-7f51-8679-208b7d044a7e",
+      "thread_name": "Remove from lead routing",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-15T16:43:16.973Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "codex_work_desktop",
+      "cli_version": "0.144.4",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.6-sol",
+      "models_used": [
+        "gpt-5.6-sol"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 182197,
+      "input_tokens": 180440,
+      "cached_input_tokens": 143104,
+      "output_tokens": 1757,
+      "reasoning_output_tokens": 738,
+      "events": [
+        {
+          "timestamp": "2026-07-15T16:43:33.113Z",
+          "date": "2026-07-15",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 30485,
+          "input_tokens": 30218,
+          "cached_input_tokens": 11008,
+          "output_tokens": 267,
+          "reasoning_output_tokens": 88
+        },
+        {
+          "timestamp": "2026-07-15T16:43:36.384Z",
+          "date": "2026-07-15",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 32430,
+          "input_tokens": 32147,
+          "cached_input_tokens": 29440,
+          "output_tokens": 283,
+          "reasoning_output_tokens": 60
+        },
+        {
+          "timestamp": "2026-07-15T16:43:38.873Z",
+          "date": "2026-07-15",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 35134,
+          "input_tokens": 34874,
+          "cached_input_tokens": 31488,
+          "output_tokens": 260,
+          "reasoning_output_tokens": 61
+        },
+        {
+          "timestamp": "2026-07-15T16:43:41.735Z",
+          "date": "2026-07-15",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 37686,
+          "input_tokens": 37574,
+          "cached_input_tokens": 34560,
+          "output_tokens": 112,
+          "reasoning_output_tokens": 13
+        },
+        {
+          "timestamp": "2026-07-15T16:43:51.272Z",
+          "date": "2026-07-15",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 46462,
+          "input_tokens": 45627,
+          "cached_input_tokens": 36608,
+          "output_tokens": 835,
+          "reasoning_output_tokens": 516
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019f43f0-3c6f-7d81-a42a-43c0fb89c927",
       "thread_name": "Remove Nauzli from lead queue",
       "parent_session_id": null,
@@ -513630,6 +513708,6 @@
     }
   ],
   "source": {
-    "log_files": 1384
+    "log_files": 1385
   }
 }
