@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-07-17T23:05:30.231Z",
+  "generated_at": "2026-07-17T23:38:00.035Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -216072,6 +216072,84 @@
           "cached_input_tokens": 189824,
           "output_tokens": 503,
           "reasoning_output_tokens": 135
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019f7262-69d5-7310-bdfa-bd2df77cd82f",
+      "thread_name": "DN Outbound Friday Cutover",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-17T23:21:20.114Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.144.4",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.6",
+      "models_used": [
+        "gpt-5.6"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 252519,
+      "input_tokens": 250713,
+      "cached_input_tokens": 187136,
+      "output_tokens": 1806,
+      "reasoning_output_tokens": 461,
+      "events": [
+        {
+          "timestamp": "2026-07-17T23:21:43.056Z",
+          "date": "2026-07-17",
+          "model": "gpt-5.6",
+          "total_tokens": 32217,
+          "input_tokens": 31847,
+          "cached_input_tokens": 9984,
+          "output_tokens": 370,
+          "reasoning_output_tokens": 79
+        },
+        {
+          "timestamp": "2026-07-17T23:21:52.777Z",
+          "date": "2026-07-17",
+          "model": "gpt-5.6",
+          "total_tokens": 39346,
+          "input_tokens": 38705,
+          "cached_input_tokens": 31488,
+          "output_tokens": 641,
+          "reasoning_output_tokens": 122
+        },
+        {
+          "timestamp": "2026-07-17T23:22:01.374Z",
+          "date": "2026-07-17",
+          "model": "gpt-5.6",
+          "total_tokens": 49227,
+          "input_tokens": 48689,
+          "cached_input_tokens": 37632,
+          "output_tokens": 538,
+          "reasoning_output_tokens": 110
+        },
+        {
+          "timestamp": "2026-07-17T23:22:04.424Z",
+          "date": "2026-07-17",
+          "model": "gpt-5.6",
+          "total_tokens": 61266,
+          "input_tokens": 61070,
+          "cached_input_tokens": 47872,
+          "output_tokens": 196,
+          "reasoning_output_tokens": 134
+        },
+        {
+          "timestamp": "2026-07-17T23:22:05.825Z",
+          "date": "2026-07-17",
+          "model": "gpt-5.6",
+          "total_tokens": 70463,
+          "input_tokens": 70402,
+          "cached_input_tokens": 60160,
+          "output_tokens": 61,
+          "reasoning_output_tokens": 16
         }
       ],
       "estimated_cost_usd": null,
@@ -538338,6 +538416,6 @@
     }
   ],
   "source": {
-    "log_files": 1425
+    "log_files": 1426
   }
 }
