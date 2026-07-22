@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-07-22T15:09:03.327Z",
+  "generated_at": "2026-07-22T16:30:03.136Z",
   "timezone": "America/New_York",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -70672,6 +70672,31 @@
       ],
       "estimated_cost_usd": null,
       "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019f8a6f-9442-7bc3-b4a0-86469c4f4dba",
+      "thread_name": "019f8a6f-9442-7bc3-b4a0-86469c4f4dba",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-22T15:26:36.126Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.145.0-alpha.24",
+      "model_provider": "openai",
+      "primary_model": "codex-auto-review",
+      "models_used": [
+        "codex-auto-review"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": true,
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "events": []
     },
     {
       "session_id": "019e93f2-9d62-78f1-9daf-3f7efab841be",
@@ -237770,6 +237795,54 @@
       "unpriced_total_tokens": null
     },
     {
+      "session_id": "019f8a6e-9404-7352-922c-49d41ba2fa42",
+      "thread_name": "Find Conservice SOW timeline",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-22T15:25:30.531Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.145.0-alpha.24",
+      "model_provider": "openai",
+      "primary_model": "mewtwo",
+      "models_used": [
+        "mewtwo"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 59627,
+      "input_tokens": 59115,
+      "cached_input_tokens": 28611,
+      "output_tokens": 512,
+      "reasoning_output_tokens": 88,
+      "events": [
+        {
+          "timestamp": "2026-07-22T15:26:09.756Z",
+          "date": "2026-07-22",
+          "model": "mewtwo",
+          "total_tokens": 28893,
+          "input_tokens": 28614,
+          "cached_input_tokens": 0,
+          "output_tokens": 279,
+          "reasoning_output_tokens": 58
+        },
+        {
+          "timestamp": "2026-07-22T15:26:12.951Z",
+          "date": "2026-07-22",
+          "model": "mewtwo",
+          "total_tokens": 30734,
+          "input_tokens": 30501,
+          "cached_input_tokens": 28611,
+          "output_tokens": 233,
+          "reasoning_output_tokens": 30
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
       "session_id": "019f5c90-8b4f-73d2-907c-cf5118225f76",
       "thread_name": "Find Darrel and Nick availability",
       "parent_session_id": null,
@@ -368035,11 +368108,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 26936976,
-      "input_tokens": 26882134,
-      "cached_input_tokens": 22162432,
-      "output_tokens": 54842,
-      "reasoning_output_tokens": 25160,
+      "total_tokens": 27227720,
+      "input_tokens": 27172819,
+      "cached_input_tokens": 22306560,
+      "output_tokens": 54901,
+      "reasoning_output_tokens": 25166,
       "events": [
         {
           "timestamp": "2026-07-08T20:18:58.873Z",
@@ -369978,6 +370051,26 @@
           "total_tokens": 145270,
           "input_tokens": 145231,
           "cached_input_tokens": 144128,
+          "output_tokens": 39,
+          "reasoning_output_tokens": 6
+        },
+        {
+          "timestamp": "2026-07-22T16:21:58.763Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 145330,
+          "input_tokens": 145310,
+          "cached_input_tokens": 144128,
+          "output_tokens": 20,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-07-22T16:22:16.844Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 145414,
+          "input_tokens": 145375,
+          "cached_input_tokens": 0,
           "output_tokens": 39,
           "reasoning_output_tokens": 6
         }
@@ -400872,6 +400965,104 @@
           "cached_input_tokens": 112384,
           "output_tokens": 355,
           "reasoning_output_tokens": 195
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019f8a6e-376c-7e73-a4a6-95a892bcccd7",
+      "thread_name": "Refresh DN Outbound Motion Dashboard",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-22T15:25:06.827Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.145.0-alpha.24",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.6",
+      "models_used": [
+        "gpt-5.6"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 388956,
+      "input_tokens": 387316,
+      "cached_input_tokens": 321792,
+      "output_tokens": 1640,
+      "reasoning_output_tokens": 307,
+      "events": [
+        {
+          "timestamp": "2026-07-22T15:25:24.470Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6",
+          "total_tokens": 30199,
+          "input_tokens": 29815,
+          "cached_input_tokens": 11008,
+          "output_tokens": 384,
+          "reasoning_output_tokens": 82
+        },
+        {
+          "timestamp": "2026-07-22T15:25:27.776Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6",
+          "total_tokens": 40017,
+          "input_tokens": 39743,
+          "cached_input_tokens": 29440,
+          "output_tokens": 274,
+          "reasoning_output_tokens": 40
+        },
+        {
+          "timestamp": "2026-07-22T15:25:33.654Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6",
+          "total_tokens": 50380,
+          "input_tokens": 50045,
+          "cached_input_tokens": 38656,
+          "output_tokens": 335,
+          "reasoning_output_tokens": 71
+        },
+        {
+          "timestamp": "2026-07-22T15:26:03.335Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6",
+          "total_tokens": 58418,
+          "input_tokens": 58335,
+          "cached_input_tokens": 49920,
+          "output_tokens": 83,
+          "reasoning_output_tokens": 40
+        },
+        {
+          "timestamp": "2026-07-22T15:26:07.509Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6",
+          "total_tokens": 68137,
+          "input_tokens": 68082,
+          "cached_input_tokens": 58112,
+          "output_tokens": 55,
+          "reasoning_output_tokens": 14
+        },
+        {
+          "timestamp": "2026-07-22T15:26:10.593Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6",
+          "total_tokens": 68679,
+          "input_tokens": 68381,
+          "cached_input_tokens": 67328,
+          "output_tokens": 298,
+          "reasoning_output_tokens": 10
+        },
+        {
+          "timestamp": "2026-07-22T15:26:23.861Z",
+          "date": "2026-07-22",
+          "model": "gpt-5.6",
+          "total_tokens": 73126,
+          "input_tokens": 72915,
+          "cached_input_tokens": 67328,
+          "output_tokens": 211,
+          "reasoning_output_tokens": 50
         }
       ],
       "estimated_cost_usd": null,
@@ -548240,6 +548431,6 @@
     }
   ],
   "source": {
-    "log_files": 1444
+    "log_files": 1447
   }
 }
