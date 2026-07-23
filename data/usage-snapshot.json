@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-07-23T21:30:06.211Z",
+  "generated_at": "2026-07-23T23:00:04.041Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -71453,6 +71453,44 @@
           "cached_input_tokens": 40448,
           "output_tokens": 51,
           "reasoning_output_tokens": 0
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019f9131-ced3-7e21-99b7-8c2582360a5e",
+      "thread_name": "019f9131-ced3-7e21-99b7-8c2582360a5e",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-23T22:56:28.405Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.145.0-alpha.24",
+      "model_provider": "openai",
+      "primary_model": "codex-auto-review",
+      "models_used": [
+        "codex-auto-review"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": true,
+      "total_tokens": 13998,
+      "input_tokens": 13855,
+      "cached_input_tokens": 5632,
+      "output_tokens": 143,
+      "reasoning_output_tokens": 81,
+      "events": [
+        {
+          "timestamp": "2026-07-23T22:56:32.360Z",
+          "date": "2026-07-23",
+          "model": "codex-auto-review",
+          "total_tokens": 13998,
+          "input_tokens": 13855,
+          "cached_input_tokens": 5632,
+          "output_tokens": 143,
+          "reasoning_output_tokens": 81
         }
       ],
       "estimated_cost_usd": null,
@@ -226193,6 +226231,154 @@
           "cached_input_tokens": 111360,
           "output_tokens": 545,
           "reasoning_output_tokens": 65
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019f9131-3c02-70f1-a3db-e29f126e90d8",
+      "thread_name": "Draft BAA applications email",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-23T22:55:50.827Z",
+      "cwd": "/Users/kj/Documents/Codex projects",
+      "workspace_key": "/Users/kj/Documents/Codex projects",
+      "workspace_label": "Codex projects",
+      "originator": "Codex Desktop",
+      "cli_version": "0.145.0-alpha.24",
+      "model_provider": "openai",
+      "primary_model": "mewtwo",
+      "models_used": [
+        "mewtwo"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 631170,
+      "input_tokens": 627897,
+      "cached_input_tokens": 539254,
+      "output_tokens": 3273,
+      "reasoning_output_tokens": 894,
+      "events": [
+        {
+          "timestamp": "2026-07-23T22:56:12.049Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 28604,
+          "input_tokens": 28212,
+          "cached_input_tokens": 0,
+          "output_tokens": 392,
+          "reasoning_output_tokens": 80
+        },
+        {
+          "timestamp": "2026-07-23T22:56:17.533Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 36277,
+          "input_tokens": 35878,
+          "cached_input_tokens": 28209,
+          "output_tokens": 399,
+          "reasoning_output_tokens": 112
+        },
+        {
+          "timestamp": "2026-07-23T22:56:22.550Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 46503,
+          "input_tokens": 46318,
+          "cached_input_tokens": 35875,
+          "output_tokens": 185,
+          "reasoning_output_tokens": 36
+        },
+        {
+          "timestamp": "2026-07-23T22:56:39.351Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 48359,
+          "input_tokens": 47904,
+          "cached_input_tokens": 46315,
+          "output_tokens": 455,
+          "reasoning_output_tokens": 103
+        },
+        {
+          "timestamp": "2026-07-23T22:56:42.601Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 48433,
+          "input_tokens": 48387,
+          "cached_input_tokens": 47901,
+          "output_tokens": 46,
+          "reasoning_output_tokens": 13
+        },
+        {
+          "timestamp": "2026-07-23T22:56:44.787Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 48503,
+          "input_tokens": 48461,
+          "cached_input_tokens": 48384,
+          "output_tokens": 42,
+          "reasoning_output_tokens": 9
+        },
+        {
+          "timestamp": "2026-07-23T22:56:46.974Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 48577,
+          "input_tokens": 48531,
+          "cached_input_tokens": 48458,
+          "output_tokens": 46,
+          "reasoning_output_tokens": 13
+        },
+        {
+          "timestamp": "2026-07-23T22:56:59.089Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 48648,
+          "input_tokens": 48605,
+          "cached_input_tokens": 48528,
+          "output_tokens": 43,
+          "reasoning_output_tokens": 10
+        },
+        {
+          "timestamp": "2026-07-23T22:57:08.315Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 48739,
+          "input_tokens": 48676,
+          "cached_input_tokens": 48602,
+          "output_tokens": 63,
+          "reasoning_output_tokens": 30
+        },
+        {
+          "timestamp": "2026-07-23T22:57:15.406Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 62353,
+          "input_tokens": 61980,
+          "cached_input_tokens": 48673,
+          "output_tokens": 373,
+          "reasoning_output_tokens": 78
+        },
+        {
+          "timestamp": "2026-07-23T22:57:30.700Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 76815,
+          "input_tokens": 76335,
+          "cached_input_tokens": 61977,
+          "output_tokens": 480,
+          "reasoning_output_tokens": 109
+        },
+        {
+          "timestamp": "2026-07-23T22:57:40.675Z",
+          "date": "2026-07-23",
+          "model": "mewtwo",
+          "total_tokens": 89359,
+          "input_tokens": 88610,
+          "cached_input_tokens": 76332,
+          "output_tokens": 749,
+          "reasoning_output_tokens": 301
         }
       ],
       "estimated_cost_usd": null,
@@ -554721,6 +554907,6 @@
     }
   ],
   "source": {
-    "log_files": 1457
+    "log_files": 1459
   }
 }
