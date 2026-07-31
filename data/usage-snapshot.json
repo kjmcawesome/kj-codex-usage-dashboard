@@ -1,6 +1,6 @@
 {
   "snapshot_version": 1,
-  "generated_at": "2026-07-31T22:30:06.420Z",
+  "generated_at": "2026-07-31T23:00:04.274Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "sessions": [
@@ -124860,6 +124860,174 @@
           "cached_input_tokens": 0,
           "output_tokens": 601,
           "reasoning_output_tokens": 43
+        }
+      ],
+      "estimated_cost_usd": null,
+      "unpriced_total_tokens": null
+    },
+    {
+      "session_id": "019fba4f-4252-7352-a017-ac2ecc1ffe48",
+      "thread_name": "Configure Codex Micro for plans",
+      "parent_session_id": null,
+      "session_started_at": "2026-07-31T22:33:04.338Z",
+      "cwd": "/Users/kj/Documents/Codex/2026-07-31/how-do-i-get-my-codex",
+      "workspace_key": "/Users/kj/Documents/Codex",
+      "workspace_label": "Codex",
+      "originator": "Codex Desktop",
+      "cli_version": "0.147.0-alpha.1",
+      "model_provider": "openai",
+      "primary_model": "gpt-5.6-terra",
+      "models_used": [
+        "gpt-5.6-terra"
+      ],
+      "agent_role": null,
+      "agent_nickname": null,
+      "is_subagent": false,
+      "total_tokens": 593432,
+      "input_tokens": 589634,
+      "cached_input_tokens": 541184,
+      "output_tokens": 3798,
+      "reasoning_output_tokens": 1009,
+      "events": [
+        {
+          "timestamp": "2026-07-31T22:33:12.240Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 31158,
+          "input_tokens": 30957,
+          "cached_input_tokens": 11008,
+          "output_tokens": 201,
+          "reasoning_output_tokens": 80
+        },
+        {
+          "timestamp": "2026-07-31T22:36:45.298Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 31389,
+          "input_tokens": 31183,
+          "cached_input_tokens": 30464,
+          "output_tokens": 206,
+          "reasoning_output_tokens": 72
+        },
+        {
+          "timestamp": "2026-07-31T22:36:51.711Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 35184,
+          "input_tokens": 34702,
+          "cached_input_tokens": 30464,
+          "output_tokens": 482,
+          "reasoning_output_tokens": 258
+        },
+        {
+          "timestamp": "2026-07-31T22:41:48.652Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 35448,
+          "input_tokens": 35206,
+          "cached_input_tokens": 33536,
+          "output_tokens": 242,
+          "reasoning_output_tokens": 75
+        },
+        {
+          "timestamp": "2026-07-31T22:41:51.550Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 35668,
+          "input_tokens": 35514,
+          "cached_input_tokens": 34560,
+          "output_tokens": 154,
+          "reasoning_output_tokens": 43
+        },
+        {
+          "timestamp": "2026-07-31T22:41:53.284Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 39620,
+          "input_tokens": 39548,
+          "cached_input_tokens": 34560,
+          "output_tokens": 72,
+          "reasoning_output_tokens": 20
+        },
+        {
+          "timestamp": "2026-07-31T22:41:57.187Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 46616,
+          "input_tokens": 46426,
+          "cached_input_tokens": 38656,
+          "output_tokens": 190,
+          "reasoning_output_tokens": 90
+        },
+        {
+          "timestamp": "2026-07-31T22:41:59.128Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 46733,
+          "input_tokens": 46644,
+          "cached_input_tokens": 45824,
+          "output_tokens": 89,
+          "reasoning_output_tokens": 14
+        },
+        {
+          "timestamp": "2026-07-31T22:42:00.930Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 47291,
+          "input_tokens": 47194,
+          "cached_input_tokens": 45824,
+          "output_tokens": 97,
+          "reasoning_output_tokens": 8
+        },
+        {
+          "timestamp": "2026-07-31T22:42:05.440Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 47479,
+          "input_tokens": 47363,
+          "cached_input_tokens": 46848,
+          "output_tokens": 116,
+          "reasoning_output_tokens": 25
+        },
+        {
+          "timestamp": "2026-07-31T22:42:23.191Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 48904,
+          "input_tokens": 47523,
+          "cached_input_tokens": 46848,
+          "output_tokens": 1381,
+          "reasoning_output_tokens": 134
+        },
+        {
+          "timestamp": "2026-07-31T22:42:26.143Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 49021,
+          "input_tokens": 48928,
+          "cached_input_tokens": 46848,
+          "output_tokens": 93,
+          "reasoning_output_tokens": 13
+        },
+        {
+          "timestamp": "2026-07-31T22:42:28.863Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 49178,
+          "input_tokens": 49044,
+          "cached_input_tokens": 47872,
+          "output_tokens": 134,
+          "reasoning_output_tokens": 41
+        },
+        {
+          "timestamp": "2026-07-31T22:42:33.562Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 49743,
+          "input_tokens": 49402,
+          "cached_input_tokens": 47872,
+          "output_tokens": 341,
+          "reasoning_output_tokens": 136
         }
       ],
       "estimated_cost_usd": null,
@@ -399727,11 +399895,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 57873861,
-      "input_tokens": 57812863,
-      "cached_input_tokens": 48550656,
-      "output_tokens": 60998,
-      "reasoning_output_tokens": 26025,
+      "total_tokens": 58245379,
+      "input_tokens": 58184322,
+      "cached_input_tokens": 48920832,
+      "output_tokens": 61057,
+      "reasoning_output_tokens": 26031,
       "events": [
         {
           "timestamp": "2026-07-08T20:18:58.873Z",
@@ -403632,6 +403800,26 @@
           "cached_input_tokens": 177920,
           "output_tokens": 53,
           "reasoning_output_tokens": 20
+        },
+        {
+          "timestamp": "2026-07-31T22:57:13.766Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 185717,
+          "input_tokens": 185697,
+          "cached_input_tokens": 185088,
+          "output_tokens": 20,
+          "reasoning_output_tokens": 0
+        },
+        {
+          "timestamp": "2026-07-31T22:57:17.898Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-sol",
+          "total_tokens": 185801,
+          "input_tokens": 185762,
+          "cached_input_tokens": 185088,
+          "output_tokens": 39,
+          "reasoning_output_tokens": 6
         }
       ],
       "estimated_cost_usd": null,
@@ -586774,11 +586962,11 @@
       "agent_role": null,
       "agent_nickname": null,
       "is_subagent": false,
-      "total_tokens": 2569683,
-      "input_tokens": 2561964,
-      "cached_input_tokens": 2354944,
-      "output_tokens": 7719,
-      "reasoning_output_tokens": 3228,
+      "total_tokens": 2793584,
+      "input_tokens": 2785483,
+      "cached_input_tokens": 2568448,
+      "output_tokens": 8101,
+      "reasoning_output_tokens": 3487,
       "events": [
         {
           "timestamp": "2026-07-31T21:15:25.460Z",
@@ -587149,6 +587337,26 @@
           "cached_input_tokens": 102144,
           "output_tokens": 141,
           "reasoning_output_tokens": 117
+        },
+        {
+          "timestamp": "2026-07-31T22:31:26.773Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 111224,
+          "input_tokens": 110989,
+          "cached_input_tokens": 103168,
+          "output_tokens": 235,
+          "reasoning_output_tokens": 129
+        },
+        {
+          "timestamp": "2026-07-31T22:31:30.265Z",
+          "date": "2026-07-31",
+          "model": "gpt-5.6-terra",
+          "total_tokens": 112677,
+          "input_tokens": 112530,
+          "cached_input_tokens": 110336,
+          "output_tokens": 147,
+          "reasoning_output_tokens": 130
         }
       ],
       "estimated_cost_usd": null,
@@ -598072,6 +598280,6 @@
     }
   ],
   "source": {
-    "log_files": 1547
+    "log_files": 1548
   }
 }
