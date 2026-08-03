@@ -22,7 +22,7 @@
             <p class="eyebrow">Tokenmaxxing</p>
             <h1>KJ Codex Usage Dashboard</h1>
             <p class="hero-note">
-              Codex momentum, project token volume, and estimated cost context.
+              Codex momentum, project token volume, and cost of work shipped.
             </p>
             <section class="hero-progress-card" aria-labelledby="hero-progress-label">
               <div class="hero-progress-head">
@@ -74,18 +74,18 @@
         </div>
 
         <div class="momentum-ribbon">
-          <article class="cost-window-card">
-            <span class="cost-window-label">Today tokens</span>
+          <article class="cost-window-card cost-window-card-primary">
+            <span class="cost-window-label">Today cost</span>
             <strong id="cost-today">-</strong>
             <span id="cost-today-foot" class="cost-window-foot">-</span>
           </article>
-          <article class="cost-window-card">
-            <span class="cost-window-label">30-day tokens</span>
+          <article class="cost-window-card cost-window-card-primary">
+            <span class="cost-window-label">30-day cost</span>
             <strong id="cost-14d">-</strong>
             <span id="cost-14d-foot" class="cost-window-foot">-</span>
           </article>
-          <article class="cost-window-card">
-            <span class="cost-window-label">Month-to-date tokens</span>
+          <article class="cost-window-card cost-window-card-primary">
+            <span class="cost-window-label">Month-to-date cost</span>
             <strong id="cost-month">-</strong>
             <span id="cost-month-foot" class="cost-window-foot">-</span>
           </article>
@@ -157,7 +157,7 @@
             <p class="panel-eyebrow">Project usage</p>
             <h2>Tokenmaxxing by project</h2>
             <p class="ranking-note" id="project-usage-note">
-              Projects ranked by token volume, with estimated cost for context.
+              Projects ranked by token volume, with cost surfaced as the work-done signal.
             </p>
           </div>
           <div class="project-sort-controls" aria-label="Project sort">
@@ -166,6 +166,16 @@
           </div>
         </div>
         <div id="project-usage-list" class="project-usage-list"></div>
+        <section class="model-cost-panel" aria-labelledby="model-cost-title">
+          <div class="model-cost-head">
+            <div>
+              <p class="panel-eyebrow">Cost by model</p>
+              <h3 id="model-cost-title">Which models did the work?</h3>
+            </div>
+            <span id="model-cost-total" class="model-cost-total">-</span>
+          </div>
+          <div id="model-cost-list" class="model-cost-list"></div>
+        </section>
       </section>
 
       <section class="panel selected-range-panel">

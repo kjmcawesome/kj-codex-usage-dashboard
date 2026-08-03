@@ -638,6 +638,18 @@ function determineDominantModelFamily(modelTotals) {
   return dominant?.model || "Other";
 }
 
+function addModelTotal(aggregate, model, tokens) {
+  if (!aggregate.model_totals) {
+    aggregate.model_totals = new Map();
+  }
+
+  const modelFamily = modelFamilyForDisplay(model);
+  aggregate.model_totals.set(
+    modelFamily,
+    (aggregate.model_totals.get(modelFamily) || 0) + (tokens || 0)
+  );
+}
+
 function shareOfTotal(total, value) {
   if (!total) {
     return 0;
@@ -652,6 +664,7 @@ function createWorkspaceAggregate(session) {
     workspace_label: session.workspace_label,
     active_days: new Set(),
     sessions: new Set(),
+    model_totals: new Map(),
     ...emptyTotals()
   };
 }
@@ -726,6 +739,7 @@ function serializeProjectUsage({
         ),
         token_share: shareOfTotal(summary.total_tokens, entry.total_tokens),
         cost_share: shareOfTotal(summary.estimated_cost_usd, entry.estimated_cost_usd),
+        dominant_model_family: determineDominantModelFamily(entry.model_totals),
         previous_total_tokens: hasComparableRange ? previousEntry.total_tokens || 0 : 0,
         previous_estimated_cost_usd: hasComparableRange ? previousEntry.estimated_cost_usd || 0 : 0,
         token_change_pct: hasComparableRange
@@ -1036,11 +1050,7 @@ function filterContributions(index, options) {
       }
       const sessionTotals = sessionMap.get(session.session_id);
       addTotals(sessionTotals, pricedEvent);
-      const modelFamily = modelFamilyForDisplay(event.model);
-      sessionTotals.model_totals.set(
-        modelFamily,
-        (sessionTotals.model_totals.get(modelFamily) || 0) + (pricedEvent.total_tokens || 0)
-      );
+      addModelTotal(sessionTotals, event.model, pricedEvent.total_tokens);
 
       const workspaceTotals = getWorkspaceAggregate(workspaceMap, session);
       addTotals(workspaceTotals, pricedEvent);
@@ -1051,6 +1061,7 @@ function filterContributions(index, options) {
       addTotals(projectTotals, pricedEvent);
       projectTotals.active_days.add(event.date);
       projectTotals.sessions.add(session.session_id);
+      addModelTotal(projectTotals, event.model, pricedEvent.total_tokens);
 
       addTotals(summary, pricedEvent);
     }

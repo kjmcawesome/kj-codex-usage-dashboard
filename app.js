@@ -75,6 +75,8 @@ const elements = {
   projectUsageSection: document.querySelector("#project-usage-section"),
   projectUsageNote: document.querySelector("#project-usage-note"),
   projectUsageList: document.querySelector("#project-usage-list"),
+  modelCostTotal: document.querySelector("#model-cost-total"),
+  modelCostList: document.querySelector("#model-cost-list"),
   projectSortButtons: document.querySelectorAll(".project-sort-button"),
   efficiencyNote: document.querySelector("#efficiency-note"),
   efficiencyGrid: document.querySelector("#efficiency-grid"),
@@ -659,23 +661,23 @@ function renderInsightCosts(dashboard) {
   const snapshots = dashboard.snapshot_windows;
   const lastThirty = sumHabitWindow(dashboard, 30);
 
-  elements.costToday.textContent = formatCompactNumber(snapshots.today.total_tokens);
-  elements.costToday.title = formatFullNumber(snapshots.today.total_tokens);
-  elements.costTodayFoot.textContent = `${formatUsd(snapshots.today.estimated_cost_usd)} est. cost today`;
-  elements.costTodayFoot.title = formatUsd(snapshots.today.estimated_cost_usd);
+  elements.costToday.textContent = formatUsd(snapshots.today.estimated_cost_usd);
+  elements.costToday.title = `${formatUsd(snapshots.today.estimated_cost_usd)} estimated cost`;
+  elements.costTodayFoot.textContent = `${formatCompactNumber(snapshots.today.total_tokens)} tokens today`;
+  elements.costTodayFoot.title = formatFullNumber(snapshots.today.total_tokens);
 
-  elements.cost14d.textContent = formatCompactNumber(lastThirty.total_tokens);
-  elements.cost14d.title = formatFullNumber(lastThirty.total_tokens);
-  elements.cost14dFoot.textContent = `${formatUsd(lastThirty.estimated_cost_usd)} est. cost over 30 days`;
-  elements.cost14dFoot.title = formatUsd(lastThirty.estimated_cost_usd);
+  elements.cost14d.textContent = formatUsd(lastThirty.estimated_cost_usd);
+  elements.cost14d.title = `${formatUsd(lastThirty.estimated_cost_usd)} estimated cost`;
+  elements.cost14dFoot.textContent = `${formatCompactNumber(lastThirty.total_tokens)} tokens over 30 days`;
+  elements.cost14dFoot.title = formatFullNumber(lastThirty.total_tokens);
 
-  elements.costMonth.textContent = formatCompactNumber(snapshots.month_to_date.total_tokens);
-  elements.costMonth.title = formatFullNumber(snapshots.month_to_date.total_tokens);
-  elements.costMonthFoot.textContent = `${formatUsd(snapshots.month_to_date.estimated_cost_usd)} est. cost · ${formatComparisonFootline(
+  elements.costMonth.textContent = formatUsd(snapshots.month_to_date.estimated_cost_usd);
+  elements.costMonth.title = `${formatUsd(snapshots.month_to_date.estimated_cost_usd)} estimated cost`;
+  elements.costMonthFoot.textContent = `${formatCompactNumber(snapshots.month_to_date.total_tokens)} tokens · ${formatComparisonFootline(
     snapshots.month_to_date.cost_change_pct,
     "same point last month"
   )}`;
-  elements.costMonthFoot.title = formatUsd(snapshots.month_to_date.estimated_cost_usd);
+  elements.costMonthFoot.title = formatFullNumber(snapshots.month_to_date.total_tokens);
 }
 
 function renderHeroProgress(dashboard) {
@@ -1086,6 +1088,41 @@ function renderCostBreakdown(dashboard) {
   `;
 }
 
+function renderModelCostSnapshot(dashboard) {
+  const rows = dashboard.cost_breakdown_by_model || [];
+  if (!elements.modelCostList || !elements.modelCostTotal) {
+    return;
+  }
+
+  elements.modelCostTotal.textContent = `${formatUsd(dashboard.summary.estimated_cost_usd)} in selected range`;
+  elements.modelCostTotal.title = `${formatUsd(dashboard.summary.estimated_cost_usd)} total estimated cost`;
+
+  if (!rows.length) {
+    elements.modelCostList.innerHTML = '<div class="empty-state">No model-level cost in this selection.</div>';
+    return;
+  }
+
+  elements.modelCostList.innerHTML = rows.slice(0, 5).map((row) => {
+    const costShare = row.share_of_total_cost || 0;
+    const tokenShare = row.share_of_total_tokens || 0;
+    return `
+      <article class="model-cost-card" title="${row.model}: ${formatUsd(row.estimated_cost_usd)} estimated cost · ${formatFullNumber(row.total_tokens)} tokens">
+        <div class="model-cost-card-head">
+          <span>${row.model}</span>
+          <strong>${formatUsd(row.estimated_cost_usd)}</strong>
+        </div>
+        <div class="model-cost-bar" aria-hidden="true">
+          <span style="width:${Math.max(costShare * 100, costShare > 0 ? 5 : 0)}%;"></span>
+        </div>
+        <div class="model-cost-card-foot">
+          <span>${formatCompactNumber(row.total_tokens)} tokens</span>
+          <span>${formatPercent(costShare)} cost · ${formatPercent(tokenShare)} tokens</span>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
 function getSortedProjects(projects) {
   return [...projects].sort((left, right) => {
     if (state.projectSort === "cost") {
@@ -1106,8 +1143,11 @@ function renderProjectUsage(dashboard) {
     tokens: "token volume"
   };
 
+  const topThreeCostShare = projects
+    .slice(0, 3)
+    .reduce((sum, project) => sum + (project.cost_share || 0), 0);
   elements.projectUsageNote.textContent =
-    `Codex usage across ${formatCountLabel(projects.length, "active project")} and ${formatCountLabel(dashboard.summary.sessions || 0, "workflow")} in ${rangeLabel}, sorted by ${sortLabels[state.projectSort] || "token volume"}.`;
+    `Codex usage across ${formatCountLabel(projects.length, "active project")} and ${formatCountLabel(dashboard.summary.sessions || 0, "workflow")} in ${rangeLabel}, sorted by ${sortLabels[state.projectSort] || "token volume"}. Top 3 projects drove ${formatPercent(topThreeCostShare)} of estimated cost.`;
 
   for (const button of elements.projectSortButtons) {
     const isActive = button.dataset.projectSort === state.projectSort;
@@ -1132,7 +1172,7 @@ function renderProjectUsage(dashboard) {
     card.innerHTML = `
       <div class="project-usage-main">
         <span class="project-title">${formatProjectName(project)}</span>
-        <span class="project-sub">${formatCountLabel(project.active_days || 0, "active day")} · ${formatCountLabel(project.workflows || 0, "workflow")}</span>
+        <span class="project-sub">${formatCountLabel(project.active_days || 0, "active day")} · ${formatCountLabel(project.workflows || 0, "workflow")} · ${project.dominant_model_family || "Other"} model</span>
       </div>
       <div class="project-bar" aria-hidden="true">
         <span style="width:${Math.max((project.token_share || 0) * 100, project.token_share > 0 ? 6 : 0)}%;"></span>
@@ -1143,10 +1183,20 @@ function renderProjectUsage(dashboard) {
           <strong>${formatCompactNumber(project.total_tokens)}</strong>
           <small>${tokenSharePercent} of range</small>
         </div>
-        <div>
-          <span>Est. cost</span>
+        <div class="project-metric-cost">
+          <span>Estimated cost</span>
           <strong>${formatUsd(project.estimated_cost_usd)}</strong>
           <small>${costSharePercent} of range</small>
+        </div>
+        <div>
+          <span>Cost / 1M</span>
+          <strong>${project.effective_cost_per_million !== null ? formatRate(project.effective_cost_per_million) : "—"}</strong>
+          <small>Model-weighted rate</small>
+        </div>
+        <div>
+          <span>Dominant model</span>
+          <strong>${project.dominant_model_family || "Other"}</strong>
+          <small>Most token volume</small>
         </div>
       </div>
     `;
@@ -1188,7 +1238,7 @@ function renderTopThreads(dashboard) {
       </div>
       <div class="rank-metrics">
         <span class="rank-value">${formatCompactNumber(thread.total_tokens)} tokens</span>
-        <span class="rank-value-sub">${formatUsd(thread.estimated_cost_usd)} est. cost · ${formatPercent(thread.token_share || 0)} token share</span>
+        <span class="rank-value-sub">${formatUsd(thread.estimated_cost_usd)} est. cost · ${formatPercent(thread.cost_share || 0)} cost share</span>
       </div>
     `;
     row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated cost · ${thread.dominant_model_family || "Other"} dominant model`;
@@ -1235,8 +1285,8 @@ function renderDayPanel(dayPayload) {
       </div>
       <div class="session-metrics">
         <div class="metric-pair"><span>Total</span><strong>${formatFullNumber(session.total_tokens)}</strong></div>
-        <div class="metric-pair"><span>Token share</span><strong>${formatPercent(session.token_share)}</strong></div>
         <div class="metric-pair"><span>Est. cost</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
+        <div class="metric-pair"><span>Token share</span><strong>${formatPercent(session.token_share)}</strong></div>
         <div class="metric-pair"><span>Cost share</span><strong>${formatPercent(session.cost_share)}</strong></div>
         <div class="metric-pair"><span>Dominant model</span><strong>${session.dominant_model_family || "Other"}</strong></div>
         <div class="metric-pair"><span>Input / output</span><strong>${session.input_output_ratio !== null ? `${session.input_output_ratio.toFixed(1)}x` : "—"}</strong></div>
@@ -1350,6 +1400,7 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     renderSummary(dashboard);
     renderWorkspaceFilter(dashboard);
     renderProjectUsage(dashboard);
+    renderModelCostSnapshot(dashboard);
     renderHeatmap(dashboard);
     renderTrend(dashboard);
     renderEfficiencyPanel(dashboard);
@@ -1369,6 +1420,12 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     elements.modelMixList.innerHTML = message;
     elements.insightList.innerHTML = message;
     elements.projectUsageList.innerHTML = message;
+    if (elements.modelCostTotal) {
+      elements.modelCostTotal.textContent = "-";
+    }
+    if (elements.modelCostList) {
+      elements.modelCostList.innerHTML = message;
+    }
     elements.threadTable.innerHTML = message;
     elements.daySessionList.innerHTML = message;
     elements.costToday.textContent = "-";

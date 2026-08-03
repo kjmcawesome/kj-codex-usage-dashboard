@@ -719,6 +719,8 @@ select {
   .trend-strip,
   .rank-row,
   .project-usage-card,
+  .model-cost-panel,
+  .model-cost-card,
   .session-card,
   .efficiency-stat,
 .mix-row,
@@ -742,6 +744,13 @@ select {
   gap: 4px;
   min-width: 0;
   align-content: start;
+}
+
+.cost-window-card-primary {
+  border-color: rgba(133, 151, 255, 0.16);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(118, 99, 255, 0.22), transparent 56%),
+    linear-gradient(180deg, rgba(22, 25, 45, 0.94), rgba(13, 15, 28, 0.82));
 }
 
 .cost-window-card:hover,
@@ -791,6 +800,13 @@ select {
 .mini-stat strong {
   font-size: 1rem;
   color: #dfe5ff;
+}
+
+.cost-window-card-primary strong {
+  font-size: clamp(1.18rem, 1.8vw, 1.58rem);
+  color: #fff;
+  letter-spacing: -0.05em;
+  text-shadow: 0 0 20px rgba(124, 111, 255, 0.22);
 }
 
 .cost-window-foot,
@@ -1216,12 +1232,12 @@ select {
 
 .project-usage-card {
   border-radius: var(--radius-sm);
-  padding: 16px;
+  padding: 17px;
   color: inherit;
   text-align: left;
   cursor: pointer;
   display: grid;
-  gap: 14px;
+  gap: 13px;
   min-width: 0;
 }
 
@@ -1269,7 +1285,7 @@ select {
 
 .project-metric-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1.15fr 1.1fr 0.85fr 0.9fr;
   gap: 12px;
 }
 
@@ -1288,7 +1304,7 @@ select {
 
 .project-metric-grid strong {
   font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
-  font-size: 1.18rem;
+  font-size: 0.98rem;
   color: #dfe5ff;
   white-space: nowrap;
   overflow: hidden;
@@ -1300,13 +1316,114 @@ select {
 }
 
 .project-metric-primary strong {
-  font-size: 1.42rem;
+  font-size: clamp(1.26rem, 2.2vw, 1.62rem);
   color: #f5f7ff;
   letter-spacing: -0.045em;
 }
 
 .project-metric-primary small {
   color: #9eaaff;
+}
+
+.project-metric-cost span {
+  color: #ddd6ff;
+}
+
+.project-metric-cost strong {
+  font-size: clamp(1.18rem, 2vw, 1.48rem);
+  color: #fff;
+  letter-spacing: -0.055em;
+}
+
+.project-metric-cost small {
+  color: #bea9ff;
+}
+
+.model-cost-panel {
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.model-cost-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: end;
+}
+
+.model-cost-head h3 {
+  margin: 3px 0 0;
+  font-size: clamp(1.12rem, 1.8vw, 1.45rem);
+}
+
+.model-cost-total {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  color: #fff;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.model-cost-list {
+  display: grid;
+  gap: 9px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.model-cost-card {
+  border-radius: 16px;
+  padding: 12px;
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+
+.model-cost-card-head,
+.model-cost-card-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.model-cost-card-head span {
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model-cost-card-head strong {
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+  color: #fff;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.model-cost-card-foot {
+  color: var(--ink-muted);
+  font-size: 0.74rem;
+  line-height: 1.25;
+}
+
+.model-cost-card-foot span:last-child {
+  text-align: right;
+}
+
+.model-cost-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.model-cost-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5f7cff, #9b5cff);
+  box-shadow: 0 0 18px rgba(133, 116, 255, 0.22);
 }
 
 .rank-row,
@@ -1682,6 +1799,10 @@ select {
     grid-template-columns: 1fr;
   }
 
+  .model-cost-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero-top {
     display: grid;
   }
@@ -1944,6 +2065,11 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .model-cost-head {
+    align-items: start;
+    flex-direction: column;
+  }
+
   .project-usage-main {
     display: grid;
   }
@@ -1979,7 +2105,9 @@ select {
 
 @media (max-width: 520px) {
   .range-summary-grid,
-  .momentum-ribbon {
+  .momentum-ribbon,
+  .project-metric-grid,
+  .model-cost-list {
     grid-template-columns: 1fr;
   }
 }
