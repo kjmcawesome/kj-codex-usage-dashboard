@@ -151,8 +151,8 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.summary.cached_input_tokens, 100);
   assert.equal(allSessions.summary.reasoning_output_tokens, 34);
   assert.equal(allSessions.summary.unpriced_total_tokens, 50);
-  assertClose(allSessions.summary.estimated_cost_usd, 0.0036242500000000003);
-  assertClose(noSubagents.summary.estimated_cost_usd, 0.0031755000000000003);
+  assertClose(allSessions.summary.estimated_cost_usd, 0.004018000000000001);
+  assertClose(noSubagents.summary.estimated_cost_usd, 0.0035692500000000004);
   assert.equal(allSessions.cost_mode, "estimated");
   assert.equal(allSessions.selection.mode, "preset");
   assert.equal(allSessions.selection.days, 365);
@@ -173,11 +173,11 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.habit_metrics.today_tokens, 0);
   assertClose(allSessions.habit_metrics.today_estimated_cost_usd, 0);
   assert.equal(allSessions.habit_metrics.last_14_days_tokens, 650);
-  assertClose(allSessions.habit_metrics.last_14_days_estimated_cost_usd, 0.0036242500000000003);
+  assertClose(allSessions.habit_metrics.last_14_days_estimated_cost_usd, 0.004018000000000001);
   assert.equal(allSessions.habit_metrics.last_7_days_tokens, 650);
   assert.equal(allSessions.habit_metrics.previous_7_days_tokens, 0);
   assert.equal(allSessions.habit_metrics.month_to_date_tokens, 650);
-  assertClose(allSessions.habit_metrics.month_to_date_estimated_cost_usd, 0.0036242500000000003);
+  assertClose(allSessions.habit_metrics.month_to_date_estimated_cost_usd, 0.004018000000000001);
   assert.equal(allSessions.habit_metrics.previous_month_comparable_tokens, 0);
   assert.equal(allSessions.habit_metrics.current_streak, 0);
   assert.equal(allSessions.habit_metrics.best_streak, 5);
@@ -188,7 +188,7 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.snapshot_windows.trailing_14d.token_change_pct, null);
   assert.equal(allSessions.snapshot_windows.month_to_date.total_tokens, 650);
   assert.equal(allSessions.snapshot_windows.month_to_date.cost_change_pct, null);
-  assertClose(allSessions.efficiency_metrics.effective_cost_per_million, 5.575769230769231);
+  assertClose(allSessions.efficiency_metrics.effective_cost_per_million, 6.181538461538462);
   assertClose(allSessions.efficiency_metrics.input_output_ratio, 3.0625);
   assertClose(allSessions.efficiency_metrics.peak_day_share, 190 / 650);
   assert.equal(allSessions.efficiency_metrics.month_to_date_token_growth_pct, null);
@@ -211,7 +211,7 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(heatmapDayByDate(allSessions, "2026-03-24").level, 3);
   assert.equal(habitBoardDayByDate(allSessions, "2026-03-20").level, 4);
   assert.equal(allSessions.cost_breakdown_by_model.length, 4);
-  assert.ok(allSessions.cost_breakdown_by_model.some((row) => row.model === "gpt-5.4 estimate"));
+  assert.ok(allSessions.cost_breakdown_by_model.some((row) => row.model === "gpt-5.5 estimate"));
   assert.ok("share_of_total_tokens" in allSessions.cost_breakdown_by_model[0]);
   assert.ok("effective_cost_per_million" in allSessions.cost_breakdown_by_model[0]);
   assertClose(
