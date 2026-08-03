@@ -677,8 +677,22 @@ function getWorkspaceAggregate(workspaceMap, session) {
   return workspaceMap.get(session.workspace_key);
 }
 
+function projectLabelForSession(session) {
+  const parentLabel = (session.parent_thread_name || "").trim();
+  if (session.is_subagent && parentLabel) {
+    return parentLabel;
+  }
+
+  const threadLabel = (session.thread_name || "").trim();
+  if (threadLabel) {
+    return threadLabel;
+  }
+
+  return session.workspace_label || "Unknown project";
+}
+
 function projectKeyForSession(session) {
-  const projectLabel = (session.thread_name || "").trim();
+  const projectLabel = projectLabelForSession(session);
   if (projectLabel) {
     return `thread:${projectLabel.toLowerCase()}`;
   }
@@ -687,7 +701,7 @@ function projectKeyForSession(session) {
 }
 
 function createProjectAggregate(session) {
-  const projectLabel = (session.thread_name || "").trim() || session.workspace_label || "Unknown project";
+  const projectLabel = projectLabelForSession(session);
   return {
     project_key: projectKeyForSession(session),
     project_label: projectLabel,
@@ -959,10 +973,13 @@ function filterContributions(index, options) {
           currentWorkSessionMap.set(session.session_id, {
             session_id: session.session_id,
             thread_name: session.thread_name,
+            parent_session_id: session.parent_session_id,
+            parent_thread_name: session.parent_thread_name,
             workspace_key: session.workspace_key,
             workspace_label: session.workspace_label,
             cwd: session.cwd,
             is_subagent: session.is_subagent,
+            agent_nickname: session.agent_nickname,
             session_started_at: session.session_started_at,
             last_active_at: null,
             active_days: new Set(),
@@ -1038,10 +1055,13 @@ function filterContributions(index, options) {
         sessionMap.set(session.session_id, {
           session_id: session.session_id,
           thread_name: session.thread_name,
+          parent_session_id: session.parent_session_id,
+          parent_thread_name: session.parent_thread_name,
           workspace_key: session.workspace_key,
           workspace_label: session.workspace_label,
           cwd: session.cwd,
           is_subagent: session.is_subagent,
+          agent_nickname: session.agent_nickname,
           session_started_at: session.session_started_at,
           active_days: 0,
           model_totals: new Map(),
@@ -1102,10 +1122,13 @@ function filterContributions(index, options) {
     .map((entry) => ({
       session_id: entry.session_id,
       thread_name: entry.thread_name,
+      parent_session_id: entry.parent_session_id,
+      parent_thread_name: entry.parent_thread_name,
       workspace_key: entry.workspace_key,
       workspace_label: entry.workspace_label,
       cwd: entry.cwd,
       is_subagent: entry.is_subagent,
+      agent_nickname: entry.agent_nickname,
       session_started_at: entry.session_started_at,
       active_days: entry.active_days,
       total_tokens: entry.total_tokens,
@@ -1124,10 +1147,13 @@ function filterContributions(index, options) {
     .map((entry) => ({
       session_id: entry.session_id,
       thread_name: entry.thread_name,
+      parent_session_id: entry.parent_session_id,
+      parent_thread_name: entry.parent_thread_name,
       workspace_key: entry.workspace_key,
       workspace_label: entry.workspace_label,
       cwd: entry.cwd,
       is_subagent: entry.is_subagent,
+      agent_nickname: entry.agent_nickname,
       session_started_at: entry.session_started_at,
       last_active_at: entry.last_active_at,
       total_tokens: entry.total_tokens,
@@ -1336,10 +1362,13 @@ export function buildDayPayload(index, date, options = {}) {
     sessions.push({
       session_id: session.session_id,
       thread_name: session.thread_name,
+      parent_session_id: session.parent_session_id,
+      parent_thread_name: session.parent_thread_name,
       workspace_key: session.workspace_key,
       workspace_label: session.workspace_label,
       cwd: session.cwd,
       is_subagent: session.is_subagent,
+      agent_nickname: session.agent_nickname,
       session_started_at: session.session_started_at,
       dominant_model_family: determineDominantModelFamily(modelTotals),
       input_output_ratio: totals.output_tokens > 0

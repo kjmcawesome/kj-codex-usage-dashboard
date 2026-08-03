@@ -94,6 +94,8 @@ button,
 .insight-card,
 .rank-row,
 .session-card,
+.day-outcome-card,
+.day-outcome-mini,
 .mini-stat,
 .trend-day-swatch,
 .day-cell,
@@ -821,6 +823,7 @@ select {
 .mix-track-value,
 .insight-card p,
 .day-explainer,
+.day-helper-note,
 .metric-pair,
 .empty-state,
 .trend-day-weekday,
@@ -833,6 +836,7 @@ select {
 .efficiency-stat-foot,
 .insight-card p,
 .day-explainer,
+.day-helper-note,
 .metric-pair,
 .rank-sub,
 .session-sub {
@@ -1221,6 +1225,7 @@ select {
 
 .rank-table,
 .project-usage-list,
+.day-outcome-summary,
 .session-list {
   display: grid;
   gap: 8px;
@@ -1637,6 +1642,75 @@ select {
   min-height: 0;
   overflow-y: auto;
   padding-right: 2px;
+}
+
+.day-outcome-card,
+.day-outcome-mini {
+  border: 1px solid rgba(165, 179, 255, 0.14);
+  background:
+    linear-gradient(135deg, rgba(95, 124, 255, 0.12), rgba(155, 92, 255, 0.05)),
+    rgba(255, 255, 255, 0.035);
+  border-radius: var(--radius-sm);
+}
+
+.day-outcome-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.day-outcome-card strong {
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.day-outcome-card p,
+.day-helper-note {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.outcome-eyebrow {
+  color: var(--ink-soft);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.day-outcome-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.day-outcome-mini {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+}
+
+.day-outcome-mini span {
+  color: #fff;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day-outcome-mini strong {
+  color: #dfe5ff;
+  font-family: "SF Mono", "SFMono-Regular", ui-monospace, monospace;
+}
+
+.day-outcome-mini small {
+  color: var(--ink-muted);
+}
+
+.day-helper-note {
+  border-left: 2px solid rgba(139, 111, 255, 0.56);
+  padding-left: 10px;
 }
 
 .budget-panel {

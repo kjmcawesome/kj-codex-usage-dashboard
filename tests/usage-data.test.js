@@ -221,14 +221,18 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.ok("dominant_model_family" in allSessions.top_threads[0]);
   assert.ok("token_share" in allSessions.top_threads[0]);
   assert.ok("cost_share" in allSessions.top_threads[0]);
-  assert.equal(allSessions.project_usage.length, 5);
+  assert.equal(allSessions.project_usage.length, 4);
   assert.equal(allSessions.project_usage[0].workspace_label, "Codex projects");
-  assert.equal(allSessions.project_usage[0].total_tokens, 200);
+  assert.equal(allSessions.project_usage[0].total_tokens, 260);
   assert.equal(allSessions.project_usage[0].active_days, 2);
-  assert.equal(allSessions.project_usage[0].workflows, 1);
-  assertClose(allSessions.project_usage[0].effective_cost_per_million, 5.13625);
+  assert.equal(allSessions.project_usage[0].workflows, 2);
+  assertClose(allSessions.project_usage[0].effective_cost_per_million, 5.676923076923076);
   assert.ok("token_share" in allSessions.project_usage[0]);
   assert.ok("cost_share" in allSessions.project_usage[0]);
+  assert.ok(
+    !allSessions.project_usage.some((project) => project.project_label === "Helper session"),
+    "subagent helpers should roll into their parent project when parent names are available"
+  );
   assert.equal(allSessions.trend_days.length, 14);
   assert.equal(allSessions.trend_days[0].date, "2026-03-12");
   assert.equal(allSessions.trend_days.at(-1).date, "2026-03-25");
