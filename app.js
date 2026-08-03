@@ -235,7 +235,7 @@ function formatTrendDayNumber(value) {
 
 function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.4-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
+    return `Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.5-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
   }
 
   return "Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend.";
