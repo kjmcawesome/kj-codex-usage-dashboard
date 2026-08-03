@@ -117,6 +117,7 @@ const elements = {
   dayOutput: document.querySelector("#day-output"),
   dayReasoning: document.querySelector("#day-reasoning"),
   daySessions: document.querySelector("#day-sessions"),
+  dayOutcomeSummary: document.querySelector("#day-outcome-summary"),
   dayCostNote: document.querySelector("#day-cost-note"),
   daySessionList: document.querySelector("#day-session-list"),
   dayDrawerShell: document.querySelector("#day-drawer-shell"),
@@ -261,8 +262,39 @@ function buildStreakStartDate(streakCount) {
   return dateKeyFromDate(addDays(todayDate(state.snapshotNow), -(streakCount - 1)));
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function isGeneratedSessionName(value) {
+  return /^019[a-f0-9-]{20,}$/i.test(String(value || "").trim());
+}
+
+function meaningfulWorkflowName(item) {
+  const parentName = (item.parent_thread_name || "").trim();
+  if (item.is_subagent && parentName && !isGeneratedSessionName(parentName)) {
+    return `Helper task for ${parentName}`;
+  }
+
+  const threadName = (item.thread_name || "").trim();
+  if (threadName && !isGeneratedSessionName(threadName)) {
+    return threadName;
+  }
+
+  if (item.is_subagent) {
+    return "Unnamed parallel helper task";
+  }
+
+  return threadName ? `Unnamed workflow ${threadName.slice(0, 8)}` : "Untitled workflow";
+}
+
 function formatWorkflowName(item) {
-  return item.thread_name || "Untitled workflow";
+  return meaningfulWorkflowName(item);
 }
 
 function formatWorkflowContext(item) {
@@ -271,7 +303,13 @@ function formatWorkflowContext(item) {
     parts.push(item.workspace_label);
   }
   if (item.is_subagent) {
-    parts.push("Helper run");
+    parts.push("Parallel helper task");
+  }
+  if (item.agent_nickname) {
+    parts.push(`Agent: ${item.agent_nickname}`);
+  }
+  if (item.is_subagent && item.parent_thread_name && !isGeneratedSessionName(item.parent_thread_name)) {
+    parts.push(`Parent: ${item.parent_thread_name}`);
   }
   return parts.join(" · ") || "Workflow";
 }
@@ -1246,6 +1284,122 @@ function renderTopThreads(dashboard) {
   });
 }
 
+function projectNameForSession(session) {
+  const parentName = (session.parent_thread_name || "").trim();
+  if (session.is_subagent && parentName && !isGeneratedSessionName(parentName)) {
+    return parentName;
+  }
+
+  const threadName = (session.thread_name || "").trim();
+  if (threadName && !isGeneratedSessionName(threadName)) {
+    return threadName;
+  }
+
+  return session.workspace_label || "Unknown project";
+}
+
+function determineDominantModelFamily(modelTotals) {
+  if (!modelTotals || modelTotals.size === 0) {
+    return "Other";
+  }
+
+  let dominant = null;
+  for (const [model, totalTokens] of modelTotals.entries()) {
+    if (!dominant || totalTokens > dominant.total_tokens) {
+      dominant = { model, total_tokens: totalTokens };
+    }
+  }
+
+  return dominant?.model || "Other";
+}
+
+function buildDayOutcomeGroups(sessions) {
+  const groups = new Map();
+  for (const session of sessions) {
+    const projectName = projectNameForSession(session);
+    const key = `${session.workspace_key || "unknown"}:${projectName.toLowerCase()}`;
+    if (!groups.has(key)) {
+      groups.set(key, {
+        project_name: projectName,
+        total_tokens: 0,
+        estimated_cost_usd: 0,
+        workflows: 0,
+        helper_tasks: 0,
+        models: new Map()
+      });
+    }
+
+    const group = groups.get(key);
+    group.total_tokens += session.total_tokens || 0;
+    group.estimated_cost_usd += session.estimated_cost_usd || 0;
+    group.workflows += 1;
+    if (session.is_subagent) {
+      group.helper_tasks += 1;
+    }
+    if (session.dominant_model_family) {
+      group.models.set(
+        session.dominant_model_family,
+        (group.models.get(session.dominant_model_family) || 0) + (session.total_tokens || 0)
+      );
+    }
+  }
+
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      dominant_model_family: determineDominantModelFamily(group.models)
+    }))
+    .sort((left, right) =>
+      (right.estimated_cost_usd - left.estimated_cost_usd) ||
+      (right.total_tokens - left.total_tokens)
+    );
+}
+
+function renderDayOutcomeSummary(dayPayload, sessions) {
+  if (!elements.dayOutcomeSummary) {
+    return;
+  }
+
+  if (!sessions.length) {
+    elements.dayOutcomeSummary.innerHTML = `
+      <div class="day-outcome-card">
+        <span class="outcome-eyebrow">What happened</span>
+        <strong>No Codex usage recorded.</strong>
+        <p>This square is empty for the selected filters.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const groups = buildDayOutcomeGroups(sessions);
+  const topGroups = groups.slice(0, 3);
+  const topGroup = topGroups[0];
+  const hasHelpers = sessions.some((session) => session.is_subagent);
+  const dateLabel = formatDate(dayPayload.date);
+
+  elements.dayOutcomeSummary.innerHTML = `
+    <div class="day-outcome-card day-outcome-card-primary">
+      <span class="outcome-eyebrow">What happened</span>
+      <strong>${escapeHtml(topGroup.project_name)} drove ${formatUsd(topGroup.estimated_cost_usd)} on ${dateLabel}.</strong>
+      <p>${formatCompactNumber(topGroup.total_tokens)} tokens across ${formatCountLabel(topGroup.workflows, "workflow")}${topGroup.helper_tasks ? `, including ${formatCountLabel(topGroup.helper_tasks, "parallel helper task")}` : ""}.</p>
+    </div>
+    <div class="day-outcome-grid">
+      ${topGroups.map((group) => `
+        <div class="day-outcome-mini">
+          <span>${escapeHtml(group.project_name)}</span>
+          <strong>${formatUsd(group.estimated_cost_usd)}</strong>
+          <small>${formatCompactNumber(group.total_tokens)} tokens · ${escapeHtml(group.dominant_model_family || "Other")}</small>
+        </div>
+      `).join("")}
+    </div>
+    ${hasHelpers ? `
+      <p class="day-helper-note">
+        Parallel helpers are subagent tasks spawned by a parent workflow. They consume real tokens and cost, and this view rolls them into the parent project when Codex logs expose that parent.
+      </p>
+    ` : ""}
+  `;
+}
+
 function renderDayPanel(dayPayload) {
   elements.dayTitle.textContent = formatDate(dayPayload.date);
   elements.dayTotal.textContent = formatCompactNumber(dayPayload.summary.total_tokens);
@@ -1260,11 +1414,13 @@ function renderDayPanel(dayPayload) {
   elements.dayCostNote.textContent = buildEstimatedCostNote(dayPayload.summary.unpriced_total_tokens);
 
   const sessions = [...(dayPayload.sessions || [])].sort((left, right) => {
-    if ((right.total_tokens || 0) !== (left.total_tokens || 0)) {
-      return (right.total_tokens || 0) - (left.total_tokens || 0);
+    if ((right.estimated_cost_usd || 0) !== (left.estimated_cost_usd || 0)) {
+      return (right.estimated_cost_usd || 0) - (left.estimated_cost_usd || 0);
     }
-    return (right.estimated_cost_usd || 0) - (left.estimated_cost_usd || 0);
+    return (right.total_tokens || 0) - (left.total_tokens || 0);
   });
+
+  renderDayOutcomeSummary(dayPayload, sessions);
 
   if (!sessions.length) {
     elements.daySessionList.innerHTML = '<div class="empty-state">No workflows contributed usage on this day.</div>';
@@ -1281,7 +1437,7 @@ function renderDayPanel(dayPayload) {
           <span class="session-title">${formatWorkflowName(session)}</span>
           <span class="session-sub">${formatWorkflowContext(session)}</span>
         </div>
-        ${session.is_subagent ? '<span class="session-badge">Helper run</span>' : ""}
+        ${session.is_subagent ? '<span class="session-badge">Parallel helper</span>' : ""}
       </div>
       <div class="session-metrics">
         <div class="metric-pair"><span>Total</span><strong>${formatFullNumber(session.total_tokens)}</strong></div>
