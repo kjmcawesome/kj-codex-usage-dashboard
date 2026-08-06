@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build:site": "node scripts/export-static-site.js",
+    "build:sites": "node scripts/build-sites.js",
     "start": "node scripts/start-local.js",
     "helper:start": "node refresh-helper.js",
     "helper:install": "node scripts/install-refresh-helper-launch-agent.js",
