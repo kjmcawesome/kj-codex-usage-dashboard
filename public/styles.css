@@ -641,7 +641,55 @@ select {
 
 .project-usage-panel {
   display: grid;
-  gap: 12px;
+  gap: 16px;
+}
+
+.project-impact-summary {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 0.9fr;
+  gap: 10px;
+}
+
+.impact-summary-card {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  align-content: center;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-sm);
+  background: rgba(17, 19, 31, 0.7);
+}
+
+.impact-summary-card-featured {
+  border-color: rgba(137, 130, 255, 0.24);
+  background: linear-gradient(135deg, rgba(84, 103, 244, 0.18), rgba(129, 84, 235, 0.09));
+}
+
+.impact-summary-card > span {
+  color: var(--ink-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.impact-summary-card > strong {
+  overflow: hidden;
+  color: #fff;
+  font-size: clamp(1.32rem, 2.2vw, 1.86rem);
+  font-weight: 850;
+  letter-spacing: -0.055em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.impact-summary-card > strong.impact-project-name {
+  font-size: clamp(1.02rem, 1.6vw, 1.3rem);
+}
+
+.impact-summary-card > small {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  line-height: 1.4;
 }
 
 .project-usage-head {
@@ -1150,7 +1198,7 @@ select {
 .lower-grid {
   display: grid;
   gap: 12px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .trend-strip-grid {
@@ -1237,12 +1285,12 @@ select {
 
 .project-usage-card {
   border-radius: var(--radius-sm);
-  padding: 17px;
+  padding: 19px;
   color: inherit;
   text-align: left;
   cursor: pointer;
   display: grid;
-  gap: 13px;
+  gap: 15px;
   min-width: 0;
 }
 
@@ -1290,8 +1338,8 @@ select {
 
 .project-metric-grid {
   display: grid;
-  grid-template-columns: 1.15fr 1.1fr 0.85fr 0.9fr;
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
 
 .project-metric-grid div {
@@ -1321,7 +1369,7 @@ select {
 }
 
 .project-metric-primary strong {
-  font-size: clamp(1.26rem, 2.2vw, 1.62rem);
+  font-size: clamp(1.45rem, 2.6vw, 1.98rem);
   color: #f5f7ff;
   letter-spacing: -0.045em;
 }
@@ -1335,7 +1383,7 @@ select {
 }
 
 .project-metric-cost strong {
-  font-size: clamp(1.18rem, 2vw, 1.48rem);
+  font-size: clamp(1.35rem, 2.4vw, 1.82rem);
   color: #fff;
   letter-spacing: -0.055em;
 }
@@ -1564,7 +1612,7 @@ select {
 .day-summary-grid {
   display: grid;
   gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .mini-stat {
@@ -1711,6 +1759,97 @@ select {
 .day-helper-note {
   border-left: 2px solid rgba(139, 111, 255, 0.56);
   padding-left: 10px;
+}
+
+.day-project-card {
+  gap: 14px;
+  padding: 15px;
+}
+
+.day-project-share {
+  color: #b9adff;
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.day-project-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.day-project-metrics > div,
+.day-task-copy,
+.day-task-values {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.day-project-metrics span,
+.day-task-copy span,
+.day-task-values span {
+  color: var(--ink-muted);
+  font-size: 0.74rem;
+}
+
+.day-project-metrics strong {
+  color: #fff;
+  font-size: 1.23rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.day-task-details,
+.day-token-details {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 11px;
+}
+
+.day-task-details > summary,
+.day-token-details > summary {
+  color: #c7ceff;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.day-task-list {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.day-task-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.day-task-copy strong,
+.day-task-values strong {
+  overflow: hidden;
+  color: #f5f6ff;
+  font-size: 0.79rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day-task-values {
+  justify-items: end;
+}
+
+.day-token-details {
+  display: grid;
+  gap: 10px;
+}
+
+.day-token-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .budget-panel {
@@ -1899,6 +2038,10 @@ select {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .project-impact-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .trend-strip-head {
     flex-direction: column;
   }
@@ -2074,8 +2217,15 @@ select {
   }
 
   .summary-grid,
-  .day-summary-grid,
   .efficiency-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .day-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .project-impact-summary {
     grid-template-columns: 1fr;
   }
 
@@ -2183,5 +2333,9 @@ select {
   .project-metric-grid,
   .model-cost-list {
     grid-template-columns: 1fr;
+  }
+
+  .day-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

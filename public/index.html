@@ -22,7 +22,7 @@
             <p class="eyebrow">Tokenmaxxing</p>
             <h1>KJ Codex Usage Dashboard</h1>
             <p class="hero-note">
-              Codex momentum, project token volume, and cost of work shipped.
+              What you built, how much Codex you used, and what the work cost.
             </p>
             <section class="hero-progress-card" aria-labelledby="hero-progress-label">
               <div class="hero-progress-head">
@@ -154,10 +154,10 @@
       <section class="panel project-usage-panel" id="project-usage-section">
         <div class="panel-head project-usage-head">
           <div>
-            <p class="panel-eyebrow">Project usage</p>
-            <h2>Tokenmaxxing by project</h2>
+            <p class="panel-eyebrow">Work that shipped</p>
+            <h2>Where the work went</h2>
             <p class="ranking-note" id="project-usage-note">
-              Projects ranked by token volume, with cost surfaced as the work-done signal.
+              Real projects, their token volume, and the estimated cost of getting them done.
             </p>
           </div>
           <div class="project-sort-controls" aria-label="Project sort">
@@ -165,26 +165,17 @@
             <button class="project-sort-button" type="button" data-project-sort="cost">Cost</button>
           </div>
         </div>
+        <div id="project-impact-summary" class="project-impact-summary"></div>
         <div id="project-usage-list" class="project-usage-list"></div>
-        <section class="model-cost-panel" aria-labelledby="model-cost-title">
-          <div class="model-cost-head">
-            <div>
-              <p class="panel-eyebrow">Cost by model</p>
-              <h3 id="model-cost-title">Which models did the work?</h3>
-            </div>
-            <span id="model-cost-total" class="model-cost-total">-</span>
-          </div>
-          <div id="model-cost-list" class="model-cost-list"></div>
-        </section>
       </section>
 
       <section class="panel selected-range-panel">
         <div class="panel-head">
           <div>
-            <p class="panel-eyebrow">Selected range</p>
+            <p class="panel-eyebrow">Your view</p>
             <h2 id="selected-range-title">Last 30 days</h2>
             <p class="ranking-note" id="selected-range-note">
-              Filters below affect the KPI row, coaching view, workflows, and day details.
+              Change the time window or focus on one workspace.
             </p>
           </div>
         </div>
@@ -243,9 +234,9 @@
           </div>
         </div>
 
-        <section class="summary-grid range-summary-grid is-hidden-by-default" aria-hidden="true">
+        <section class="summary-grid range-summary-grid" aria-label="Selected range totals">
           <article class="summary-card">
-            <span class="card-label">Usage</span>
+            <span class="card-label">Tokens used</span>
             <strong class="card-value" id="summary-total">-</strong>
             <span class="card-foot" id="summary-total-foot">Selected range</span>
           </article>
@@ -253,17 +244,17 @@
           <article class="summary-card">
             <span class="card-label">Estimated cost</span>
             <strong class="card-value" id="summary-cost">-</strong>
-            <span class="card-foot" id="summary-cost-foot">Directional planning lens</span>
+            <span class="card-foot" id="summary-cost-foot">Estimated from public model pricing</span>
           </article>
 
           <article class="summary-card">
-            <span class="card-label">Cost / 1M</span>
+            <span class="card-label">Active projects</span>
             <strong class="card-value" id="summary-days">-</strong>
-            <span class="card-foot" id="summary-days-foot">Selected-range efficiency</span>
+            <span class="card-foot" id="summary-days-foot">Meaningful work in this view</span>
           </article>
 
           <article class="summary-card">
-            <span class="card-label">Vs prior comparable range</span>
+            <span class="card-label">Momentum vs prior</span>
             <strong class="card-value" id="summary-burst">-</strong>
             <span class="card-foot" id="summary-burst-foot">Previous equal-length window</span>
           </article>
@@ -271,25 +262,12 @@
       </section>
 
       <section class="lower-grid">
-        <article class="panel ranking-panel is-hidden-by-default" aria-hidden="true">
+        <article class="panel ranking-panel workflow-panel">
           <div class="panel-head">
             <div>
-              <p class="panel-eyebrow">Coaching view</p>
-              <h2>Efficiency signals</h2>
-              <p class="ranking-note" id="efficiency-note">Transparent cost and usage checks for the current selection.</p>
-            </div>
-          </div>
-          <div id="efficiency-grid" class="efficiency-grid"></div>
-          <div id="model-mix-list" class="model-mix-list"></div>
-          <div id="insight-list" class="insight-list"></div>
-        </article>
-
-        <article class="panel ranking-panel">
-          <div class="panel-head">
-            <div>
-              <p class="panel-eyebrow">Across selected range</p>
-              <h2>Top workflows</h2>
-              <p class="ranking-note">Workflow detail for the active project/range filters.</p>
+              <p class="panel-eyebrow">Behind the projects</p>
+              <h2>Work that drove the usage</h2>
+              <p class="ranking-note">Your biggest workflows, with their real token volume and estimated cost.</p>
             </div>
           </div>
           <div id="thread-table" class="rank-table"></div>
@@ -311,28 +289,12 @@
 
           <div class="day-summary-grid">
             <div class="mini-stat">
-              <span>Total</span>
+              <span>Total tokens</span>
               <strong id="day-total">-</strong>
             </div>
             <div class="mini-stat">
               <span>Estimated cost</span>
               <strong id="day-cost">-</strong>
-            </div>
-            <div class="mini-stat">
-              <span>Input</span>
-              <strong id="day-input">-</strong>
-            </div>
-            <div class="mini-stat">
-              <span>Reused input</span>
-              <strong id="day-cached">-</strong>
-            </div>
-            <div class="mini-stat">
-              <span>Output</span>
-              <strong id="day-output">-</strong>
-            </div>
-            <div class="mini-stat">
-              <span>Reasoning</span>
-              <strong id="day-reasoning">-</strong>
             </div>
             <div class="mini-stat">
               <span>Workflows</span>
@@ -342,13 +304,18 @@
 
           <div class="day-drawer-body">
             <div id="day-outcome-summary" class="day-outcome-summary"></div>
-            <p class="day-explainer">
-              Workflow rows below show what drove the selected day.
-            </p>
-            <p class="day-explainer" id="day-cost-note">
-              Estimated cost uses OpenAI API token pricing as a directional planning lens.
-            </p>
+            <p class="day-explainer">Projects below include the parent workflow and any parallel helper tasks.</p>
             <div id="day-session-list" class="session-list"></div>
+            <details class="day-token-details">
+              <summary>How the tokens break down</summary>
+              <div class="day-token-grid">
+                <div class="mini-stat"><span>Input</span><strong id="day-input">-</strong></div>
+                <div class="mini-stat"><span>Reused input</span><strong id="day-cached">-</strong></div>
+                <div class="mini-stat"><span>Output</span><strong id="day-output">-</strong></div>
+                <div class="mini-stat"><span>Reasoning</span><strong id="day-reasoning">-</strong></div>
+              </div>
+              <p class="day-explainer" id="day-cost-note">Estimated cost uses public OpenAI API token pricing.</p>
+            </details>
           </div>
         </aside>
       </div>
@@ -365,6 +332,16 @@
           <p class="section-note" id="cost-note">
             Estimated cost uses OpenAI API token pricing as a directional planning lens.
           </p>
+          <section class="model-cost-panel" aria-labelledby="model-cost-title">
+            <div class="model-cost-head">
+              <div>
+                <p class="panel-eyebrow">Cost by model</p>
+                <h3 id="model-cost-title">Which models did the work?</h3>
+              </div>
+              <span id="model-cost-total" class="model-cost-total">-</span>
+            </div>
+            <div id="model-cost-list" class="model-cost-list"></div>
+          </section>
           <div class="cost-table-shell">
             <table class="cost-table">
               <thead>
@@ -391,6 +368,6 @@
 
     <script src="./vendor/flatpickr/flatpickr.min.js"></script>
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
-    <script type="module" src="./app.js?v=20260513-tokenmaxxing"></script>
+    <script type="module" src="./app.js?v=20260806-decision-rebuild"></script>
   </body>
 </html>
