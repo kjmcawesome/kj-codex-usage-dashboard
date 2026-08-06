@@ -73,14 +73,11 @@ const elements = {
   summaryBurstFoot: document.querySelector("#summary-burst-foot"),
   projectUsageSection: document.querySelector("#project-usage-section"),
   projectUsageNote: document.querySelector("#project-usage-note"),
+  projectImpactSummary: document.querySelector("#project-impact-summary"),
   projectUsageList: document.querySelector("#project-usage-list"),
   modelCostTotal: document.querySelector("#model-cost-total"),
   modelCostList: document.querySelector("#model-cost-list"),
   projectSortButtons: document.querySelectorAll(".project-sort-button"),
-  efficiencyNote: document.querySelector("#efficiency-note"),
-  efficiencyGrid: document.querySelector("#efficiency-grid"),
-  modelMixList: document.querySelector("#model-mix-list"),
-  insightList: document.querySelector("#insight-list"),
   costNote: document.querySelector("#cost-note"),
   costBreakdownBody: document.querySelector("#cost-breakdown-body"),
   costBreakdownFoot: document.querySelector("#cost-breakdown-foot"),
@@ -747,22 +744,16 @@ function renderSummary(dashboard) {
   elements.lastRefresh.textContent = new Date(dashboard.generated_at).toLocaleString();
   elements.sourceNote.textContent = `${formatDate(dashboard.habit_board.start_date)} - ${formatDate(dashboard.habit_board.end_date)}`;
   elements.selectedRangeTitle.textContent = dashboard.selection.label;
-  elements.selectedRangeNote.textContent = `Filters here only change the selected-range KPIs, coaching view, workflows, and day details.`;
+  elements.selectedRangeNote.textContent = "Choose the window and workspace behind the projects and workflows.";
   elements.summaryTotal.textContent = formatCompactNumber(dashboard.summary.total_tokens);
   elements.summaryTotal.title = formatFullNumber(dashboard.summary.total_tokens);
   elements.summaryTotalFoot.textContent = `${dashboard.selection.label} · ${formatCountLabel(dashboard.summary.active_days, "active day")}`;
   elements.summaryCost.textContent = formatUsd(dashboard.summary.estimated_cost_usd);
   elements.summaryCost.title = formatUsd(dashboard.summary.estimated_cost_usd);
   elements.summaryCostFoot.textContent = `${formatCountLabel(dashboard.summary.sessions, "workflow")} in range`;
-  elements.summaryDays.textContent = dashboard.efficiency_metrics.effective_cost_per_million !== null
-    ? formatRate(dashboard.efficiency_metrics.effective_cost_per_million)
-    : "—";
-  elements.summaryDays.title = dashboard.efficiency_metrics.effective_cost_per_million !== null
-    ? formatRate(dashboard.efficiency_metrics.effective_cost_per_million)
-    : "No priced usage in range";
-  elements.summaryDaysFoot.textContent = dashboard.efficiency_metrics.input_output_ratio !== null
-    ? `Input/output ${dashboard.efficiency_metrics.input_output_ratio.toFixed(1)}x`
-    : "No output in range";
+  elements.summaryDays.textContent = formatFullNumber(dashboard.project_usage?.length || 0);
+  elements.summaryDays.title = formatCountLabel(dashboard.project_usage?.length || 0, "active project");
+  elements.summaryDaysFoot.textContent = formatCountLabel(dashboard.summary.sessions || 0, "workflow");
   const rangeComparison = dashboard.range_comparison;
   elements.summaryBurst.textContent = rangeComparison.token_change_pct !== null
     ? formatSignedPercent(rangeComparison.token_change_pct)
@@ -778,92 +769,6 @@ function renderSummary(dashboard) {
   elements.mobileSelectionSummary.textContent = buildMobileSelectionSummary(dashboard);
   elements.mobileSelectionSummary.title = elements.mobileSelectionSummary.textContent;
   renderHeroProgress(dashboard);
-}
-
-function renderEfficiencyPanel(dashboard) {
-  const metrics = dashboard.efficiency_metrics;
-  const selectedRangeLabel = dashboard.selection.label;
-  elements.efficiencyNote.textContent = `Signals for ${selectedRangeLabel.toLowerCase()}.`;
-
-  elements.efficiencyGrid.innerHTML = `
-    <div class="efficiency-stat">
-      <span class="efficiency-stat-label">Cost / 1M</span>
-      <strong>${metrics.effective_cost_per_million !== null ? formatRate(metrics.effective_cost_per_million) : "—"}</strong>
-      <span class="efficiency-stat-foot">Selected range</span>
-    </div>
-    <div class="efficiency-stat">
-      <span class="efficiency-stat-label">Month pace</span>
-      <strong>${formatSignedPercent(metrics.month_to_date_token_growth_pct)}</strong>
-      <span class="efficiency-stat-foot">Tokens vs same point last month</span>
-    </div>
-    <div class="efficiency-stat">
-      <span class="efficiency-stat-label">Peak day share</span>
-      <strong>${formatPercent(metrics.peak_day_share)}</strong>
-      <span class="efficiency-stat-foot">${metrics.peak_day ? formatDate(metrics.peak_day.date) : "No peak day yet"}</span>
-    </div>
-    <div class="efficiency-stat">
-      <span class="efficiency-stat-label">Input / output</span>
-      <strong>${metrics.input_output_ratio !== null ? `${metrics.input_output_ratio.toFixed(1)}x` : "—"}</strong>
-      <span class="efficiency-stat-foot">Prompt load vs response load</span>
-    </div>
-  `;
-
-  const modelMixRows = dashboard.cost_breakdown_by_model || [];
-  if (!modelMixRows.length) {
-    elements.modelMixList.innerHTML = '<div class="empty-state">No priced model mix for this selection.</div>';
-  } else {
-    const totalCost = dashboard.summary.estimated_cost_usd || 0;
-    const palette = {
-      "gpt-5.4": "rgba(40, 72, 54, 0.82)",
-      "gpt-5.3-codex": "rgba(69, 155, 89, 0.7)",
-      "gpt-5.2-codex": "rgba(166, 214, 175, 0.95)"
-    };
-    elements.modelMixList.innerHTML = `
-      <div class="efficiency-section-title">Model mix</div>
-      ${modelMixRows.map((row) => {
-        const color = palette[row.model] || "rgba(35, 49, 39, 0.42)";
-        const costShare = totalCost > 0 ? row.share_of_total_cost : 0;
-        const tokenShare = row.share_of_total_tokens || 0;
-        return `
-          <div class="mix-row" title="${row.model}: ${formatUsd(row.estimated_cost_usd)} estimated cost · ${formatFullNumber(row.total_tokens)} tokens · ${formatRate(row.effective_cost_per_million || 0)}">
-            <div class="mix-copy">
-              <span class="mix-label">${row.model}</span>
-              <span class="mix-sub">${formatUsd(row.estimated_cost_usd)} · ${formatRate(row.effective_cost_per_million || 0)}</span>
-            </div>
-            <div class="mix-bars">
-              <div class="mix-track">
-                <span class="mix-track-label">Tokens</span>
-                <div class="mix-bar-shell">
-                  <span class="mix-bar" style="width:${Math.max(tokenShare * 100, tokenShare > 0 ? 6 : 0)}%; background:${color};"></span>
-                </div>
-                <span class="mix-track-value">${formatPercent(tokenShare)}</span>
-              </div>
-              <div class="mix-track">
-                <span class="mix-track-label">Cost</span>
-                <div class="mix-bar-shell">
-                  <span class="mix-bar" style="width:${Math.max(costShare * 100, costShare > 0 ? 6 : 0)}%; background:${color}; opacity:0.78;"></span>
-                </div>
-                <span class="mix-track-value">${formatPercent(costShare)}</span>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("")}
-    `;
-  }
-
-  const insights = dashboard.insights || [];
-  elements.insightList.innerHTML = `
-    <div class="efficiency-section-title">Insights</div>
-    <div class="insight-stack">
-      ${insights.map((insight) => `
-        <article class="insight-card">
-          <strong>${insight.title}</strong>
-          <p>${insight.body}</p>
-        </article>
-      `).join("")}
-    </div>
-  `;
 }
 
 function renderWorkspaceFilter(dashboard) {
@@ -1180,11 +1085,33 @@ function renderProjectUsage(dashboard) {
     tokens: "token volume"
   };
 
-  const topThreeCostShare = projects
+  const topThreeCostShare = [...projects]
+    .sort((left, right) => right.estimated_cost_usd - left.estimated_cost_usd)
     .slice(0, 3)
     .reduce((sum, project) => sum + (project.cost_share || 0), 0);
   elements.projectUsageNote.textContent =
-    `Codex usage across ${formatCountLabel(projects.length, "active project")} and ${formatCountLabel(dashboard.summary.sessions || 0, "workflow")} in ${rangeLabel}, sorted by ${sortLabels[state.projectSort] || "token volume"}. Top 3 projects drove ${formatPercent(topThreeCostShare)} of estimated cost.`;
+    `${formatCountLabel(projects.length, "active project")} and ${formatCountLabel(dashboard.summary.sessions || 0, "workflow")} in ${rangeLabel}, sorted by ${sortLabels[state.projectSort] || "token volume"}.`;
+
+  if (elements.projectImpactSummary) {
+    const topProject = [...projects].sort((left, right) => right.total_tokens - left.total_tokens)[0];
+    elements.projectImpactSummary.innerHTML = `
+      <article class="impact-summary-card impact-summary-card-featured">
+        <span>Estimated cost of work</span>
+        <strong>${formatUsd(dashboard.summary.estimated_cost_usd)}</strong>
+        <small>${formatCompactNumber(dashboard.summary.total_tokens)} tokens across ${rangeLabel}</small>
+      </article>
+      <article class="impact-summary-card">
+        <span>Biggest project</span>
+        <strong class="impact-project-name">${topProject ? escapeHtml(formatProjectName(topProject)) : "No activity yet"}</strong>
+        <small>${topProject ? `${formatCompactNumber(topProject.total_tokens)} tokens · ${formatUsd(topProject.estimated_cost_usd)}` : "Start a workflow to light the board."}</small>
+      </article>
+      <article class="impact-summary-card">
+        <span>Where cost concentrated</span>
+        <strong>${formatPercent(topThreeCostShare)}</strong>
+        <small>of estimated cost came from the top three projects</small>
+      </article>
+    `;
+  }
 
   for (const button of elements.projectSortButtons) {
     const isActive = button.dataset.projectSort === state.projectSort;
@@ -1208,8 +1135,8 @@ function renderProjectUsage(dashboard) {
 
     card.innerHTML = `
       <div class="project-usage-main">
-        <span class="project-title">${formatProjectName(project)}</span>
-        <span class="project-sub">${formatCountLabel(project.active_days || 0, "active day")} · ${formatCountLabel(project.workflows || 0, "workflow")} · ${project.dominant_model_family || "Other"} model</span>
+        <span class="project-title">${escapeHtml(formatProjectName(project))}</span>
+        <span class="project-sub">${formatCountLabel(project.active_days || 0, "active day")} · ${formatCountLabel(project.workflows || 0, "workflow")}</span>
       </div>
       <div class="project-bar" aria-hidden="true">
         <span style="width:${Math.max((project.token_share || 0) * 100, project.token_share > 0 ? 6 : 0)}%;"></span>
@@ -1218,22 +1145,12 @@ function renderProjectUsage(dashboard) {
         <div class="project-metric-primary">
           <span>Tokens</span>
           <strong>${formatCompactNumber(project.total_tokens)}</strong>
-          <small>${tokenSharePercent} of range</small>
+          <small>${tokenSharePercent} of all tokens</small>
         </div>
         <div class="project-metric-cost">
           <span>Estimated cost</span>
           <strong>${formatUsd(project.estimated_cost_usd)}</strong>
-          <small>${costSharePercent} of range</small>
-        </div>
-        <div>
-          <span>Cost / 1M</span>
-          <strong>${project.effective_cost_per_million !== null ? formatRate(project.effective_cost_per_million) : "—"}</strong>
-          <small>Model-weighted rate</small>
-        </div>
-        <div>
-          <span>Dominant model</span>
-          <strong>${project.dominant_model_family || "Other"}</strong>
-          <small>Most token volume</small>
+          <small>${costSharePercent} of all cost</small>
         </div>
       </div>
     `;
@@ -1270,12 +1187,12 @@ function renderTopThreads(dashboard) {
     row.className = "rank-row";
     row.innerHTML = `
       <div class="rank-main">
-        <span class="rank-title">${formatWorkflowName(thread)}</span>
-        <span class="rank-sub">${formatWorkflowContext(thread)} · ${formatCountLabel(thread.active_days || 0, "active day")} · ${thread.dominant_model_family || "Other"} dominant</span>
+        <span class="rank-title">${escapeHtml(formatWorkflowName(thread))}</span>
+        <span class="rank-sub">${escapeHtml(formatWorkflowContext(thread))} · ${formatCountLabel(thread.active_days || 0, "active day")}</span>
       </div>
       <div class="rank-metrics">
         <span class="rank-value">${formatCompactNumber(thread.total_tokens)} tokens</span>
-        <span class="rank-value-sub">${formatUsd(thread.estimated_cost_usd)} est. cost · ${formatPercent(thread.cost_share || 0)} cost share</span>
+        <span class="rank-value-sub">${formatUsd(thread.estimated_cost_usd)} estimated cost</span>
       </div>
     `;
     row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated cost · ${thread.dominant_model_family || "Other"} dominant model`;
@@ -1324,7 +1241,8 @@ function buildDayOutcomeGroups(sessions) {
         estimated_cost_usd: 0,
         workflows: 0,
         helper_tasks: 0,
-        models: new Map()
+        models: new Map(),
+        sessions: []
       });
     }
 
@@ -1332,6 +1250,7 @@ function buildDayOutcomeGroups(sessions) {
     group.total_tokens += session.total_tokens || 0;
     group.estimated_cost_usd += session.estimated_cost_usd || 0;
     group.workflows += 1;
+    group.sessions.push(session);
     if (session.is_subagent) {
       group.helper_tasks += 1;
     }
@@ -1371,8 +1290,7 @@ function renderDayOutcomeSummary(dayPayload, sessions) {
   }
 
   const groups = buildDayOutcomeGroups(sessions);
-  const topGroups = groups.slice(0, 3);
-  const topGroup = topGroups[0];
+  const topGroup = groups[0];
   const hasHelpers = sessions.some((session) => session.is_subagent);
   const dateLabel = formatDate(dayPayload.date);
 
@@ -1382,18 +1300,9 @@ function renderDayOutcomeSummary(dayPayload, sessions) {
       <strong>${escapeHtml(topGroup.project_name)} drove ${formatUsd(topGroup.estimated_cost_usd)} on ${dateLabel}.</strong>
       <p>${formatCompactNumber(topGroup.total_tokens)} tokens across ${formatCountLabel(topGroup.workflows, "workflow")}${topGroup.helper_tasks ? `, including ${formatCountLabel(topGroup.helper_tasks, "parallel helper task")}` : ""}.</p>
     </div>
-    <div class="day-outcome-grid">
-      ${topGroups.map((group) => `
-        <div class="day-outcome-mini">
-          <span>${escapeHtml(group.project_name)}</span>
-          <strong>${formatUsd(group.estimated_cost_usd)}</strong>
-          <small>${formatCompactNumber(group.total_tokens)} tokens · ${escapeHtml(group.dominant_model_family || "Other")}</small>
-        </div>
-      `).join("")}
-    </div>
     ${hasHelpers ? `
       <p class="day-helper-note">
-        Parallel helpers are subagent tasks spawned by a parent workflow. They consume real tokens and cost, and this view rolls them into the parent project when Codex logs expose that parent.
+        Parallel helpers are background tasks spawned by a workflow. Their tokens and cost are included in the project that launched them.
       </p>
     ` : ""}
   `;
@@ -1427,30 +1336,41 @@ function renderDayPanel(dayPayload) {
   }
 
   elements.daySessionList.innerHTML = "";
-  for (const session of sessions) {
+  const totalCost = dayPayload.summary.estimated_cost_usd || 0;
+  for (const group of buildDayOutcomeGroups(sessions)) {
     const card = document.createElement("article");
-    card.className = "session-card";
+    card.className = "session-card day-project-card";
+    const costShare = totalCost > 0 ? group.estimated_cost_usd / totalCost : 0;
+    const detailRows = [...group.sessions]
+      .sort((left, right) => (right.estimated_cost_usd || 0) - (left.estimated_cost_usd || 0))
+      .map((session) => `
+        <div class="day-task-row">
+          <div class="day-task-copy">
+            <strong>${escapeHtml(session.is_subagent ? "Parallel helper task" : formatWorkflowName(session))}</strong>
+            <span>${escapeHtml(session.dominant_model_family || "Model unavailable")}${session.agent_nickname ? ` · ${escapeHtml(session.agent_nickname)}` : ""}</span>
+          </div>
+          <div class="day-task-values">
+            <strong>${formatUsd(session.estimated_cost_usd)}</strong>
+            <span>${formatCompactNumber(session.total_tokens)} tokens</span>
+          </div>
+        </div>
+      `).join("");
     card.innerHTML = `
       <div class="session-head">
         <div class="session-main">
-          <span class="session-title">${formatWorkflowName(session)}</span>
-          <span class="session-sub">${formatWorkflowContext(session)}</span>
+          <span class="session-title">${escapeHtml(group.project_name)}</span>
+          <span class="session-sub">${formatCountLabel(group.workflows, "workflow")}${group.helper_tasks ? ` · ${formatCountLabel(group.helper_tasks, "parallel helper")}` : ""}</span>
         </div>
-        ${session.is_subagent ? '<span class="session-badge">Parallel helper</span>' : ""}
+        <span class="day-project-share">${formatPercent(costShare)} of day</span>
       </div>
-      <div class="session-metrics">
-        <div class="metric-pair"><span>Total</span><strong>${formatFullNumber(session.total_tokens)}</strong></div>
-        <div class="metric-pair"><span>Est. cost</span><strong>${formatUsd(session.estimated_cost_usd)}</strong></div>
-        <div class="metric-pair"><span>Token share</span><strong>${formatPercent(session.token_share)}</strong></div>
-        <div class="metric-pair"><span>Cost share</span><strong>${formatPercent(session.cost_share)}</strong></div>
-        <div class="metric-pair"><span>Dominant model</span><strong>${session.dominant_model_family || "Other"}</strong></div>
-        <div class="metric-pair"><span>Input / output</span><strong>${session.input_output_ratio !== null ? `${session.input_output_ratio.toFixed(1)}x` : "—"}</strong></div>
-        <div class="metric-pair"><span>Input</span><strong>${formatFullNumber(session.input_tokens)}</strong></div>
-        <div class="metric-pair"><span>Reused input</span><strong>${formatFullNumber(session.cached_input_tokens)}</strong></div>
-        <div class="metric-pair"><span>Output</span><strong>${formatFullNumber(session.output_tokens)}</strong></div>
-        <div class="metric-pair"><span>Reasoning</span><strong>${formatFullNumber(session.reasoning_output_tokens)}</strong></div>
-        <div class="metric-pair"><span>Started</span><strong>${session.session_started_at ? new Date(session.session_started_at).toLocaleString() : "-"}</strong></div>
+      <div class="day-project-metrics">
+        <div><span>Estimated cost</span><strong>${formatUsd(group.estimated_cost_usd)}</strong></div>
+        <div><span>Tokens</span><strong>${formatCompactNumber(group.total_tokens)}</strong></div>
       </div>
+      <details class="day-task-details">
+        <summary>${group.helper_tasks ? "See workflows and helper tasks" : "See workflow details"}</summary>
+        <div class="day-task-list">${detailRows}</div>
+      </details>
     `;
     elements.daySessionList.append(card);
   }
@@ -1558,7 +1478,6 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     renderModelCostSnapshot(dashboard);
     renderHeatmap(dashboard);
     renderTrend(dashboard);
-    renderEfficiencyPanel(dashboard);
     renderCostBreakdown(dashboard);
     renderTopThreads(dashboard);
     renderIcons();
@@ -1571,9 +1490,9 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
     const message = `<div class="empty-state">${detail}</div>`;
     elements.costBreakdownBody.innerHTML = `<tr><td colspan="10" class="cost-empty">${detail}</td></tr>`;
     elements.costBreakdownFoot.innerHTML = "";
-    elements.efficiencyGrid.innerHTML = message;
-    elements.modelMixList.innerHTML = message;
-    elements.insightList.innerHTML = message;
+    if (elements.projectImpactSummary) {
+      elements.projectImpactSummary.innerHTML = "";
+    }
     elements.projectUsageList.innerHTML = message;
     if (elements.modelCostTotal) {
       elements.modelCostTotal.textContent = "-";
