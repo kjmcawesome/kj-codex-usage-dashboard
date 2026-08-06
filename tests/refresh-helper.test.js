@@ -74,7 +74,7 @@ test("refresh helper serves a localhost bridge page for public-site refreshes", 
     assert.equal(response.status, 200);
     assert.match(response.headers.get("content-type") || "", /text\/html/);
     const html = await response.text();
-    assert.match(html, /Force rebuilding the snapshot/);
+    assert.match(html, /Updating the dashboard/);
     assert.match(html, /https:\/\/kjmcawesome\.github\.io\/kjmcawesome\.github\.io|kj-codex-usage-dashboard/);
   });
 });

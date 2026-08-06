@@ -160,9 +160,9 @@ function renderBridgePage(returnTo) {
   </head>
   <body>
     <main>
-      <h1>Force rebuilding the snapshot</h1>
+      <h1>Updating the dashboard</h1>
       <p>This tab is using the local refresh helper on your machine to rebuild from <code>~/.codex</code> and publish a fresh snapshot.</p>
-      <p id="status">Starting local rebuild...</p>
+      <p id="status">Starting update...</p>
       <p id="detail"></p>
     </main>
     <script>
@@ -190,8 +190,8 @@ function renderBridgePage(returnTo) {
 
           const payload = await response.json();
           statusNode.textContent = payload.pushed
-            ? "Local rebuild complete. Returning to the dashboard..."
-            : "Local rebuild complete. Reloading the dashboard...";
+            ? "Update published. Returning to the dashboard..."
+            : "Update complete. Reloading the dashboard...";
           detailNode.textContent = payload.generated_at
             ? "New snapshot generated at " + new Date(payload.generated_at).toLocaleString()
             : "";
