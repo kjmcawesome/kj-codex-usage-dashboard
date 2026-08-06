@@ -17,10 +17,9 @@ const WEEKDAY_LABELS = [
   { label: "Fri", row: 7 }
 ];
 const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
-const REFRESH_CHECK_LABEL = "Check for updates";
-const REFRESH_FORCE_LABEL = "Force rebuild";
-const REFRESH_REBUILDING_LABEL = "Rebuilding...";
-const REFRESH_WAITING_LABEL = "Waiting for publish...";
+const REFRESH_FORCE_LABEL = "Update now";
+const REFRESH_REBUILDING_LABEL = "Updating...";
+const REFRESH_WAITING_LABEL = "Publishing update...";
 const REFRESH_POLL_INTERVAL_MS = 2500;
 const REFRESH_POLL_TIMEOUT_MS = 60000;
 const MOBILE_BREAKPOINT = 760;
@@ -402,7 +401,7 @@ function syncRefreshButtonMode() {
   if (isPublicPagesSite()) {
     setRefreshButtonLabel(
       REFRESH_FORCE_LABEL,
-      "Open the local helper on this machine to rebuild from ~/.codex and republish the snapshot"
+      "Rebuild from local Codex logs and publish a fresh dashboard snapshot"
     );
     return;
   }
@@ -410,8 +409,8 @@ function syncRefreshButtonMode() {
   setRefreshButtonLabel(
     REFRESH_FORCE_LABEL,
     state.refreshHelperAvailable
-      ? "Rebuild the snapshot from local ~/.codex logs. The local helper can also publish if needed."
-      : "Rebuild the local snapshot from ~/.codex logs"
+      ? "Rebuild from local Codex logs and publish a fresh dashboard snapshot"
+      : "Reload the latest local dashboard snapshot. Start the helper to publish updates."
   );
 }
 
@@ -483,7 +482,7 @@ async function forceRefreshViaHelper() {
 
   setRefreshButtonLabel(
     REFRESH_REBUILDING_LABEL,
-    "Running a fresh local rebuild from ~/.codex and publishing the result"
+    "Rebuilding from local Codex logs and publishing the result"
   );
 
   const response = await fetch(`${state.refreshHelperUrl}/refresh`, {
@@ -518,7 +517,7 @@ async function forceRefreshViaHelper() {
 async function forceRefreshLocally() {
   setRefreshButtonLabel(
     REFRESH_REBUILDING_LABEL,
-    "Rebuilding the local snapshot from ~/.codex logs"
+    "Rebuilding from local Codex logs"
   );
 
   await fetchJson("/api/refresh", {
