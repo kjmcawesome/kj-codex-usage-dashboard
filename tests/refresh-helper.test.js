@@ -15,7 +15,11 @@ async function withRefreshHelper(callback) {
         pushed: publish,
         branch: publish ? "gh-pages" : null
       };
-    }
+    },
+    snapshotFn: async () => ({
+      generated_at: "2026-03-26T22:00:00.000Z",
+      sessions: [{ id: "session-1" }]
+    })
   });
 
   await new Promise((resolvePromise) => server.listen(0, "127.0.0.1", resolvePromise));
@@ -45,6 +49,43 @@ test("refresh helper exposes status with allowed CORS origin", async () => {
     assert.equal(payload.ok, true);
     assert.equal(payload.busy, false);
     assert.equal(payload.last_result, null);
+  });
+});
+
+test("refresh helper allows the hosted OpenAI Sites dashboard", async () => {
+  await withRefreshHelper(async ({ baseUrl }) => {
+    const origin = "https://kj-codex-usage-dashboard.openai.chatgpt.site";
+    const response = await fetch(`${baseUrl}/status`, {
+      headers: { Origin: origin }
+    });
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("access-control-allow-origin"), origin);
+  });
+});
+
+test("refresh helper returns the latest local snapshot to the hosted dashboard", async () => {
+  await withRefreshHelper(async ({ baseUrl, calls }) => {
+    const origin = "https://kj-codex-usage-dashboard.openai.chatgpt.site";
+    const refreshResponse = await fetch(`${baseUrl}/refresh?publish=0`, {
+      method: "POST",
+      headers: { Origin: origin }
+    });
+
+    assert.equal(refreshResponse.status, 200);
+    assert.equal((await refreshResponse.json()).published, false);
+    assert.deepEqual(calls, [{ publish: false }]);
+
+    const snapshotResponse = await fetch(`${baseUrl}/snapshot`, {
+      headers: { Origin: origin }
+    });
+
+    assert.equal(snapshotResponse.status, 200);
+    assert.equal(snapshotResponse.headers.get("access-control-allow-origin"), origin);
+    assert.deepEqual(await snapshotResponse.json(), {
+      generated_at: "2026-03-26T22:00:00.000Z",
+      sessions: [{ id: "session-1" }]
+    });
   });
 });
 

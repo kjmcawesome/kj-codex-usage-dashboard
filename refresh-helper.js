@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import { exportStaticSite } from "./scripts/export-static-site.js";
@@ -8,6 +9,7 @@ const port = Number(process.env.REFRESH_HELPER_PORT || 3185);
 const host = process.env.REFRESH_HELPER_HOST || "127.0.0.1";
 const allowedOriginPatterns = [
   /^https:\/\/kjmcawesome\.github\.io$/,
+  /^https:\/\/kj-codex-usage-dashboard\.openai\.chatgpt\.site$/,
   /^http:\/\/localhost(?::\d+)?$/,
   /^http:\/\/127\.0\.0\.1(?::\d+)?$/
 ];
@@ -226,7 +228,11 @@ export function createRefreshHelperServer({
     }
 
     return exportStaticSite();
-  }
+  },
+  snapshotFn = async () => JSON.parse(await readFile(
+    new URL("./public/data/usage-snapshot.json", import.meta.url),
+    "utf8"
+  ))
 } = {}) {
   let currentRefreshPromise = null;
   let lastResult = null;
@@ -262,6 +268,11 @@ export function createRefreshHelperServer({
           busy: Boolean(currentRefreshPromise),
           last_result: lastResult
         }, corsHeaders);
+        return;
+      }
+
+      if (isReadMethod && url.pathname === "/snapshot") {
+        sendJson(res, req.method, 200, await snapshotFn(), corsHeaders);
         return;
       }
 
