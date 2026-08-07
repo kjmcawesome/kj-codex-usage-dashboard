@@ -17,8 +17,8 @@ const WEEKDAY_LABELS = [
   { label: "Fri", row: 7 }
 ];
 const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
-const REFRESH_FORCE_LABEL = "Update now";
-const REFRESH_REBUILDING_LABEL = "Updating...";
+const REFRESH_FORCE_LABEL = "Refresh";
+const REFRESH_REBUILDING_LABEL = "Refreshing...";
 const REFRESH_WAITING_LABEL = "Publishing update...";
 const REFRESH_POLL_INTERVAL_MS = 2500;
 const REFRESH_POLL_TIMEOUT_MS = 60000;
@@ -385,6 +385,10 @@ function isPublicPagesSite() {
   return window.location.hostname === "kjmcawesome.github.io";
 }
 
+function isHostedSitesDashboard() {
+  return window.location.hostname === "kj-codex-usage-dashboard.openai.chatgpt.site";
+}
+
 function setRefreshButtonLabel(label, title) {
   elements.refreshButton.textContent = label;
   elements.refreshButton.title = title;
@@ -399,6 +403,16 @@ function syncRefreshButtonMode() {
     setRefreshButtonLabel(
       REFRESH_FORCE_LABEL,
       "Rebuild from local Codex logs and publish a fresh dashboard snapshot"
+    );
+    return;
+  }
+
+  if (isHostedSitesDashboard()) {
+    setRefreshButtonLabel(
+      REFRESH_FORCE_LABEL,
+      state.refreshHelperAvailable
+        ? "Rebuild from your local Codex logs and immediately refresh this dashboard"
+        : "Reload the latest published dashboard snapshot"
     );
     return;
   }
@@ -509,6 +523,31 @@ async function forceRefreshViaHelper() {
   if (!observed) {
     await loadDashboard(true, { suppressButtonToggle: true });
   }
+}
+
+async function refreshHostedDashboard() {
+  if (!state.refreshHelperAvailable || !state.refreshHelperUrl) {
+    setRefreshButtonLabel(REFRESH_REBUILDING_LABEL, "Loading the latest published dashboard snapshot");
+    state.shouldResetHeatmapViewport = true;
+    await loadDashboard(true, { suppressButtonToggle: true });
+    return;
+  }
+
+  setRefreshButtonLabel(REFRESH_REBUILDING_LABEL, "Rebuilding usage from your local Codex logs");
+  await fetchJson(`${state.refreshHelperUrl}/refresh?publish=0`, {
+    method: "POST",
+    mode: "cors",
+    cache: "no-store"
+  });
+
+  const snapshot = await fetchJson(`${state.refreshHelperUrl}/snapshot?ts=${Date.now()}`, {
+    mode: "cors",
+    cache: "no-store"
+  });
+  state.snapshot = snapshot;
+  state.snapshotNow = new Date(snapshot.generated_at);
+  state.shouldResetHeatmapViewport = true;
+  await loadDashboard(false, { suppressButtonToggle: true });
 }
 
 async function forceRefreshLocally() {
@@ -1536,6 +1575,11 @@ async function refreshDashboard() {
   elements.refreshButton.disabled = true;
 
   try {
+    if (isHostedSitesDashboard()) {
+      await refreshHostedDashboard();
+      return;
+    }
+
     if (isPublicPagesSite()) {
       launchRefreshBridge();
       return;

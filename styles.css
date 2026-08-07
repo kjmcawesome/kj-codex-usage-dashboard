@@ -2,14 +2,14 @@
   color-scheme: dark;
   --bg: #050505;
   --bg-soft: #080813;
-  --panel: rgba(10, 12, 20, 0.7);
-  --panel-strong: rgba(15, 17, 29, 0.9);
-  --panel-soft: rgba(18, 21, 34, 0.54);
+  --panel: rgba(15, 18, 30, 0.82);
+  --panel-strong: rgba(20, 24, 39, 0.95);
+  --panel-soft: rgba(25, 29, 46, 0.7);
   --ink: #f6f7ff;
-  --ink-muted: rgba(219, 225, 255, 0.68);
-  --ink-faint: rgba(219, 225, 255, 0.48);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(144, 160, 255, 0.18);
+  --ink-muted: rgba(229, 234, 255, 0.86);
+  --ink-faint: rgba(208, 217, 255, 0.7);
+  --border: rgba(171, 184, 255, 0.14);
+  --border-strong: rgba(158, 174, 255, 0.28);
   --shadow: 0 26px 72px rgba(0, 0, 0, 0.45);
   --shadow-soft: 0 16px 38px rgba(0, 0, 0, 0.26);
   --glow: rgba(89, 112, 255, 0.34);
@@ -46,6 +46,9 @@ body {
     radial-gradient(circle at 50% 0%, rgba(42, 60, 178, 0.1), transparent 26%),
     linear-gradient(180deg, #050505 0%, #06060c 38%, #040409 100%);
   font-family: "Inter", "Avenir Next", "SF Pro Text", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
@@ -126,10 +129,10 @@ button,
 .page-shell {
   position: relative;
   z-index: 1;
-  width: min(1380px, calc(100vw - 32px));
-  margin: 14px auto 30px;
+  width: min(1510px, calc(100vw - 44px));
+  margin: 20px auto 42px;
   display: grid;
-  gap: 14px;
+  gap: 20px;
 }
 
 .hero,
@@ -144,17 +147,17 @@ button,
 .controls-panel,
 .panel,
 .summary-card {
-  background: linear-gradient(180deg, rgba(12, 15, 24, 0.9), rgba(9, 11, 18, 0.76));
+  background: linear-gradient(180deg, rgba(18, 21, 34, 0.96), rgba(11, 13, 22, 0.9));
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
 }
 
 .hero {
   position: relative;
-  padding: 18px 18px 16px;
+  padding: 25px 26px 23px;
   border-radius: var(--radius-lg);
   display: grid;
-  gap: 14px;
+  gap: 18px;
   overflow: hidden;
 }
 
@@ -186,14 +189,14 @@ button,
 .hero-copy {
   display: grid;
   gap: 0;
-  max-width: 780px;
+  max-width: 890px;
 }
 
 .eyebrow,
 .panel-eyebrow,
 .hero-progress-kicker {
   margin: 0 0 8px;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -227,7 +230,7 @@ button,
   max-width: 54ch;
   color: var(--ink-muted);
   line-height: 1.65;
-  font-size: 0.98rem;
+  font-size: 1.06rem;
   letter-spacing: 0.01em;
 }
 
@@ -323,7 +326,7 @@ button,
 .hero-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
   align-items: center;
 }
@@ -348,14 +351,14 @@ button,
   display: inline;
   margin: 0;
   color: var(--ink-faint);
-  font-size: 0.68rem;
+  font-size: 0.74rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
 }
 
 .meta-card strong {
   display: inline;
-  font-size: 0.84rem;
+  font-size: 0.9rem;
   color: #fff;
 }
 
@@ -544,6 +547,19 @@ select {
   margin-left: auto;
 }
 
+.refresh-button-header {
+  order: -1;
+  margin-left: 0;
+  min-width: 122px;
+  padding: 12px 19px;
+  border-color: rgba(151, 169, 255, 0.56);
+  background: linear-gradient(135deg, #536bfa 0%, #755cf6 56%, #9b69f5 100%);
+  font-size: 0.94rem;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 30px rgba(90, 86, 236, 0.36);
+}
+
 .refresh-button:disabled {
   opacity: 0.6;
   cursor: wait;
@@ -641,24 +657,24 @@ select {
 
 .project-usage-panel {
   display: grid;
-  gap: 16px;
+  gap: 22px;
 }
 
 .project-impact-summary {
   display: grid;
   grid-template-columns: 1.1fr 1.4fr 0.9fr;
-  gap: 10px;
+  gap: 14px;
 }
 
 .impact-summary-card {
   min-width: 0;
   display: grid;
-  gap: 6px;
+  gap: 8px;
   align-content: center;
-  padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 20px 21px;
+  border: 1px solid rgba(170, 182, 255, 0.14);
   border-radius: var(--radius-sm);
-  background: rgba(17, 19, 31, 0.7);
+  background: rgba(21, 25, 41, 0.86);
 }
 
 .impact-summary-card-featured {
@@ -668,14 +684,14 @@ select {
 
 .impact-summary-card > span {
   color: var(--ink-muted);
-  font-size: 0.76rem;
+  font-size: 0.86rem;
   font-weight: 600;
 }
 
 .impact-summary-card > strong {
   overflow: hidden;
   color: #fff;
-  font-size: clamp(1.32rem, 2.2vw, 1.86rem);
+  font-size: clamp(1.64rem, 2.5vw, 2.18rem);
   font-weight: 850;
   letter-spacing: -0.055em;
   text-overflow: ellipsis;
@@ -683,12 +699,12 @@ select {
 }
 
 .impact-summary-card > strong.impact-project-name {
-  font-size: clamp(1.02rem, 1.6vw, 1.3rem);
+  font-size: clamp(1.08rem, 1.7vw, 1.42rem);
 }
 
 .impact-summary-card > small {
   color: var(--ink-muted);
-  font-size: 0.75rem;
+  font-size: 0.84rem;
   line-height: 1.4;
 }
 
@@ -778,9 +794,9 @@ select {
 .mini-stat,
 .mobile-selection-bar,
 .empty-state {
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(174, 186, 255, 0.13);
   background:
-    linear-gradient(180deg, rgba(19, 22, 36, 0.84), rgba(13, 15, 26, 0.74));
+    linear-gradient(180deg, rgba(24, 28, 45, 0.96), rgba(16, 19, 32, 0.89));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
     var(--shadow-soft);
@@ -1281,17 +1297,25 @@ select {
 
 .project-usage-list {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .project-usage-card {
   border-radius: var(--radius-sm);
-  padding: 19px;
+  padding: 23px 24px;
   color: inherit;
   text-align: left;
   cursor: pointer;
   display: grid;
-  gap: 15px;
+  gap: 18px;
   min-width: 0;
+}
+
+.project-usage-card:first-child {
+  border-color: rgba(135, 150, 255, 0.34);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(93, 105, 245, 0.18), transparent 48%),
+    linear-gradient(180deg, rgba(29, 32, 52, 0.98), rgba(18, 20, 37, 0.95));
 }
 
 .project-usage-card:focus-visible {
@@ -1308,7 +1332,7 @@ select {
 
 .project-title {
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 1.14rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1316,13 +1340,13 @@ select {
 
 .project-sub {
   color: var(--ink-muted);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   white-space: nowrap;
 }
 
 .project-bar {
   width: 100%;
-  height: 10px;
+  height: 11px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.07);
   overflow: hidden;
@@ -1339,19 +1363,19 @@ select {
 .project-metric-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 22px;
 }
 
 .project-metric-grid div {
   display: grid;
-  gap: 3px;
+  gap: 5px;
   min-width: 0;
 }
 
 .project-metric-grid span,
 .project-metric-grid small {
   color: var(--ink-muted);
-  font-size: 0.78rem;
+  font-size: 0.87rem;
   line-height: 1.25;
 }
 
@@ -1369,7 +1393,7 @@ select {
 }
 
 .project-metric-primary strong {
-  font-size: clamp(1.45rem, 2.6vw, 1.98rem);
+  font-size: clamp(1.8rem, 2.9vw, 2.38rem);
   color: #f5f7ff;
   letter-spacing: -0.045em;
 }
@@ -1383,7 +1407,7 @@ select {
 }
 
 .project-metric-cost strong {
-  font-size: clamp(1.35rem, 2.4vw, 1.82rem);
+  font-size: clamp(1.72rem, 2.7vw, 2.26rem);
   color: #fff;
   letter-spacing: -0.055em;
 }
@@ -2207,13 +2231,13 @@ select {
   }
 
   .active-range-pill,
-  select,
-  .refresh-button {
+  select {
     width: 100%;
   }
 
-  .refresh-button {
+  .refresh-button-header {
     margin-left: 0;
+    width: auto;
   }
 
   .summary-grid,
