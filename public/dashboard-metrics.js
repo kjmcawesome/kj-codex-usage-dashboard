@@ -4,6 +4,7 @@ const CURRENT_WORK_WINDOW_HOURS = 72;
 const PROXY_PRICED_MODEL = "gpt-5.5 estimate";
 const MODEL_ALIASES = Object.freeze({
   arcanine: "gpt-5.5",
+  "gpt-5.6": "gpt-5.6-sol",
   sol: "gpt-5.6-sol",
   terra: "gpt-5.6-terra",
   luna: "gpt-5.6-luna",
@@ -188,7 +189,7 @@ function estimateCost(totals, model) {
   const rates = RATE_CARD[pricedModel];
 
   const uncachedInputTokens = Math.max(0, (totals.input_tokens || 0) - (totals.cached_input_tokens || 0));
-  const billedOutputTokens = (totals.output_tokens || 0) + (totals.reasoning_output_tokens || 0);
+  const billedOutputTokens = totals.output_tokens || 0;
   const estimatedCostUsd =
     ((uncachedInputTokens / 1000000) * rates.input) +
     (((totals.cached_input_tokens || 0) / 1000000) * rates.cached_input) +
@@ -1046,8 +1047,7 @@ function filterContributions(index, options) {
           0,
           (pricedEvent.input_tokens || 0) - (pricedEvent.cached_input_tokens || 0)
         );
-        modelEntry.billed_output_tokens +=
-          (pricedEvent.output_tokens || 0) + (pricedEvent.reasoning_output_tokens || 0);
+        modelEntry.billed_output_tokens += pricedEvent.output_tokens || 0;
       }
 
       if (!dayMap.has(event.date)) {

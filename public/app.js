@@ -35,6 +35,7 @@ const state = {
   snapshot: null,
   snapshotNow: null,
   dashboard: null,
+  directDashboard: null,
   datePicker: null,
   shouldResetHeatmapViewport: true,
   refreshHelperAvailable: false,
@@ -1095,16 +1096,15 @@ function getSortedProjects(projects) {
 
 function renderProjectUsage(dashboard) {
   const projects = getSortedProjects(dashboard.project_usage || []);
+  const directSummary = state.directDashboard?.summary || dashboard.summary;
+  const helperTokens = Math.max(0, dashboard.summary.total_tokens - directSummary.total_tokens);
+  const helperCost = Math.max(0, dashboard.summary.estimated_cost_usd - directSummary.estimated_cost_usd);
   const rangeLabel = dashboard.selection.label.toLowerCase();
   const sortLabels = {
     cost: "estimated cost",
     tokens: "token volume"
   };
 
-  const topThreeCostShare = [...projects]
-    .sort((left, right) => right.estimated_cost_usd - left.estimated_cost_usd)
-    .slice(0, 3)
-    .reduce((sum, project) => sum + (project.cost_share || 0), 0);
   elements.projectUsageNote.textContent =
     `${formatCountLabel(projects.length, "active project")} and ${formatCountLabel(dashboard.summary.sessions || 0, "workflow")} in ${rangeLabel}, sorted by ${sortLabels[state.projectSort] || "token volume"}.`;
 
@@ -1112,20 +1112,28 @@ function renderProjectUsage(dashboard) {
     const topProject = [...projects].sort((left, right) => right.total_tokens - left.total_tokens)[0];
     elements.projectImpactSummary.innerHTML = `
       <article class="impact-summary-card impact-summary-card-featured">
-        <span>Estimated cost of work</span>
+        <span>All work, including helpers</span>
         <strong>${formatUsd(dashboard.summary.estimated_cost_usd)}</strong>
         <small>${formatCompactNumber(dashboard.summary.total_tokens)} tokens across ${rangeLabel}</small>
       </article>
       <article class="impact-summary-card">
+        <span>Your direct work</span>
+        <strong>${formatUsd(directSummary.estimated_cost_usd)}</strong>
+        <small>${formatCompactNumber(directSummary.total_tokens)} tokens, excluding parallel helpers</small>
+      </article>
+      <article class="impact-summary-card">
+        <span>Parallel helper work</span>
+        <strong>${formatUsd(helperCost)}</strong>
+        <small>${formatCompactNumber(helperTokens)} tokens from delegated agent tasks</small>
+      </article>
+      <article class="impact-summary-card impact-summary-card-project">
         <span>Biggest project</span>
         <strong class="impact-project-name">${topProject ? escapeHtml(formatProjectName(topProject)) : "No activity yet"}</strong>
         <small>${topProject ? `${formatCompactNumber(topProject.total_tokens)} tokens · ${formatUsd(topProject.estimated_cost_usd)}` : "Start a workflow to light the board."}</small>
       </article>
-      <article class="impact-summary-card">
-        <span>Where cost concentrated</span>
-        <strong>${formatPercent(topThreeCostShare)}</strong>
-        <small>of estimated cost came from the top three projects</small>
-      </article>
+      ${dashboard.summary.unpriced_total_tokens > 0 ? `
+        <p class="pricing-confidence-note">${formatCompactNumber(dashboard.summary.unpriced_total_tokens)} tokens use estimated model pricing because their model names could not be verified.</p>
+      ` : ""}
     `;
   }
 
@@ -1480,6 +1488,16 @@ async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle
       includeSubagents: state.includeSubagents,
       now: state.snapshotNow
     });
+    state.directDashboard = state.includeSubagents
+      ? buildDashboardPayload(state.snapshot, {
+        days: state.rangeMode === "preset" ? state.days : undefined,
+        startDate: state.rangeMode === "custom" ? state.startDate : null,
+        endDate: state.rangeMode === "custom" ? state.endDate : null,
+        workspace: state.workspace,
+        includeSubagents: false,
+        now: state.snapshotNow
+      })
+      : dashboard;
     const validDates = new Set(dashboard.habit_board.days.filter((day) => day.in_range).map((day) => day.date));
     if (!state.selectedDate || !validDates.has(state.selectedDate)) {
       state.selectedDate = chooseDefaultDay(dashboard);
