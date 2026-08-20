@@ -314,29 +314,6 @@ function formatProjectName(project) {
   return project.project_label || project.workspace_label || project.workspace_key || "Unknown project";
 }
 
-function sumHabitWindow(dashboard, days) {
-  const boardDays = dashboard.habit_board?.days || [];
-  const endDate = todayDate(state.snapshotNow || new Date());
-  const startDate = addDays(endDate, -(days - 1));
-  return boardDays.reduce((totals, day) => {
-    if (!day?.date || !day.in_range) {
-      return totals;
-    }
-
-    const date = new Date(`${day.date}T12:00:00`);
-    if (date < startDate || date > endDate) {
-      return totals;
-    }
-
-    totals.total_tokens += day.total_tokens || 0;
-    totals.estimated_cost_usd += day.estimated_cost_usd || 0;
-    return totals;
-  }, {
-    total_tokens: 0,
-    estimated_cost_usd: 0
-  });
-}
-
 function renderIcons() {
   if (window.lucide?.createIcons) {
     window.lucide.createIcons();
@@ -732,7 +709,7 @@ function renderHabitRail(dashboard) {
 
 function renderInsightCosts(dashboard) {
   const snapshots = dashboard.snapshot_windows;
-  const lastThirty = sumHabitWindow(dashboard, 30);
+  const lastThirty = snapshots.trailing_30d;
 
   elements.costToday.textContent = formatUsd(snapshots.today.estimated_cost_usd);
   elements.costToday.title = `${formatUsd(snapshots.today.estimated_cost_usd)} estimated cost`;
