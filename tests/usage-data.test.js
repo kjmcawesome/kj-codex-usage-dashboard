@@ -223,7 +223,7 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(heatmapDayByDate(allSessions, "2026-03-24").level, 3);
   assert.equal(habitBoardDayByDate(allSessions, "2026-03-20").level, 4);
   assert.equal(allSessions.cost_breakdown_by_model.length, 4);
-  assert.ok(allSessions.cost_breakdown_by_model.some((row) => row.model === "gpt-5.5 estimate"));
+  assert.ok(allSessions.cost_breakdown_by_model.some((row) => row.model === "gpt-5.6-sol estimate"));
   assert.ok("share_of_total_tokens" in allSessions.cost_breakdown_by_model[0]);
   assert.ok("effective_cost_per_million" in allSessions.cost_breakdown_by_model[0]);
   assert.ok(

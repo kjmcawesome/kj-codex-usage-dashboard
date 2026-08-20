@@ -1,7 +1,7 @@
 const RATE_CARD_PUBLISHED_AT = "2026-08-03";
 const RATE_CARD_MODE = "api_token_pricing_usd";
 const CURRENT_WORK_WINDOW_HOURS = 72;
-const PROXY_PRICED_MODEL = "gpt-5.5 estimate";
+const PROXY_PRICED_MODEL = "gpt-5.6-sol estimate";
 const MODEL_ALIASES = Object.freeze({
   arcanine: "gpt-5.5",
   "gpt-5.6": "gpt-5.6-sol",
