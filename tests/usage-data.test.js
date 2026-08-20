@@ -186,8 +186,20 @@ test("buildDashboardPayload computes range summaries and filter reconciliation",
   assert.equal(allSessions.snapshot_windows.today.total_tokens, 0);
   assert.equal(allSessions.snapshot_windows.trailing_14d.total_tokens, 650);
   assert.equal(allSessions.snapshot_windows.trailing_14d.token_change_pct, null);
+  assert.equal(allSessions.snapshot_windows.trailing_30d.start_date, "2026-02-24");
+  assert.equal(allSessions.snapshot_windows.trailing_30d.end_date, "2026-03-25");
+  assert.equal(allSessions.snapshot_windows.trailing_30d.total_tokens, 650);
+  assertClose(allSessions.snapshot_windows.trailing_30d.estimated_cost_usd, 0.004018000000000001);
   assert.equal(allSessions.snapshot_windows.month_to_date.total_tokens, 650);
   assert.equal(allSessions.snapshot_windows.month_to_date.cost_change_pct, null);
+  assert.ok(
+    allSessions.snapshot_windows.trailing_30d.total_tokens >=
+      allSessions.snapshot_windows.month_to_date.total_tokens
+  );
+  assert.ok(
+    allSessions.snapshot_windows.trailing_30d.estimated_cost_usd >=
+      allSessions.snapshot_windows.month_to_date.estimated_cost_usd
+  );
   assertClose(allSessions.efficiency_metrics.effective_cost_per_million, 6.181538461538462);
   assertClose(allSessions.efficiency_metrics.input_output_ratio, 3.0625);
   assertClose(allSessions.efficiency_metrics.peak_day_share, 190 / 650);

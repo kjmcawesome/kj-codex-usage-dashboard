@@ -550,6 +550,9 @@ function buildMomentumSnapshots(dayMap, now = new Date()) {
   const trailingFourteenStart = addDays(today, -13);
   const previousFourteenStart = addDays(today, -27);
   const previousFourteenEnd = addDays(today, -14);
+  const trailingThirtyStart = addDays(today, -29);
+  const previousThirtyStart = addDays(today, -59);
+  const previousThirtyEnd = addDays(today, -30);
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const previousMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
   const previousMonthLastDay = new Date(today.getFullYear(), today.getMonth(), 0);
@@ -568,6 +571,13 @@ function buildMomentumSnapshots(dayMap, now = new Date()) {
       today,
       previousFourteenStart,
       previousFourteenEnd
+    ),
+    trailing_30d: buildWindowSnapshot(
+      dayMap,
+      trailingThirtyStart,
+      today,
+      previousThirtyStart,
+      previousThirtyEnd
     ),
     month_to_date: buildWindowSnapshot(
       dayMap,
