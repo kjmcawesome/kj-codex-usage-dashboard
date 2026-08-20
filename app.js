@@ -235,7 +235,7 @@ function formatTrendDayNumber(value) {
 
 function buildEstimatedCostNote(unpricedTotalTokens) {
   if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens in this view used a GPT-5.5-equivalent proxy rate because their log model did not match a direct rate-card entry.`;
+    return `Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens from unreleased or unidentified models are estimated using GPT-5.6 Sol pricing.`;
   }
 
   return "Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend.";
@@ -1132,7 +1132,7 @@ function renderProjectUsage(dashboard) {
         <small>${topProject ? `${formatCompactNumber(topProject.total_tokens)} tokens · ${formatUsd(topProject.estimated_cost_usd)}` : "Start a workflow to light the board."}</small>
       </article>
       ${dashboard.summary.unpriced_total_tokens > 0 ? `
-        <p class="pricing-confidence-note">${formatCompactNumber(dashboard.summary.unpriced_total_tokens)} tokens use estimated model pricing because their model names could not be verified.</p>
+        <p class="pricing-confidence-note">${formatCompactNumber(dashboard.summary.unpriced_total_tokens)} tokens from unreleased or unidentified models are priced at GPT-5.6 Sol rates.</p>
       ` : ""}
     `;
   }
