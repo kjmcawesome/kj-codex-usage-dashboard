@@ -486,6 +486,21 @@ async function forceRefreshViaHelper() {
   }
 
   const payload = await response.json();
+
+  try {
+    const snapshot = await fetchJson(`${state.refreshHelperUrl}/snapshot?ts=${Date.now()}`, {
+      mode: "cors",
+      cache: "no-store"
+    });
+    state.snapshot = snapshot;
+    state.snapshotNow = new Date(snapshot.generated_at);
+    state.shouldResetHeatmapViewport = true;
+    await loadDashboard(false, { suppressButtonToggle: true });
+    return;
+  } catch {
+    // Older helper versions may not expose the snapshot until hosting catches up.
+  }
+
   setRefreshButtonLabel(
     REFRESH_WAITING_LABEL,
     payload.pushed
@@ -1576,7 +1591,15 @@ async function refreshDashboard() {
     }
 
     if (isPublicPagesSite()) {
-      launchRefreshBridge();
+      if (!state.refreshHelperAvailable || !state.refreshHelperUrl) {
+        await probeRefreshHelper();
+      }
+
+      if (state.refreshHelperAvailable && state.refreshHelperUrl) {
+        await forceRefreshViaHelper();
+      } else {
+        launchRefreshBridge();
+      }
       return;
     }
 
