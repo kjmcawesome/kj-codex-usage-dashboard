@@ -224,10 +224,10 @@ function renderBridgePage(returnTo) {
 export function createRefreshHelperServer({
   refreshFn = async ({ publish }) => {
     if (publish) {
-      return publishPages();
+      return publishPages({ forceReparse: true });
     }
 
-    return exportStaticSite();
+    return exportStaticSite({ forceReparse: true });
   },
   snapshotFn = async () => JSON.parse(await readFile(
     new URL("./public/data/usage-snapshot.json", import.meta.url),
@@ -265,6 +265,7 @@ export function createRefreshHelperServer({
       if (isReadMethod && url.pathname === "/status") {
         sendJson(res, req.method, 200, {
           ok: true,
+          counting_version: 3,
           busy: Boolean(currentRefreshPromise),
           last_result: lastResult
         }, corsHeaders);

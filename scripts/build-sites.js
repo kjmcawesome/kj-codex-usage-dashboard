@@ -14,6 +14,10 @@ const CONTENT_TYPES = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
   ".md": "text/markdown; charset=utf-8"
 };
 
@@ -52,6 +56,9 @@ function decodeBase64(value) {
 
 export default {
   async fetch(request) {
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      return new Response("Method not allowed", { status: 405, headers: { Allow: "GET, HEAD" } });
+    }
     const url = new URL(request.url);
     let pathname = decodeURIComponent(url.pathname);
     if (pathname === "/" || pathname.endsWith("/")) {
@@ -65,7 +72,7 @@ export default {
 
     const compressed = decodeBase64(asset.body);
     const body = new Response(compressed).body.pipeThrough(new DecompressionStream("gzip"));
-    return new Response(body, {
+    return new Response(request.method === "HEAD" ? null : body, {
       headers: {
         "content-type": asset.content_type,
         "cache-control": pathname.includes("/data/") ? "no-store, max-age=0" : "public, max-age=120"

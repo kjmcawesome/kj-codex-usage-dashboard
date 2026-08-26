@@ -4,7 +4,6 @@ import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createUsageService } from "./lib/usage-data.js";
-import { exportStaticSite } from "./scripts/export-static-site.js";
 
 const port = Number(process.env.PORT || 3184);
 
@@ -79,12 +78,12 @@ function parseDashboardParams(url) {
   const daysParam = url.searchParams.get("days");
   const days = daysParam && daysParam.toLowerCase() === "all"
     ? "all"
-    : Number(daysParam || 365);
+    : Number(daysParam || 30);
 
   return {
     startDate,
     endDate,
-    days: days === "all" || Number.isFinite(days) ? days : 365,
+    days,
     workspace: url.searchParams.get("workspace") || "all",
     includeSubagents: parseBooleanFlag(url.searchParams.get("include_subagents"), true)
   };
@@ -128,12 +127,11 @@ export function createAppServer({
       }
 
       if (req.method === "POST" && url.pathname === "/api/refresh") {
-        const result = await exportStaticSite();
+        const result = await usageService.refresh();
         sendJson(res, req.method, 200, {
           ok: true,
           generated_at: result.generated_at,
-          session_count: result.session_count,
-          workspace_count: result.workspace_count,
+          source: result.source,
           published: false
         });
         return;
@@ -146,7 +144,7 @@ export function createAppServer({
 
       await serveStaticFile(req, res, staticRoot, url.pathname);
     } catch (error) {
-      if (error instanceof BadRequestError) {
+      if (error instanceof BadRequestError || error instanceof RangeError) {
         sendJson(res, req.method || "GET", 400, {
           error: "Bad request",
           detail: error.message

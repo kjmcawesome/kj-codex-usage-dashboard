@@ -1,515 +1,398 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile, cp, rm } from "node:fs/promises";
 import os from "node:os";
 import { join, resolve } from "node:path";
-
-import {
-  buildDashboardPayload,
-  buildDayPayload,
-  createPublicSnapshot,
-  loadUsageIndex,
-  parseSessionLog
-} from "../lib/usage-data.js";
-import { createUsageService } from "../lib/usage-data.js";
+import { buildDashboardPayload, buildDayPayload, createPublicSnapshot, loadUsageIndex, parseSessionLog, reconcileSessions, createUsageService } from "../lib/usage-data.js";
+import { createAnalytics, heatLevel, resolveRange, dayInZone } from "../public/analytics.js";
+import { priceEvent, resolveModel, PRICING } from "../public/pricing.js";
 import { createAppServer } from "../server.js";
 
 const fixtureRoot = resolve("./tests/fixtures/codex-root");
 const publicRoot = resolve("./public");
-
-function fixedNow() {
-  return new Date("2026-03-25T12:00:00.000Z");
+const fixedNow = () => new Date("2026-03-25T12:00:00.000Z");
+const close = (a, b, eps = 1e-8) => assert.ok(Math.abs(a - b) < eps, `${a} != ${b}`);
+const fields = ["total_tokens", "input_tokens", "cached_input_tokens", "output_tokens", "reasoning_output_tokens", "cache_write_input_tokens"];
+const counts = (total) => ({ total_tokens: total, input_tokens: total * .8, cached_input_tokens: total * .4, output_tokens: total * .2, reasoning_output_tokens: total * .1, cache_write_input_tokens: 0 });
+const cumulative = (total) => fields.map((key) => counts(total)[key]);
+const event = (date, total, extra = {}) => ({ date, timestamp: `${date}T12:00:00Z`, model: "gpt-5.4", context_input_tokens: total * .8, ...counts(total), ...extra });
+const session = (id, events, extra = {}) => ({ session_id: id, thread_name: id, parent_session_id: null,
+  session_started_at: "2026-01-01T12:00:00Z", workspace_key: "ws_a", workspace_label: "Workspace A", is_subagent: false, events,
+  ...Object.fromEntries(fields.map((key) => [key, events.reduce((sum, row) => sum + row[key], 0)])),
+  quality: {}, ...extra });
+const snapshot = (sessions, generated = "2026-08-26T20:00:00Z") => ({
+  snapshot_version: 3, counting_version: 3, generated_at: generated, timezone: "America/Los_Angeles",
+  earliest_date: "2026-01-01", sessions, workspaces: [{ workspace_key: "ws_a", workspace_label: "Workspace A" }, { workspace_key: "ws_b", workspace_label: "Workspace B" }], quality: {}
+});
+async function fixtures() {
+  const dir = await mkdtemp(join(os.tmpdir(), "kj-usage-fixtures-"));
+  return loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath: join(dir, "cache.json") });
 }
 
-function assertClose(actual, expected, epsilon = 1e-12) {
-  assert.ok(
-    Math.abs(actual - expected) <= epsilon,
-    `Expected ${actual} to be within ${epsilon} of ${expected}`
-  );
-}
-
-function heatmapDayByDate(dashboard, date) {
-  return dashboard.heatmap_days.find((day) => day.date === date);
-}
-
-function habitBoardDayByDate(dashboard, date) {
-  return dashboard.habit_board.days.find((day) => day.date === date);
-}
-
-async function withTestServer(callback) {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-server-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
-  const usageService = createUsageService({
-    codexRoot: fixtureRoot,
-    cacheFilePath,
-    nowProvider: fixedNow
-  });
-  const server = createAppServer({
-    usageService,
-    staticRoot: publicRoot
-  });
-
-  await new Promise((resolvePromise) => server.listen(0, "127.0.0.1", resolvePromise));
-
-  try {
-    const address = server.address();
-    const baseUrl = `http://127.0.0.1:${address.port}`;
-    await callback({ baseUrl });
-  } finally {
-    await new Promise((resolvePromise, rejectPromise) =>
-      server.close((error) => (error ? rejectPromise(error) : resolvePromise()))
-    );
-  }
-}
-
-test("parseSessionLog handles one-snapshot sessions", async () => {
-  const session = await parseSessionLog(join(fixtureRoot, "sessions", "rollout-2026-03-20-session-one.jsonl"));
-
-  assert.equal(session.session_id, "session-one");
-  assert.equal(session.total_tokens, 150);
-  assert.equal(session.input_tokens, 120);
-  assert.equal(session.cached_input_tokens, 20);
-  assert.equal(session.output_tokens, 30);
-  assert.equal(session.reasoning_output_tokens, 10);
-  assert.equal(session.events.length, 1);
-  assert.equal(session.primary_model, "gpt-5.4");
-  assert.deepEqual(session.models_used, ["gpt-5.4"]);
-  assert.equal(session.events[0].model, "gpt-5.4");
+test("one snapshot, duplicate emissions, info:null, and multi-day deltas stay exact", async () => {
+  const one = await parseSessionLog(join(fixtureRoot, "sessions", "rollout-2026-03-20-session-one.jsonl"));
+  assert.equal(one.total_tokens, 150);
+  assert.equal(one.input_tokens, 120);
+  assert.equal(one.cached_input_tokens, 20);
+  assert.equal(one.output_tokens, 30);
+  assert.equal(one.reasoning_output_tokens, 10);
+  assert.equal(one.primary_model, "gpt-5.4");
+  const duplicate = await parseSessionLog(join(fixtureRoot, "sessions", "rollout-2026-03-21-session-duplicate.jsonl"));
+  assert.deepEqual(duplicate.events.map((row) => row.total_tokens), [100, 90]);
+  assert.equal(duplicate.total_tokens, 190);
+  const emptyInfo = await parseSessionLog(join(fixtureRoot, "sessions", "rollout-2026-03-24-session-null.jsonl"));
+  assert.equal(emptyInfo.total_tokens, 50);
+  assert.equal(emptyInfo.events.length, 1);
+  const index = await fixtures();
+  const multi = index.sessions.find((row) => row.session_id === "session-multiday");
+  assert.equal(multi.total_tokens, 200);
+  assert.equal(multi.events.reduce((sum, row) => sum + row.total_tokens, 0), multi.total_tokens);
+  assert.equal(new Set(multi.events.map((row) => row.date)).size, 2);
 });
 
-test("parseSessionLog ignores duplicate token snapshots", async () => {
-  const session = await parseSessionLog(join(fixtureRoot, "sessions", "rollout-2026-03-21-session-duplicate.jsonl"));
-
-  assert.equal(session.total_tokens, 190);
-  assert.equal(session.events.length, 2);
-  assert.deepEqual(
-    session.events.map((event) => event.total_tokens),
-    [100, 90]
-  );
+test("a helper is attributed to its parent, but a user fork is not labeled a helper", async () => {
+  const helper = await parseSessionLog(join(fixtureRoot, "archived_sessions", "rollout-2026-03-23-session-subagent.jsonl"));
+  assert.equal(helper.is_subagent, true);
+  assert.equal(helper.parent_session_id, "session-multiday");
+  assert.equal(helper.agent_nickname, "Lovelace");
+  const temp = await mkdtemp(join(os.tmpdir(), "kj-fork-"));
+  const file = join(temp, "fork.jsonl");
+  await writeFile(file, JSON.stringify({ type: "session_meta", timestamp: "2026-03-24T12:00:00Z",
+    payload: { id: "fork", forked_from_id: "parent", source: "vscode", timestamp: "2026-03-24T12:00:00Z" } }) + "\n");
+  const fork = await parseSessionLog(file);
+  assert.equal(fork.is_fork, true);
+  assert.equal(fork.is_subagent, false);
 });
 
-test("parseSessionLog ignores info:null and preserves first real snapshot", async () => {
-  const session = await parseSessionLog(join(fixtureRoot, "sessions", "rollout-2026-03-24-session-null.jsonl"));
-
-  assert.equal(session.total_tokens, 50);
-  assert.equal(session.events.length, 1);
+test("fork replay with rewritten timestamps is excluded while new helper work remains", () => {
+  const parent = session("parent", [
+    event("2026-03-20", 100, { cumulative: cumulative(100), turn_id: "parent-turn" }),
+    event("2026-03-20", 100, { cumulative: cumulative(200), turn_id: "parent-turn" })
+  ]);
+  const child = session("child", [
+    event("2026-03-21", 100, { cumulative: cumulative(100), turn_id: "parent-turn" }),
+    event("2026-03-21", 100, { cumulative: cumulative(200), turn_id: "parent-turn" }),
+    event("2026-03-21", 50, { cumulative: cumulative(250), turn_id: "child-turn" })
+  ], { parent_session_id: "parent", is_subagent: true, session_started_at: "2026-03-21T10:00:00Z" });
+  const fixed = reconcileSessions([parent, child]);
+  assert.equal(fixed[0].total_tokens, 200);
+  assert.equal(fixed[1].total_tokens, 50);
+  assert.equal(fixed[1].events.length, 1);
+  assert.equal(fixed[1].quality.inherited_tokens_removed, 200);
+  assert.equal(child.total_tokens, 250, "raw cache remains immutable");
 });
 
-test("parseSessionLog marks subagent sessions", async () => {
-  const session = await parseSessionLog(join(fixtureRoot, "archived_sessions", "rollout-2026-03-23-session-subagent.jsonl"));
-
-  assert.equal(session.session_id, "session-subagent");
-  assert.equal(session.is_subagent, true);
-  assert.equal(session.parent_session_id, "session-multiday");
-  assert.equal(session.agent_role, "worker");
+test("fork without replay subtracts a provable inherited baseline", () => {
+  const parent = session("parent", [event("2026-03-20", 200, { cumulative: cumulative(200), turn_id: "p" })]);
+  const child = session("child", [event("2026-03-21", 250, { cumulative: cumulative(250), last_usage: cumulative(50), turn_id: "c" })],
+    { parent_session_id: "parent", session_started_at: "2026-03-21T10:00:00Z" });
+  const fixed = reconcileSessions([parent, child])[1];
+  assert.equal(fixed.total_tokens, 50);
+  assert.equal(fixed.quality.inherited_tokens_removed, 200);
+  assert.equal(fixed.events[0].context_input_tokens, 40);
 });
 
-test("loadUsageIndex reuses cached per-file summaries and supports forced refresh", async () => {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-cache-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
+test("nested helpers exclude ancestor replay and group under one real project", () => {
+  const parent = session("p", [event("2026-03-20", 100, { cumulative: cumulative(100), turn_id: "p" })]);
+  const child = session("c", [
+    event("2026-03-21", 100, { cumulative: cumulative(100), turn_id: "p" }),
+    event("2026-03-21", 50, { cumulative: cumulative(150), turn_id: "c" })
+  ], { parent_session_id: "p", session_started_at: "2026-03-21T10:00:00Z", is_subagent: true });
+  const grandchild = session("g", [
+    event("2026-03-22", 100, { cumulative: cumulative(100), turn_id: "p" }),
+    event("2026-03-22", 50, { cumulative: cumulative(150), turn_id: "c" }),
+    event("2026-03-22", 20, { cumulative: cumulative(170), turn_id: "g" })
+  ], { parent_session_id: "c", session_started_at: "2026-03-22T10:00:00Z", is_subagent: true });
+  const fixed = reconcileSessions([parent, child, grandchild]);
+  assert.deepEqual(fixed.map((row) => row.total_tokens), [100, 50, 20]);
+  const report = createAnalytics(snapshot(fixed, "2026-03-25T12:00:00Z")).dashboard();
+  assert.equal(report.projects.length, 1);
+  assert.equal(report.projects[0].total_tokens, 170);
+  assert.equal(report.projects[0].helper_tokens, 70);
+});
 
-  const cold = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
+test("equal counters on unrelated turns are not blindly deduplicated across sessions", () => {
+  const parent = session("p", [event("2026-03-20", 100, { cumulative: cumulative(100), turn_id: "p" })]);
+  const child = session("c", [event("2026-03-21", 100, { cumulative: cumulative(100), turn_id: "c" })],
+    { parent_session_id: "p", session_started_at: "2026-03-21T10:00:00Z" });
+  assert.equal(reconcileSessions([parent, child])[1].total_tokens, 100);
+});
+
+test("missing parents and lineage cycles do not hang or silently lose usage", () => {
+  const a = session("a", [event("2026-08-26", 100)], { parent_session_id: "missing" });
+  const b = session("b", [event("2026-08-26", 200)], { parent_session_id: "c" });
+  const c = session("c", [event("2026-08-26", 300)], { parent_session_id: "b" });
+  const fixed = reconcileSessions([a, b, c]);
+  assert.equal(fixed[0].quality.missing_parent, true);
+  assert.equal(fixed[1].quality.lineage_cycle, true);
+  const report = createAnalytics(snapshot(fixed)).dashboard();
+  assert.equal(report.summary.total_tokens, 600);
+  close(report.projects.reduce((sum, row) => sum + row.total_tokens, 0), 600);
+});
+
+test("cache warm loads, forced loads, removed files, and corrupted caches are safe", async () => {
+  const temp = await mkdtemp(join(os.tmpdir(), "kj-cache-"));
+  const root = join(temp, "codex");
+  await cp(fixtureRoot, root, { recursive: true });
+  const options = { codexRoot: root, cacheFilePath: join(temp, "cache.json") };
+  const cold = await loadUsageIndex(options);
   assert.equal(cold.source.reparsed_files, 6);
-  assert.equal(cold.source.reused_files, 0);
-  assert.equal(cold.sessions.filter((session) => session.session_id === "session-multiday").length, 1);
-  assert.equal(
-    cold.sessions.find((session) => session.session_id === "session-multiday").total_tokens,
-    200
-  );
-
-  const warm = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath });
-  assert.equal(warm.source.reparsed_files, 0);
+  assert.equal(cold.sessions.length, 5);
+  const warm = await loadUsageIndex(options);
   assert.equal(warm.source.reused_files, 6);
-
-  const forced = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
+  const forced = await loadUsageIndex({ ...options, forceReparse: true });
   assert.equal(forced.source.reparsed_files, 6);
+  await rm(join(root, "sessions", "rollout-2026-03-20-session-one.jsonl"));
+  const removed = await loadUsageIndex(options);
+  assert.equal(removed.source.log_files, 5);
+  assert.equal(removed.sessions.some((row) => row.session_id === "session-one"), false);
+  await writeFile(options.cacheFilePath, "{broken");
+  assert.equal((await loadUsageIndex(options)).source.reparsed_files, 5);
 });
 
-test("buildDashboardPayload computes range summaries and filter reconciliation", async () => {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-range-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
-  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
-
-  const allSessions = buildDashboardPayload(index, {
-    days: 365,
-    includeSubagents: true,
-    workspace: "all",
-    now: fixedNow()
-  });
-  const noSubagents = buildDashboardPayload(index, {
-    days: 365,
-    includeSubagents: false,
-    workspace: "all",
-    now: fixedNow()
-  });
-
-  assert.equal(allSessions.summary.total_tokens, 650);
-  assert.equal(noSubagents.summary.total_tokens, 590);
-  assert.equal(allSessions.summary.total_tokens - noSubagents.summary.total_tokens, 60);
-  assert.equal(allSessions.summary.input_tokens, 490);
-  assert.equal(allSessions.summary.output_tokens, 160);
-  assert.equal(allSessions.summary.cached_input_tokens, 100);
-  assert.equal(allSessions.summary.reasoning_output_tokens, 34);
-  assert.equal(allSessions.summary.unpriced_total_tokens, 50);
-  assertClose(allSessions.summary.estimated_cost_usd, 0.003496);
-  assertClose(noSubagents.summary.estimated_cost_usd, 0.0031072499999999998);
-  assert.equal(allSessions.cost_mode, "estimated");
-  assert.equal(allSessions.selection.mode, "preset");
-  assert.equal(allSessions.selection.days, 365);
-  assert.equal(allSessions.available_range.start_date, "2026-03-20");
-  assert.equal(allSessions.available_range.end_date, "2026-03-25");
-  assert.equal(allSessions.current_work_range.start_at, "2026-03-22T12:00:00.000Z");
-  assert.equal(allSessions.current_work_range.end_at, "2026-03-25T12:00:00.000Z");
-  assert.equal(allSessions.current_work_range.hours, 72);
-  assert.equal(allSessions.current_work_sessions[0].thread_name, "Multi-day thread");
-  assert.equal(allSessions.current_work_sessions[0].total_tokens, 200);
-  assert.equal(allSessions.current_work_sessions[1].thread_name, "Subagent thread");
-  assert.equal(allSessions.current_work_sessions[1].total_tokens, 60);
-  assert.equal(allSessions.current_work_sessions[2].thread_name, "Null-info thread");
-  assert.equal(allSessions.current_work_sessions[2].total_tokens, 50);
-  assert.equal(allSessions.habit_board.start_date, "2025-03-26");
-  assert.equal(allSessions.habit_board.end_date, "2026-03-25");
-  assert.equal(allSessions.habit_metrics.today_has_usage, false);
-  assert.equal(allSessions.habit_metrics.today_tokens, 0);
-  assertClose(allSessions.habit_metrics.today_estimated_cost_usd, 0);
-  assert.equal(allSessions.habit_metrics.last_14_days_tokens, 650);
-  assertClose(allSessions.habit_metrics.last_14_days_estimated_cost_usd, 0.003496);
-  assert.equal(allSessions.habit_metrics.last_7_days_tokens, 650);
-  assert.equal(allSessions.habit_metrics.previous_7_days_tokens, 0);
-  assert.equal(allSessions.habit_metrics.month_to_date_tokens, 650);
-  assertClose(allSessions.habit_metrics.month_to_date_estimated_cost_usd, 0.003496);
-  assert.equal(allSessions.habit_metrics.previous_month_comparable_tokens, 0);
-  assert.equal(allSessions.habit_metrics.current_streak, 0);
-  assert.equal(allSessions.habit_metrics.best_streak, 5);
-  assert.equal(allSessions.habit_metrics.workweek_green_days, 2);
-  assert.equal(allSessions.habit_metrics.workweek_goal, 5);
-  assert.equal(allSessions.snapshot_windows.today.total_tokens, 0);
-  assert.equal(allSessions.snapshot_windows.trailing_14d.total_tokens, 650);
-  assert.equal(allSessions.snapshot_windows.trailing_14d.token_change_pct, null);
-  assert.equal(allSessions.snapshot_windows.trailing_30d.start_date, "2026-02-24");
-  assert.equal(allSessions.snapshot_windows.trailing_30d.end_date, "2026-03-25");
-  assert.equal(allSessions.snapshot_windows.trailing_30d.total_tokens, 650);
-  assertClose(allSessions.snapshot_windows.trailing_30d.estimated_cost_usd, 0.003496);
-  assert.equal(allSessions.snapshot_windows.month_to_date.total_tokens, 650);
-  assert.equal(allSessions.snapshot_windows.month_to_date.cost_change_pct, null);
-  assert.ok(
-    allSessions.snapshot_windows.trailing_30d.total_tokens >=
-      allSessions.snapshot_windows.month_to_date.total_tokens
-  );
-  assert.ok(
-    allSessions.snapshot_windows.trailing_30d.estimated_cost_usd >=
-      allSessions.snapshot_windows.month_to_date.estimated_cost_usd
-  );
-  assertClose(allSessions.efficiency_metrics.effective_cost_per_million, 5.378461538461538);
-  assertClose(allSessions.efficiency_metrics.input_output_ratio, 3.0625);
-  assertClose(allSessions.efficiency_metrics.peak_day_share, 190 / 650);
-  assert.equal(allSessions.efficiency_metrics.month_to_date_token_growth_pct, null);
-  assert.equal(allSessions.efficiency_metrics.last_7_day_change_pct, null);
-  assert.ok(allSessions.efficiency_metrics.top_model);
-  assert.equal(allSessions.range_comparison.available, true);
-  assert.equal(allSessions.range_comparison.previous_total_tokens, 0);
-  assert.equal(allSessions.range_comparison.token_change_pct, null);
-  assert.equal(allSessions.insights[0].title, "One day is driving the range");
-  assertClose(allSessions.habit_board.scale.max_total_tokens, 190);
-  assertClose(allSessions.heatmap_scale.max_total_tokens, 190);
-  assertClose(allSessions.heatmap_scale.baseline_total_tokens, 186);
-  assert.equal(allSessions.heatmap_scale.scale_method, "90th_percentile_cap");
-  assertClose(allSessions.heatmap_scale.thresholds[0], 14.88);
-  assertClose(allSessions.heatmap_scale.thresholds[1], 37.2);
-  assertClose(allSessions.heatmap_scale.thresholds[2], 83.7);
-  assertClose(allSessions.heatmap_scale.thresholds[3], 186);
-  assert.equal(heatmapDayByDate(allSessions, "2026-03-20").level, 4);
-  assert.equal(heatmapDayByDate(allSessions, "2026-03-22").level, 3);
-  assert.equal(heatmapDayByDate(allSessions, "2026-03-24").level, 3);
-  assert.equal(habitBoardDayByDate(allSessions, "2026-03-20").level, 4);
-  assert.equal(allSessions.cost_breakdown_by_model.length, 4);
-  assert.ok(allSessions.cost_breakdown_by_model.some((row) => row.model === "gpt-5.6-sol estimate"));
-  assert.ok("share_of_total_tokens" in allSessions.cost_breakdown_by_model[0]);
-  assert.ok("effective_cost_per_million" in allSessions.cost_breakdown_by_model[0]);
-  assert.ok(
-    allSessions.cost_breakdown_by_model.every((row) => row.billed_output_tokens === row.output_tokens),
-    "reasoning tokens are already included in output tokens and must not be billed twice"
-  );
-  assertClose(
-    allSessions.cost_breakdown_by_model.reduce((sum, row) => sum + row.estimated_cost_usd, 0),
-    allSessions.summary.estimated_cost_usd
-  );
-  assert.ok("dominant_model_family" in allSessions.top_threads[0]);
-  assert.ok("token_share" in allSessions.top_threads[0]);
-  assert.ok("cost_share" in allSessions.top_threads[0]);
-  assert.equal(allSessions.project_usage.length, 4);
-  assert.equal(allSessions.project_usage[0].workspace_label, "Codex projects");
-  assert.equal(allSessions.project_usage[0].total_tokens, 260);
-  assert.equal(allSessions.project_usage[0].active_days, 2);
-  assert.equal(allSessions.project_usage[0].workflows, 2);
-  assertClose(allSessions.project_usage[0].effective_cost_per_million, 5.015384615384615);
-  assert.ok("token_share" in allSessions.project_usage[0]);
-  assert.ok("cost_share" in allSessions.project_usage[0]);
-  assert.ok(
-    !allSessions.project_usage.some((project) => project.project_label === "Helper session"),
-    "subagent helpers should roll into their parent project when parent names are available"
-  );
-  assert.equal(allSessions.trend_days.length, 14);
-  assert.equal(allSessions.trend_days[0].date, "2026-03-12");
-  assert.equal(allSessions.trend_days.at(-1).date, "2026-03-25");
-  assert.equal(
-    allSessions.trend_days.reduce((sum, day) => sum + day.total_tokens, 0),
-    650
-  );
-  assert.equal(allSessions.heatmap_days.filter((day) => day.in_range).length, 365);
-  assert.equal(allSessions.habit_board.days.filter((day) => day.in_range).length, 365);
+test("fixture totals reconcile by projects, days, models, and helper filter", async () => {
+  const index = await fixtures();
+  const report = buildDashboardPayload(index, { now: fixedNow() });
+  assert.equal(report.summary.total_tokens, 650);
+  assert.equal(report.summary.input_tokens, 490);
+  assert.equal(report.summary.output_tokens, 160);
+  assert.equal(report.summary.cached_input_tokens, 100);
+  assert.equal(report.summary.reasoning_output_tokens, 34);
+  assert.equal(report.summary.proxy_tokens, 50);
+  close(report.summary.estimated_cost_usd, .0032705);
+  const direct = buildDashboardPayload(index, { now: fixedNow(), includeSubagents: false });
+  assert.equal(direct.summary.total_tokens, 590);
+  assert.equal(report.summary.total_tokens - direct.summary.total_tokens, 60);
+  close(report.summary.estimated_cost_usd - direct.summary.estimated_cost_usd, report.summary.helper_cost_usd);
+  for (const rows of [report.projects, report.models, report.habit_board.days.filter((day) => day.in_range)]) {
+    close(rows.reduce((sum, row) => sum + row.total_tokens, 0), report.summary.total_tokens);
+    close(rows.reduce((sum, row) => sum + row.estimated_cost_usd, 0), report.summary.estimated_cost_usd);
+  }
+  assert.equal(report.summary.project_count, 4);
+  assert.equal(report.summary.workflow_count, 5);
 });
 
-test("buildDashboardPayload supports custom date ranges", async () => {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-custom-range-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
-  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
-
-  const dashboard = buildDashboardPayload(index, {
-    startDate: "2026-03-21",
-    endDate: "2026-03-23",
-    includeSubagents: true,
-    workspace: "all",
-    now: fixedNow()
-  });
-
-  assert.equal(dashboard.range.days, null);
-  assert.equal(dashboard.range.start_date, "2026-03-21");
-  assert.equal(dashboard.range.end_date, "2026-03-23");
-  assert.equal(dashboard.selection.mode, "custom");
-  assert.equal(dashboard.selection.label, "Mar 21, 2026 - Mar 23, 2026");
-  assert.equal(dashboard.summary.total_tokens, 450);
-  assertClose(dashboard.summary.estimated_cost_usd, 0.0020635000000000002);
-  assertClose(dashboard.efficiency_metrics.effective_cost_per_million, 4.585555555555556);
-  assertClose(dashboard.efficiency_metrics.peak_day_share, 190 / 450);
-  assert.equal(dashboard.range_comparison.available, true);
-  assert.equal(dashboard.range_comparison.previous_start_date, "2026-03-18");
-  assert.equal(dashboard.range_comparison.previous_end_date, "2026-03-20");
-  assert.equal(dashboard.range_comparison.previous_total_tokens, 150);
-  assert.equal(dashboard.range_comparison.previous_estimated_cost_usd > 0, true);
-  assertClose(dashboard.range_comparison.token_change_pct, 2);
-  assertClose(dashboard.heatmap_scale.max_total_tokens, 190);
-  assert.equal(dashboard.trend_days.length, 14);
-  assert.equal(dashboard.trend_days[0].date, "2026-03-12");
-  assert.equal(dashboard.trend_days.at(-1).date, "2026-03-25");
+test("browser snapshot compression and HTTP transformation use the same counts and rates", async () => {
+  const index = await fixtures();
+  const publicData = createPublicSnapshot(index);
+  const raw = buildDashboardPayload(index, { now: fixedNow() });
+  const client = buildDashboardPayload(publicData, { now: fixedNow() });
+  for (const key of ["total_tokens", "input_tokens", "cached_input_tokens", "output_tokens", "estimated_cost_usd", "proxy_tokens"]) {
+    close(raw.summary[key], client.summary[key]);
+  }
+  const serialized = JSON.stringify(publicData);
+  for (const forbidden of ["cumulative", "last_usage", "turn_id", "base_instructions", "cwd", "/Users/"]) {
+    assert.ok(!serialized.includes('"' + forbidden + '"') && (forbidden !== "/Users/" || !serialized.includes(forbidden)), forbidden);
+  }
+  assert.equal(publicData.snapshot_version, 3);
 });
 
-test("buildDashboardPayload supports workspace-specific filtering", async () => {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-workspace-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
-  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
-  const meetingPrepWorkspace = index.workspaces.find((workspace) => workspace.workspace_label === "meeting-prep-ops");
-
-  assert.ok(meetingPrepWorkspace);
-
-  const dashboard = buildDashboardPayload(index, {
-    days: 365,
-    includeSubagents: true,
-    workspace: meetingPrepWorkspace.workspace_key,
-    now: fixedNow()
-  });
-
-  assert.equal(dashboard.summary.total_tokens, 190);
-  assert.equal(dashboard.summary.sessions, 1);
-  assertClose(dashboard.summary.estimated_cost_usd, 0.0007595000000000001);
-  assert.equal(dashboard.current_work_sessions.length, 0);
+test("custom dates apply only to project costs, not the fixed board or fixed snapshots", () => {
+  const data = snapshot([session("p", [event("2026-08-01", 100), event("2026-08-20", 200), event("2026-08-26", 300)])]);
+  const engine = createAnalytics(data);
+  const custom = engine.dashboard({ startDate: "2026-08-01", endDate: "2026-08-01" });
+  const all = engine.dashboard({ days: "all" });
+  assert.equal(custom.summary.total_tokens, 100);
+  assert.equal(all.summary.total_tokens, 600);
+  assert.deepEqual(custom.habit_board, all.habit_board);
+  assert.deepEqual(custom.snapshot_windows, all.snapshot_windows);
+  assert.equal(custom.projects[0].recorded.total_tokens, 600);
+  assert.equal(custom.trend_days.length, 14);
 });
 
-test("buildDashboardPayload maps Arcanine usage to GPT-5.5 pricing", async () => {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-arcanine-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
-  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
-  const sourceSession = index.sessions.find((session) => session.primary_model === "gpt-5.4");
-
-  assert.ok(sourceSession);
-
-  index.sessions.push({
-    ...structuredClone(sourceSession),
-    session_id: "session-arcanine",
-    thread_name: "Arcanine workflow",
-    primary_model: "arcanine",
-    models_used: ["arcanine"],
-    events: sourceSession.events.map((event) => ({
-      ...structuredClone(event),
-      model: "arcanine"
-    }))
-  });
-
-  const dashboard = buildDashboardPayload(index, {
-    days: 365,
-    includeSubagents: true,
-    workspace: "all",
-    now: fixedNow()
-  });
-
-  assert.ok(dashboard.cost_breakdown_by_model.some((row) => row.model === "gpt-5.5"));
+test("day breakdown can open outside the selected range and reconciles all contributors", async () => {
+  const index = await fixtures();
+  const detail = buildDayPayload(index, "2026-03-20", { days: 1, now: fixedNow() });
+  assert.equal(detail.summary.total_tokens, 150);
+  const busy = buildDayPayload(index, "2026-03-23", { now: fixedNow() });
+  close(busy.workflows.reduce((sum, row) => sum + row.estimated_cost_usd, 0), busy.summary.estimated_cost_usd);
+  assert.ok(busy.workflows.every((row, index, rows) => !index || rows[index - 1].estimated_cost_usd >= row.estimated_cost_usd));
+  const empty = buildDayPayload(index, "2026-03-19", { now: fixedNow() });
+  assert.equal(empty.summary.total_tokens, 0);
+  assert.equal(empty.summary.estimated_cost_usd, 0);
+  assert.deepEqual(empty.workflows, []);
 });
 
-test("buildDayPayload returns per-day session drilldown", async () => {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-day-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
-  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
-
-  const withSubagents = buildDayPayload(index, "2026-03-23", {
-    days: 365,
-    includeSubagents: true,
-    workspace: "all",
-    now: fixedNow()
-  });
-  const withoutSubagents = buildDayPayload(index, "2026-03-23", {
-    days: 365,
-    includeSubagents: false,
-    workspace: "all",
-    now: fixedNow()
-  });
-
-  assert.equal(withSubagents.summary.total_tokens, 180);
-  assert.equal(withSubagents.sessions.length, 2);
-  assertClose(withSubagents.summary.estimated_cost_usd, 0.00093475);
-  assert.equal(withSubagents.sessions[0].estimated_cost_usd >= withSubagents.sessions[1].estimated_cost_usd, true);
-  assert.ok("dominant_model_family" in withSubagents.sessions[0]);
-  assert.ok("token_share" in withSubagents.sessions[0]);
-  assert.ok("cost_share" in withSubagents.sessions[0]);
-  assert.equal(withoutSubagents.summary.total_tokens, 120);
-  assert.equal(withoutSubagents.sessions.length, 1);
-  assertClose(withoutSubagents.summary.estimated_cost_usd, 0.000546);
+test("project roots, not generic workspace names, identify the work; all projects are counted", () => {
+  const sessions = Array.from({ length: 24 }, (_, index) => session("Project " + index, [event("2026-08-26", (index + 1) * 100)]));
+  const engine = createAnalytics(snapshot(sessions));
+  const report = engine.dashboard();
+  assert.equal(report.projects.length, 24);
+  assert.equal(report.summary.project_count, 24);
+  assert.equal(report.projects[0].name, "Project 23");
+  const detail = engine.breakdown("project", "Project 23");
+  assert.equal(detail.summary.total_tokens, 2400);
+  assert.equal(detail.workflows.length, 1);
 });
 
-test("buildDayPayload still returns a clicked habit-board day outside the selected range", async () => {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-day-outside-range-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
-  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
-
-  const payload = buildDayPayload(index, "2026-03-20", {
-    startDate: "2026-03-23",
-    endDate: "2026-03-24",
-    includeSubagents: true,
-    workspace: "all",
-    now: fixedNow()
-  });
-
-  assert.equal(payload.selection.mode, "custom");
-  assert.equal(payload.summary.total_tokens, 150);
-  assert.equal(payload.sessions.length, 1);
-  assert.equal(payload.sessions[0].thread_name, "One snapshot thread");
-  assert.equal(payload.sessions[0].dominant_model_family, "gpt-5.4");
+test("workspace filters follow the root project, including helpers in another working directory", () => {
+  const data = snapshot([
+    session("A", [event("2026-08-26", 100)]),
+    session("A-helper", [event("2026-08-26", 200)], { parent_session_id: "A", is_subagent: true, workspace_key: "ws_b" }),
+    session("B", [event("2026-08-26", 400)], { workspace_key: "ws_b" })
+  ]);
+  const engine = createAnalytics(data);
+  const a = engine.dashboard({ workspace: "ws_a" });
+  const b = engine.dashboard({ workspace: "ws_b" });
+  const all = engine.dashboard();
+  assert.equal(a.summary.total_tokens, 300);
+  assert.equal(b.summary.total_tokens, 400);
+  close(a.summary.estimated_cost_usd + b.summary.estimated_cost_usd, all.summary.estimated_cost_usd);
+  assert.equal(engine.dashboard({ workspace: "ws_a", includeSubagents: false }).summary.total_tokens, 100);
+  assert.equal(a.habit_board.summary.total_tokens, 300);
 });
 
-test("createPublicSnapshot strips local source paths and keeps usage data", async () => {
-  const tempRoot = await mkdtemp(join(os.tmpdir(), "codex-usage-public-snapshot-"));
-  const cacheFilePath = join(tempRoot, "usage-dashboard-index.json");
-  const index = await loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath, forceReparse: true });
-
-  const snapshot = createPublicSnapshot(index);
-
-  assert.equal(snapshot.snapshot_version, 1);
-  assert.equal(snapshot.generated_at, index.generated_at);
-  assert.equal(snapshot.sessions.length, index.sessions.length);
-  assert.equal(snapshot.workspaces.length, index.workspaces.length);
-  assert.deepEqual(snapshot.source, { log_files: index.source.log_files });
-  assert.equal("codex_root" in snapshot.source, false);
-  assert.equal("cache_file" in snapshot.source, false);
+test("human annotations are optional, and absent outcomes are not invented", () => {
+  const data = snapshot([session("p", [event("2026-08-26", 100)])]);
+  const without = createAnalytics(data).breakdown("project", "p");
+  assert.equal(without.outcome, null);
+  const engine = createAnalytics(data, { annotations: { p: { project_label: "Usage dashboard", business_outcome: "Shared reporting prototype", impact_label: "Reporting" } } });
+  assert.equal(engine.dashboard().projects[0].name, "Usage dashboard");
+  assert.equal(engine.breakdown("project", "p").outcome, "Shared reporting prototype");
 });
 
-test("server returns 200 for GET and HEAD on /", async () => {
-  await withTestServer(async ({ baseUrl }) => {
-    const getResponse = await fetch(`${baseUrl}/`);
-    assert.equal(getResponse.status, 200);
-    assert.match(getResponse.headers.get("content-type") || "", /text\/html/);
-    const html = await getResponse.text();
-    assert.match(html, /KJ Codex Usage Dashboard/);
+test("today is included in the 30-day window, which contains MTD before month day 31", () => {
+  const engine = createAnalytics(snapshot([session("p", [
+    event("2026-07-27", 5000), event("2026-07-28", 100), event("2026-08-01", 200), event("2026-08-26", 9000)
+  ])]));
+  const report = engine.dashboard();
+  assert.equal(report.snapshot_windows.today.total_tokens, 9000);
+  assert.equal(report.snapshot_windows.month_to_date.total_tokens, 9200);
+  assert.equal(report.snapshot_windows.trailing_30d.total_tokens, 9300);
+  assert.equal(report.summary.total_tokens, 9300);
+  assert.ok(report.snapshot_windows.trailing_30d.estimated_cost_usd >= report.snapshot_windows.month_to_date.estimated_cost_usd);
+});
 
-    const headResponse = await fetch(`${baseUrl}/`, { method: "HEAD" });
-    assert.equal(headResponse.status, 200);
-    assert.match(headResponse.headers.get("content-type") || "", /text\/html/);
-    const headBody = await headResponse.text();
-    assert.equal(headBody, "");
+test("a 31-day month can legitimately have MTD larger than a 30-day window", () => {
+  const report = createAnalytics(snapshot([session("p", [event("2026-08-01", 100), event("2026-08-31", 100)])], "2026-08-31T20:00:00Z")).dashboard();
+  assert.equal(report.snapshot_windows.month_to_date.total_tokens, 200);
+  assert.equal(report.snapshot_windows.trailing_30d.total_tokens, 100);
+});
+
+test("snapshot timezone, UTC midnight, DST, and leap dates do not move the selected day", () => {
+  assert.equal(dayInZone("2026-08-27T02:00:00Z", "America/Los_Angeles"), "2026-08-26");
+  assert.equal(dayInZone("2026-03-08T09:59:00Z", "America/Los_Angeles"), "2026-03-08");
+  assert.equal(dayInZone("2026-03-08T10:01:00Z", "America/Los_Angeles"), "2026-03-08");
+  assert.throws(() => resolveRange({ startDate: "2026-02-29", endDate: "2026-03-01" }, "2026-08-26", "2026-01-01"), RangeError);
+  assert.equal(resolveRange({ startDate: "2024-02-29", endDate: "2024-03-01" }, "2026-08-26").start_date, "2024-02-29");
+});
+
+test("the board has exactly 365 selectable dates, Sunday-first rows, and monotonic honest color bins", () => {
+  const sessions = [session("p", Array.from({ length: 20 }, (_, i) => event("2026-08-" + String(i + 1).padStart(2, "0"), (i + 1) * 100)))];
+  const board = createAnalytics(snapshot(sessions)).dashboard().habit_board;
+  assert.equal(board.days.filter((day) => day.in_range).length, 365);
+  assert.equal(board.days.length % 7, 0);
+  for (const day of board.days) assert.equal(day.weekday, new Date(day.date + "T12:00:00Z").getUTCDay());
+  assert.equal(board.days.find((day) => day.date === "2026-08-24").weekday, 1);
+  assert.equal(board.days.find((day) => day.date === "2026-08-26").weekday, 3);
+  assert.equal(heatLevel(0, board.scale.thresholds, board.scale.max_total_tokens), 0);
+  assert.equal(heatLevel(2000, board.scale.thresholds, board.scale.max_total_tokens), 7);
+  let previous = 0;
+  for (let value = 1; value <= 2000; value++) {
+    const level = heatLevel(value, board.scale.thresholds, board.scale.max_total_tokens);
+    assert.ok(level >= previous && level >= 1);
+    previous = level;
+  }
+  assert.ok(board.month_labels.every((month, i, rows) => !i || month.week - rows[i - 1].week >= 3));
+});
+
+test("streaks and Monday-Friday workweek use actual calendar days", () => {
+  const rows = ["2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26"].map((day) => event(day, 100));
+  const report = createAnalytics(snapshot([session("p", rows)])).dashboard();
+  assert.equal(report.habit_board.metrics.current_streak, 6);
+  assert.equal(report.habit_board.metrics.best_streak, 6);
+  assert.equal(report.habit_board.metrics.workweek_green_days, 3);
+  const empty = createAnalytics(snapshot([])).dashboard();
+  assert.equal(empty.habit_board.metrics.current_streak, 0);
+  assert.equal(empty.habit_board.scale.max_total_tokens, 0);
+  assert.ok(empty.habit_board.days.every((day) => day.level === 0));
+});
+
+test("current Sol pricing splits cache writes, reused input, fresh input, and output once", () => {
+  const priced = priceEvent({ model: "gpt-5.6-sol", input_tokens: 1000000, cached_input_tokens: 500000,
+    cache_write_input_tokens: 200000, output_tokens: 100000, reasoning_output_tokens: 90000,
+    total_tokens: 1100000, context_input_tokens: 200000 });
+  close(priced.estimated_cost_usd, 1.2 + .2 + 1 + 2);
+  assert.equal(priced.fresh_input_tokens, 300000);
+  assert.equal(PRICING.checked_at, "2026-08-26");
+});
+
+test("long-context premium applies per request, not to cumulative daily input", () => {
+  const short = priceEvent({ ...counts(1000000), model: "gpt-5.6-sol", context_input_tokens: 272000 });
+  const long = priceEvent({ ...counts(1000000), model: "gpt-5.6-sol", context_input_tokens: 272001 });
+  assert.equal(short.rates.input, 4);
+  assert.equal(long.rates.input, 8);
+  assert.equal(long.rates.output, 30);
+  const unknown = priceEvent({ ...counts(1000000), model: "gpt-5.6-sol" });
+  assert.equal(unknown.unknown_context_tokens, 1000000);
+  assert.equal(unknown.rates.input, 4);
+});
+
+test("Arcanine, dated models, old model pricing, and unreleased Sol proxies resolve explicitly", () => {
+  assert.equal(resolveModel("arcanine").model, "gpt-5.5");
+  assert.equal(resolveModel("gpt-5.4-2026-03-05").model, "gpt-5.4");
+  assert.equal(resolveModel("unreleased-model").proxy, true);
+  assert.equal(resolveModel("gpt-5.4-secret-experiment").proxy, true);
+  const unknown = priceEvent({ ...counts(1000), model: "unreleased-model" });
+  const sol = priceEvent({ ...counts(1000), model: "gpt-5.6-sol" });
+  close(unknown.estimated_cost_usd, sol.estimated_cost_usd);
+  assert.equal(unknown.proxy_tokens, 1000);
+  assert.equal(priceEvent({ ...counts(1000), model: "gpt-5.2" }).rates.input, 1.75);
+});
+
+test("unpriceable token splits are surfaced, never silently represented as fully priced", () => {
+  const priced = priceEvent({ total_tokens: 500, input_tokens: 0, output_tokens: 0, model: "gpt-5.4" });
+  assert.equal(priced.unallocated_tokens, 500);
+  assert.equal(priced.estimated_cost_usd, 0);
+});
+
+test("old uncorrected snapshots cannot silently populate the rebuilt dashboard", () => {
+  assert.throws(() => createAnalytics({ snapshot_version: 1, sessions: [] }), /fresh count/);
+});
+
+async function withServer(callback) {
+  const temp = await mkdtemp(join(os.tmpdir(), "kj-server-"));
+  const server = createAppServer({ usageService: createUsageService({
+    codexRoot: fixtureRoot, cacheFilePath: join(temp, "cache.json"), nowProvider: fixedNow
+  }), staticRoot: publicRoot });
+  await new Promise((done) => server.listen(0, "127.0.0.1", done));
+  try { await callback("http://127.0.0.1:" + server.address().port); }
+  finally { await new Promise((done) => server.close(done)); }
+}
+
+test("GET and HEAD keep working for the app, data, and dashboard/day APIs", async () => {
+  await withServer(async (url) => {
+    for (const path of ["/", "/app.js?v=test", "/api/dashboard?days=365", "/api/day/2026-03-20"]) {
+      const response = await fetch(url + path);
+      assert.equal(response.status, 200, path);
+      assert.ok((await response.text()).length > 0);
+      const head = await fetch(url + path, { method: "HEAD" });
+      assert.equal(head.status, 200, path);
+      assert.equal(await head.text(), "");
+    }
+    const payload = await (await fetch(url + "/api/dashboard?days=365")).json();
+    assert.equal(payload.summary.total_tokens, 650);
+    const day = await (await fetch(url + "/api/day/2026-03-20?days=1")).json();
+    assert.equal(day.summary.total_tokens, 150);
+    const refresh = await (await fetch(url + "/api/refresh", { method: "POST" })).json();
+    assert.equal(refresh.ok, true);
+    assert.equal(refresh.source.reparsed_files, 6);
   });
 });
 
-test("server serves static snapshot files even with cache-busting query params", async () => {
-  await withTestServer(async ({ baseUrl }) => {
-    const response = await fetch(`${baseUrl}/data/usage-snapshot.json?ts=12345`);
+test("API rejects invalid ranges and unsupported methods with useful JSON", async () => {
+  await withServer(async (url) => {
+    for (const query of ["start_date=2026-03-20", "end_date=2026-03-20", "start_date=20-03-2026&end_date=2026-03-21",
+      "start_date=2026-03-25&end_date=2026-03-20", "start_date=2026-02-30&end_date=2026-03-01", "days=0", "days=-1", "days=invalid"]) {
+      const response = await fetch(url + "/api/dashboard?" + query);
+      assert.equal(response.status, 400, query);
+      assert.equal((await response.json()).error, "Bad request");
+    }
+    for (const method of ["PUT", "PATCH", "DELETE"]) assert.equal((await fetch(url + "/", { method })).status, 405);
+    const response = await fetch(url + "/api/dashboard?days=1&start_date=2026-03-20&end_date=2026-03-23");
     assert.equal(response.status, 200);
-    assert.match(response.headers.get("content-type") || "", /application\/json/);
-    const payload = await response.json();
-    assert.equal(payload.snapshot_version, 1);
-  });
-});
-
-test("server returns 200 for GET and HEAD on dashboard API", async () => {
-  await withTestServer(async ({ baseUrl }) => {
-    const url = `${baseUrl}/api/dashboard?days=30&workspace=all&include_subagents=1`;
-    const getResponse = await fetch(url);
-    assert.equal(getResponse.status, 200);
-    assert.match(getResponse.headers.get("content-type") || "", /application\/json/);
-    const payload = await getResponse.json();
-    assert.equal(payload.credits_mode, "none");
-    assert.equal(payload.cost_mode, "estimated");
-    assert.ok(payload.summary.estimated_cost_usd > 0);
-    assert.equal(payload.selection.mode, "preset");
-    assert.ok(Array.isArray(payload.cost_breakdown_by_model));
-    assert.ok(Array.isArray(payload.current_work_sessions));
-
-    const headResponse = await fetch(url, { method: "HEAD" });
-    assert.equal(headResponse.status, 200);
-    assert.match(headResponse.headers.get("content-type") || "", /application\/json/);
-    const headBody = await headResponse.text();
-    assert.equal(headBody, "");
-  });
-});
-
-test("server supports explicit custom ranges on dashboard API", async () => {
-  await withTestServer(async ({ baseUrl }) => {
-    const response = await fetch(
-      `${baseUrl}/api/dashboard?start_date=2026-03-21&end_date=2026-03-23&workspace=all&include_subagents=1`
-    );
-    assert.equal(response.status, 200);
-    const payload = await response.json();
-    assert.equal(payload.selection.mode, "custom");
-    assert.equal(payload.range.start_date, "2026-03-21");
-    assert.equal(payload.range.end_date, "2026-03-23");
-    assert.equal(payload.summary.total_tokens, 450);
-  });
-});
-
-test("server returns 200 for HEAD on day API", async () => {
-  await withTestServer(async ({ baseUrl }) => {
-    const response = await fetch(
-      `${baseUrl}/api/day/2026-03-23?days=365&workspace=all&include_subagents=1`,
-      { method: "HEAD" }
-    );
-    assert.equal(response.status, 200);
-    assert.match(response.headers.get("content-type") || "", /application\/json/);
-    assert.equal(await response.text(), "");
-  });
-});
-
-test("server returns 400 for invalid date range params", async () => {
-  await withTestServer(async ({ baseUrl }) => {
-    const missingEnd = await fetch(
-      `${baseUrl}/api/dashboard?start_date=2026-03-21&workspace=all&include_subagents=1`
-    );
-    assert.equal(missingEnd.status, 400);
-    assert.equal((await missingEnd.json()).error, "Bad request");
-
-    const reversed = await fetch(
-      `${baseUrl}/api/dashboard?start_date=2026-03-24&end_date=2026-03-21&workspace=all&include_subagents=1`
-    );
-    assert.equal(reversed.status, 400);
-    assert.equal((await reversed.json()).error, "Bad request");
-
-    const invalidDay = await fetch(`${baseUrl}/api/day/not-a-date?days=30&workspace=all&include_subagents=1`);
-    assert.equal(invalidDay.status, 400);
-    assert.equal((await invalidDay.json()).error, "Bad request");
-  });
-});
-
-test("server keeps unsupported methods at 405", async () => {
-  await withTestServer(async ({ baseUrl }) => {
-    const response = await fetch(`${baseUrl}/`, { method: "PUT" });
-    assert.equal(response.status, 405);
-    const payload = await response.json();
-    assert.equal(payload.error, "Method not allowed");
+    const data = await response.json();
+    assert.equal(data.selection.mode, "custom");
+    assert.equal(data.summary.total_tokens, 600);
   });
 });

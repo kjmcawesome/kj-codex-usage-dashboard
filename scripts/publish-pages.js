@@ -1,4 +1,5 @@
-import { cp, mkdir, readdir, rm } from "node:fs/promises";
+import { cp, mkdir, readdir, readFile, rm } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFile } from "node:child_process";
@@ -68,7 +69,7 @@ async function clearWorktree() {
 
 async function copyDistToWorktree() {
   const entries = await readdir(distRoot, { withFileTypes: true });
-  await Promise.all(entries.map((entry) =>
+  await Promise.all(entries.filter((entry) => !["server", ".openai"].includes(entry.name)).map((entry) =>
     cp(join(distRoot, entry.name), join(worktreeRoot, entry.name), { recursive: true })
   ));
 }
@@ -111,8 +112,26 @@ async function cleanupWorktree() {
   }
 }
 
-export async function publishPages() {
-  const exportResult = await exportStaticSite();
+export async function publishPages({ prepared = false, ...options } = {}) {
+  const { stdout: dirtySource } = await runGit(["status", "--porcelain", "--untracked-files=no"]);
+  const { stdout: newSource } = await runGit(["ls-files", "--others", "--exclude-standard", "--", "lib", "public", "scripts", "config"]);
+  if (dirtySource.trim() || newSource.trim()) {
+    throw new Error("Dashboard changes are being tested. Keeping the last published version until the source is committed.");
+  }
+  let exportResult;
+  if (prepared) {
+    const build = JSON.parse(await readFile(join(distRoot, "data", "build-info.json"), "utf8"));
+    const { stdout: head } = await runGit(["rev-parse", "HEAD"]);
+    const content = await readFile(join(distRoot, "data", "usage-snapshot.json"));
+    if (build.source_commit !== head.trim() || build.snapshot_sha256 !== createHash("sha256").update(content).digest("hex")) {
+      throw new Error("The prepared site does not match the committed source or checked snapshot. Rebuild before publishing.");
+    }
+    const snapshot = JSON.parse(content);
+    exportResult = { generated_at: snapshot.generated_at, session_count: snapshot.sessions.length,
+      workspace_count: snapshot.workspaces.length, dist_root: distRoot };
+  } else {
+    exportResult = await exportStaticSite(options);
+  }
 
   try {
     await ensureWorktree();
@@ -131,7 +150,7 @@ export async function publishPages() {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   try {
-    const result = await publishPages();
+    const result = await publishPages({ prepared: process.argv.includes("--prepared") });
     if (result.pushed) {
       console.log(`Published snapshot to ${result.branch}`);
     } else {
