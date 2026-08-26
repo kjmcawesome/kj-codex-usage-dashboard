@@ -1,1682 +1,300 @@
-import {
-  buildDashboardPayload,
-  buildDayPayload
-} from "./dashboard-metrics.js";
+import { createAnalytics, validDate, dayInZone } from "./analytics.js";
+import { PRICING } from "./pricing.js";
+import { loadPublishedSnapshot, refreshUsage } from "./refresh-client.js";
+import { FILLS, tokens, exact, money, escape as e, dateLabel, rangeLabel,
+  renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderBreakdown } from "./view.js";
 
-const RANGE_OPTIONS = [
-  { label: "30d", value: 30 },
-  { label: "90d", value: 90 },
-  { label: "365d", value: 365 },
-  { label: "All", value: "all" }
-];
-
-const DEFAULT_DAYS = 30;
-const WEEKDAY_LABELS = [
-  { label: "Mon", row: 3 },
-  { label: "Wed", row: 5 },
-  { label: "Fri", row: 7 }
-];
-const REFRESH_HELPER_URL = "http://127.0.0.1:3185";
-const REFRESH_FORCE_LABEL = "Refresh";
-const REFRESH_REBUILDING_LABEL = "Refreshing...";
-const REFRESH_WAITING_LABEL = "Publishing update...";
-const REFRESH_POLL_INTERVAL_MS = 2500;
-const REFRESH_POLL_TIMEOUT_MS = 60000;
-const MOBILE_BREAKPOINT = 760;
+const $ = (id) => document.getElementById(id);
+const RELEASE = "work-cost-3";
 const state = {
-  rangeMode: "preset",
-  days: DEFAULT_DAYS,
-  startDate: null,
-  endDate: null,
-  workspace: "all",
-  includeSubagents: true,
-  projectSort: "tokens",
-  selectedDate: null,
-  snapshot: null,
-  snapshotNow: null,
-  dashboard: null,
-  directDashboard: null,
-  datePicker: null,
-  shouldResetHeatmapViewport: true,
-  refreshHelperAvailable: false,
-  refreshHelperUrl: null
+  snapshot: null, analysis: null, report: null, params: readUrl(), sort: "cost",
+  search: "", limit: 12, selectedDay: null, detailStack: [], boardKey: null,
+  returnFocus: null, refreshing: false, source: "published", annotations: {}
 };
 
-const elements = {
-  lastRefresh: document.querySelector("#last-refresh"),
-  sourceNote: document.querySelector("#source-note"),
-  heroProgressLabel: document.querySelector("#hero-progress-label"),
-  heroProgressNote: document.querySelector("#hero-progress-note"),
-  heroProgressValue: document.querySelector("#hero-progress-value"),
-  heroProgressFoot: document.querySelector("#hero-progress-foot"),
-  heroProgressFill: document.querySelector("#hero-progress-fill"),
-  selectedRangeTitle: document.querySelector("#selected-range-title"),
-  selectedRangeNote: document.querySelector("#selected-range-note"),
-  rangeChips: document.querySelector("#range-chips"),
-  customRangeButton: document.querySelector("#custom-range-button"),
-  customRangeInput: document.querySelector("#custom-range-input"),
-  activeRangePill: document.querySelector("#active-range-pill"),
-  mobileSelectionSummary: document.querySelector("#mobile-selection-summary"),
-  mobileFiltersButton: document.querySelector("#mobile-filters-button"),
-  mobileFiltersSheet: document.querySelector("#mobile-filters-sheet"),
-  mobileFiltersBackdrop: document.querySelector("#mobile-filters-backdrop"),
-  mobileFiltersClose: document.querySelector("#mobile-filters-close"),
-  workspaceFilter: document.querySelector("#workspace-filter"),
-  subagentToggle: document.querySelector("#subagent-toggle"),
-  refreshButton: document.querySelector("#refresh-button"),
-  summaryTotal: document.querySelector("#summary-total"),
-  summaryTotalFoot: document.querySelector("#summary-total-foot"),
-  summaryCost: document.querySelector("#summary-cost"),
-  summaryCostFoot: document.querySelector("#summary-cost-foot"),
-  summaryDays: document.querySelector("#summary-days"),
-  summaryDaysFoot: document.querySelector("#summary-days-foot"),
-  summaryBurst: document.querySelector("#summary-burst"),
-  summaryBurstFoot: document.querySelector("#summary-burst-foot"),
-  projectUsageSection: document.querySelector("#project-usage-section"),
-  projectUsageNote: document.querySelector("#project-usage-note"),
-  projectImpactSummary: document.querySelector("#project-impact-summary"),
-  projectUsageList: document.querySelector("#project-usage-list"),
-  modelCostTotal: document.querySelector("#model-cost-total"),
-  modelCostList: document.querySelector("#model-cost-list"),
-  projectSortButtons: document.querySelectorAll(".project-sort-button"),
-  costNote: document.querySelector("#cost-note"),
-  costBreakdownBody: document.querySelector("#cost-breakdown-body"),
-  costBreakdownFoot: document.querySelector("#cost-breakdown-foot"),
-  heatmapSummary: document.querySelector("#heatmap-summary"),
-  heatmapWeekdays: document.querySelector("#heatmap-weekdays"),
-  heatmapShell: document.querySelector(".heatmap-shell"),
-  heatmapMonths: document.querySelector("#heatmap-months"),
-  heatmapGrid: document.querySelector("#heatmap-grid"),
-  todayStatusPill: document.querySelector("#today-status-pill"),
-  todayStatusHeadline: document.querySelector("#today-status-headline"),
-  todayStatusNote: document.querySelector("#today-status-note"),
-  habitCurrentStreak: document.querySelector("#habit-current-streak"),
-  habitCurrentNote: document.querySelector("#habit-current-note"),
-  habitBestStreak: document.querySelector("#habit-best-streak"),
-  habitBestNote: document.querySelector("#habit-best-note"),
-  habitWorkweek: document.querySelector("#habit-workweek"),
-  habitWorkweekNote: document.querySelector("#habit-workweek-note"),
-  costToday: document.querySelector("#cost-today"),
-  costTodayFoot: document.querySelector("#cost-today-foot"),
-  cost14d: document.querySelector("#cost-14d"),
-  cost14dFoot: document.querySelector("#cost-14d-foot"),
-  costMonth: document.querySelector("#cost-month"),
-  costMonthFoot: document.querySelector("#cost-month-foot"),
-  trendTotalTokens: document.querySelector("#trend-total-tokens"),
-  trendTotalCost: document.querySelector("#trend-total-cost"),
-  trendSparkline: document.querySelector("#trend-sparkline"),
-  threadTable: document.querySelector("#thread-table"),
-  dayTitle: document.querySelector("#day-title"),
-  dayTotal: document.querySelector("#day-total"),
-  dayCost: document.querySelector("#day-cost"),
-  dayInput: document.querySelector("#day-input"),
-  dayCached: document.querySelector("#day-cached"),
-  dayOutput: document.querySelector("#day-output"),
-  dayReasoning: document.querySelector("#day-reasoning"),
-  daySessions: document.querySelector("#day-sessions"),
-  dayOutcomeSummary: document.querySelector("#day-outcome-summary"),
-  dayCostNote: document.querySelector("#day-cost-note"),
-  daySessionList: document.querySelector("#day-session-list"),
-  dayDrawerShell: document.querySelector("#day-drawer-shell"),
-  dayDrawerBackdrop: document.querySelector("#day-drawer-backdrop"),
-  dayDrawerClose: document.querySelector("#day-drawer-close")
-};
-
-function formatCompactNumber(value) {
-  return new Intl.NumberFormat("en-US", {
-    notation: "compact",
-    maximumFractionDigits: value >= 1000000 ? 1 : 0
-  }).format(value || 0);
-}
-
-function formatFullNumber(value) {
-  return (value || 0).toLocaleString("en-US");
-}
-
-function formatPercent(value) {
-  return `${Math.round((value || 0) * 100)}%`;
-}
-
-function formatSignedPercent(value) {
-  if (value === null || Number.isNaN(value)) {
-    return "—";
-  }
-
-  const rounded = Math.round(value * 100);
-  return `${rounded > 0 ? "+" : ""}${rounded}%`;
-}
-
-function formatUsd(value) {
-  const amount = value || 0;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: amount > 0 && amount < 1 ? 2 : 0,
-    maximumFractionDigits: amount >= 100 ? 0 : 2
-  }).format(amount);
-}
-
-function formatRate(value) {
-  const amount = value || 0;
-  return `${new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: amount > 0 && amount < 1 ? 2 : 0,
-    maximumFractionDigits: amount >= 100 ? 0 : 2
-  }).format(amount)}/1M`;
-}
-
-function formatCompactUsd(value) {
-  return formatUsd(value || 0);
-}
-
-function formatAxisUsd(value) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(value || 0);
-}
-
-function formatDate(value) {
-  return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-}
-
-function formatCountLabel(value, singular, plural = `${singular}s`) {
-  return `${value} ${value === 1 ? singular : plural}`;
-}
-
-function formatComparisonFootline(changePct, label) {
-  if (changePct === null || Number.isNaN(changePct)) {
-    return `No prior comparison · ${label}`;
-  }
-
-  return `${formatSignedPercent(changePct)} vs ${label}`;
-}
-
-function formatAxisTokens(value) {
-  if (value >= 1000000000) {
-    return `${(value / 1000000000).toFixed(1)}B`;
-  }
-  if (value >= 1000000) {
-    return `${(value / 1000000).toFixed(value >= 100000000 ? 0 : 1)}M`;
-  }
-  if (value >= 1000) {
-    return `${Math.round(value / 1000)}K`;
-  }
-  return String(Math.round(value));
-}
-
-function formatTrendDayLabel(value) {
-  return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric"
-  });
-}
-
-function formatTrendDayShort(value) {
-  return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
-    weekday: "short"
-  });
-}
-
-function formatTrendDayNumber(value) {
-  return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric"
-  });
-}
-
-function buildEstimatedCostNote(unpricedTotalTokens) {
-  if (unpricedTotalTokens > 0) {
-    return `Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend. ${formatFullNumber(unpricedTotalTokens)} tokens from unreleased or unidentified models are estimated using GPT-5.6 Sol pricing.`;
-  }
-
-  return "Estimated cost uses published Codex and API pricing as a directional planning lens, not billed spend.";
-}
-
-function todayDate(now = new Date()) {
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-}
-
-function addDays(date, days) {
-  const copy = new Date(date);
-  copy.setDate(copy.getDate() + days);
-  return copy;
-}
-
-function buildStreakStartDate(streakCount) {
-  if (!streakCount) {
-    return null;
-  }
-
-  return dateKeyFromDate(addDays(todayDate(state.snapshotNow), -(streakCount - 1)));
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function isGeneratedSessionName(value) {
-  return /^019[a-f0-9-]{20,}$/i.test(String(value || "").trim());
-}
-
-function meaningfulWorkflowName(item) {
-  const parentName = (item.parent_thread_name || "").trim();
-  if (item.is_subagent && parentName && !isGeneratedSessionName(parentName)) {
-    return `Helper task for ${parentName}`;
-  }
-
-  const threadName = (item.thread_name || "").trim();
-  if (threadName && !isGeneratedSessionName(threadName)) {
-    return threadName;
-  }
-
-  if (item.is_subagent) {
-    return "Unnamed parallel helper task";
-  }
-
-  return threadName ? `Unnamed workflow ${threadName.slice(0, 8)}` : "Untitled workflow";
-}
-
-function formatWorkflowName(item) {
-  return meaningfulWorkflowName(item);
-}
-
-function formatWorkflowContext(item) {
-  const parts = [];
-  if (item.workspace_label) {
-    parts.push(item.workspace_label);
-  }
-  if (item.is_subagent) {
-    parts.push("Parallel helper task");
-  }
-  if (item.agent_nickname) {
-    parts.push(`Agent: ${item.agent_nickname}`);
-  }
-  if (item.is_subagent && item.parent_thread_name && !isGeneratedSessionName(item.parent_thread_name)) {
-    parts.push(`Parent: ${item.parent_thread_name}`);
-  }
-  return parts.join(" · ") || "Workflow";
-}
-
-function formatProjectName(project) {
-  return project.project_label || project.workspace_label || project.workspace_key || "Unknown project";
-}
-
-function renderIcons() {
-  if (window.lucide?.createIcons) {
-    window.lucide.createIcons();
-  }
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
-}
-
-function isMobileViewport() {
-  return window.innerWidth <= MOBILE_BREAKPOINT;
-}
-
-function openMobileFilters() {
-  if (!isMobileViewport()) {
-    return;
-  }
-
-  document.body.classList.add("mobile-filters-open");
-  elements.mobileFiltersSheet?.setAttribute("aria-hidden", "false");
-  elements.mobileFiltersButton?.setAttribute("aria-expanded", "true");
-}
-
-function closeMobileFilters() {
-  document.body.classList.remove("mobile-filters-open");
-  elements.mobileFiltersSheet?.setAttribute("aria-hidden", "true");
-  elements.mobileFiltersButton?.setAttribute("aria-expanded", "false");
-}
-
-function buildMobileSelectionSummary(dashboard) {
-  const workspaceLabel = state.workspace === "all"
-    ? "All workspaces"
-    : (elements.workspaceFilter.selectedOptions[0]?.textContent || "Filtered workspace");
-
-  return [
-    dashboard.selection.label,
-    workspaceLabel,
-    state.includeSubagents ? "Subagents on" : "Subagents off"
-  ].join(" · ");
-}
-
-function isPublicPagesSite() {
-  return window.location.hostname === "kjmcawesome.github.io";
-}
-
-function isHostedSitesDashboard() {
-  return window.location.hostname === "kj-codex-usage-dashboard.openai.chatgpt.site";
-}
-
-function setRefreshButtonLabel(label, title) {
-  elements.refreshButton.textContent = label;
-  elements.refreshButton.title = title;
-}
-
-function syncRefreshButtonMode() {
-  if (elements.refreshButton.disabled) {
-    return;
-  }
-
-  if (isPublicPagesSite()) {
-    setRefreshButtonLabel(
-      REFRESH_FORCE_LABEL,
-      "Rebuild from local Codex logs and publish a fresh dashboard snapshot"
-    );
-    return;
-  }
-
-  if (isHostedSitesDashboard()) {
-    setRefreshButtonLabel(
-      REFRESH_FORCE_LABEL,
-      state.refreshHelperAvailable
-        ? "Rebuild from your local Codex logs and immediately refresh this dashboard"
-        : "Reload the latest published dashboard snapshot"
-    );
-    return;
-  }
-
-  setRefreshButtonLabel(
-    REFRESH_FORCE_LABEL,
-    state.refreshHelperAvailable
-      ? "Rebuild from local Codex logs and publish a fresh dashboard snapshot"
-      : "Reload the latest local dashboard snapshot. Start the helper to publish updates."
-  );
-}
-
-function launchRefreshBridge() {
-  const bridgeUrl = new URL("/bridge", `${REFRESH_HELPER_URL}/`);
-  bridgeUrl.searchParams.set("return_to", window.location.href);
-
-  const bridgeWindow = window.open(
-    bridgeUrl.toString(),
-    "kj-codex-usage-refresh",
-    "popup,width=540,height=720"
-  );
-
-  if (!bridgeWindow) {
-    window.location.assign(bridgeUrl.toString());
-  }
-}
-
-async function probeRefreshHelper() {
-  try {
-    const response = await fetch(`${REFRESH_HELPER_URL}/status`, {
-      cache: "no-store",
-      mode: "cors"
-    });
-
-    if (!response.ok) {
-      throw new Error(`Refresh helper probe failed: ${response.status}`);
-    }
-
-    state.refreshHelperAvailable = true;
-    state.refreshHelperUrl = REFRESH_HELPER_URL;
-  } catch {
-    state.refreshHelperAvailable = false;
-    state.refreshHelperUrl = null;
-  } finally {
-    syncRefreshButtonMode();
-  }
-}
-
-function setDayDrawerOpen(open) {
-  elements.dayDrawerShell?.classList.toggle("is-open", open);
-  elements.dayDrawerShell?.setAttribute("aria-hidden", open ? "false" : "true");
-  document.body.classList.toggle("day-drawer-open", open);
-}
-
-async function waitForSnapshotGeneration(targetGeneratedAt, timeoutMs) {
-  const targetTime = new Date(targetGeneratedAt).getTime();
-  const deadline = Date.now() + timeoutMs;
-
-  while (Date.now() <= deadline) {
-    await loadDashboard(true, { suppressButtonToggle: true });
-    const currentTime = new Date(state.dashboard?.generated_at || 0).getTime();
-    if (currentTime >= targetTime) {
-      return true;
-    }
-
-    await sleep(REFRESH_POLL_INTERVAL_MS);
-  }
-
-  return false;
-}
-
-async function forceRefreshViaHelper() {
-  if (!state.refreshHelperAvailable || !state.refreshHelperUrl) {
-    state.shouldResetHeatmapViewport = true;
-    await loadDashboard(true, { suppressButtonToggle: true });
-    return;
-  }
-
-  setRefreshButtonLabel(
-    REFRESH_REBUILDING_LABEL,
-    "Rebuilding from local Codex logs and publishing the result"
-  );
-
-  const response = await fetch(`${state.refreshHelperUrl}/refresh`, {
-    method: "POST",
-    mode: "cors",
-    cache: "no-store"
-  });
-
-  if (!response.ok) {
-    const payload = await response.json().catch(() => ({}));
-    throw new Error(payload.detail || payload.error || `Refresh helper failed: ${response.status}`);
-  }
-
-  const payload = await response.json();
-
-  try {
-    const snapshot = await fetchJson(`${state.refreshHelperUrl}/snapshot?ts=${Date.now()}`, {
-      mode: "cors",
-      cache: "no-store"
-    });
-    state.snapshot = snapshot;
-    state.snapshotNow = new Date(snapshot.generated_at);
-    state.shouldResetHeatmapViewport = true;
-    await loadDashboard(false, { suppressButtonToggle: true });
-    return;
-  } catch {
-    // Older helper versions may not expose the snapshot until hosting catches up.
-  }
-
-  setRefreshButtonLabel(
-    REFRESH_WAITING_LABEL,
-    payload.pushed
-      ? "Waiting for the published snapshot to become visible on the static site"
-      : "Waiting for the rebuilt snapshot to be visible"
-  );
-
-  const observed = await waitForSnapshotGeneration(
-    payload.generated_at,
-    payload.pushed ? REFRESH_POLL_TIMEOUT_MS : 10000
-  );
-
-  if (!observed) {
-    await loadDashboard(true, { suppressButtonToggle: true });
-  }
-}
-
-async function refreshHostedDashboard() {
-  if (!state.refreshHelperAvailable || !state.refreshHelperUrl) {
-    setRefreshButtonLabel(REFRESH_REBUILDING_LABEL, "Loading the latest published dashboard snapshot");
-    state.shouldResetHeatmapViewport = true;
-    await loadDashboard(true, { suppressButtonToggle: true });
-    return;
-  }
-
-  setRefreshButtonLabel(REFRESH_REBUILDING_LABEL, "Rebuilding usage from your local Codex logs");
-  await fetchJson(`${state.refreshHelperUrl}/refresh?publish=0`, {
-    method: "POST",
-    mode: "cors",
-    cache: "no-store"
-  });
-
-  const snapshot = await fetchJson(`${state.refreshHelperUrl}/snapshot?ts=${Date.now()}`, {
-    mode: "cors",
-    cache: "no-store"
-  });
-  state.snapshot = snapshot;
-  state.snapshotNow = new Date(snapshot.generated_at);
-  state.shouldResetHeatmapViewport = true;
-  await loadDashboard(false, { suppressButtonToggle: true });
-}
-
-async function forceRefreshLocally() {
-  setRefreshButtonLabel(
-    REFRESH_REBUILDING_LABEL,
-    "Rebuilding from local Codex logs"
-  );
-
-  await fetchJson("/api/refresh", {
-    method: "POST",
-    cache: "no-store"
-  });
-
-  state.shouldResetHeatmapViewport = true;
-  await loadDashboard(true, { suppressButtonToggle: true });
-}
-
-function isDateKey(value) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) {
-    return false;
-  }
-
-  const [year, month, day] = value.split("-").map(Number);
-  const parsed = new Date(Date.UTC(year, month - 1, day));
-  return parsed.getUTCFullYear() === year
-    && parsed.getUTCMonth() === month - 1
-    && parsed.getUTCDate() === day;
-}
-
-function dateKeyFromDate(date) {
-  return [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, "0"),
-    String(date.getDate()).padStart(2, "0")
-  ].join("-");
-}
-
-function parseBooleanFlag(value, defaultValue = true) {
-  if (value == null) {
-    return defaultValue;
-  }
-
-  return value !== "0" && value !== "false";
-}
-
-function initializeStateFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const startDate = params.get("start_date");
-  const endDate = params.get("end_date");
-
-  if (startDate && endDate && isDateKey(startDate) && isDateKey(endDate) && startDate <= endDate) {
-    state.rangeMode = "custom";
-    state.startDate = startDate;
-    state.endDate = endDate;
-  } else {
-    const daysParam = params.get("days");
-    const parsedDays = daysParam && daysParam.toLowerCase() === "all"
-      ? "all"
-      : Number(daysParam || DEFAULT_DAYS);
-    state.rangeMode = "preset";
-    state.days = parsedDays === "all" || Number.isFinite(parsedDays) ? parsedDays : DEFAULT_DAYS;
-    state.startDate = null;
-    state.endDate = null;
-  }
-
-  state.workspace = params.get("workspace") || "all";
-  state.includeSubagents = parseBooleanFlag(params.get("include_subagents"), true);
-  elements.subagentToggle.checked = state.includeSubagents;
-}
-
-function buildQueryString() {
-  const query = new URLSearchParams();
-
-  if (state.rangeMode === "custom" && state.startDate && state.endDate) {
-    query.set("start_date", state.startDate);
-    query.set("end_date", state.endDate);
-  } else {
-    query.set("days", String(state.days));
-  }
-
-  query.set("workspace", state.workspace);
-  query.set("include_subagents", state.includeSubagents ? "1" : "0");
-  return query.toString();
-}
-
-function syncUrl() {
-  const queryString = buildQueryString();
-  const nextUrl = `${window.location.pathname}?${queryString}`;
-  window.history.replaceState({}, "", nextUrl);
-}
-
-async function fetchJson(path, options) {
-  const response = await fetch(path, options);
-  if (!response.ok) {
-    const payload = await response.json().catch(() => ({}));
-    throw new Error(payload.detail || payload.error || `Request failed: ${response.status}`);
-  }
-  return response.json();
-}
-
-async function loadSnapshot(forceReload = false) {
-  const snapshotUrl = new URL("data/usage-snapshot.json", document.baseURI);
-  if (forceReload) {
-    snapshotUrl.searchParams.set("ts", String(Date.now()));
-  }
-
-  const snapshot = await fetchJson(snapshotUrl.toString(), {
-    cache: forceReload ? "no-store" : "default"
-  });
-  state.snapshot = snapshot;
-  state.snapshotNow = new Date(snapshot.generated_at);
-  return snapshot;
-}
-
-function updateRangeSelectionLabel(label) {
-  elements.activeRangePill.textContent = label;
-  elements.activeRangePill.title = label;
-}
-
-function renderRangeControls() {
-  elements.rangeChips.innerHTML = "";
-
-  for (const option of RANGE_OPTIONS) {
-    const isActive = state.rangeMode === "preset" && state.days === option.value;
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `chip${isActive ? " is-active" : ""}`;
-    button.textContent = option.label;
-    button.addEventListener("click", () => {
-      if (state.rangeMode === "preset" && state.days === option.value) {
-        return;
-      }
-
-      state.rangeMode = "preset";
-      state.days = option.value;
-      state.startDate = null;
-      state.endDate = null;
-      syncUrl();
-      syncDatePicker(null);
-      renderRangeControls();
-      closeMobileFilters();
-      loadDashboard();
-    });
-    elements.rangeChips.append(button);
-  }
-
-  elements.customRangeButton.classList.toggle("is-active", state.rangeMode === "custom");
-}
-
-function renderHabitRail(dashboard) {
-  const metrics = dashboard.habit_metrics;
-  const todayStatusLabel = metrics.today_has_usage ? "Lit today" : "Not lit yet";
-  elements.todayStatusPill.textContent = todayStatusLabel;
-  elements.todayStatusPill.classList.toggle("is-live", metrics.today_has_usage);
-  elements.todayStatusPill.classList.toggle("is-idle", !metrics.today_has_usage);
-
-  if (metrics.today_has_usage) {
-    elements.todayStatusHeadline.textContent = `${formatCompactNumber(metrics.today_tokens)} tokens so far today`;
-    elements.todayStatusNote.textContent = metrics.current_streak > 1
-      ? `${formatCompactUsd(metrics.today_estimated_cost_usd)} est. cost · ${formatCountLabel(metrics.current_streak, "day")} streak is live`
-      : `${formatCompactUsd(metrics.today_estimated_cost_usd)} est. cost · streak is live`;
-  } else {
-    elements.todayStatusHeadline.textContent = "One workflow starts the streak";
-    elements.todayStatusNote.textContent = "No usage yet today. Light up today's square.";
-  }
-
-  const streakStartDate = buildStreakStartDate(metrics.current_streak);
-  elements.habitCurrentStreak.textContent = formatFullNumber(metrics.current_streak);
-  elements.habitCurrentNote.textContent = streakStartDate
-    ? `Live since ${formatDate(streakStartDate)}`
-    : "Start with one active day";
-  elements.habitBestStreak.textContent = formatFullNumber(metrics.best_streak);
-  elements.habitBestNote.textContent = metrics.best_streak > 0
-    ? "Best run in the last 365 days"
-    : "No streak on the board yet";
-  elements.habitWorkweek.textContent = `${metrics.workweek_green_days}/${metrics.workweek_goal}`;
-  const workweekRemaining = Math.max(metrics.workweek_goal - metrics.workweek_green_days, 0);
-  elements.habitWorkweekNote.textContent = workweekRemaining === 0
-    ? "Workweek goal hit"
-    : `${workweekRemaining} active day${workweekRemaining === 1 ? "" : "s"} to go`;
-}
-
-function renderInsightCosts(dashboard) {
-  const snapshots = dashboard.snapshot_windows;
-  const lastThirty = snapshots.trailing_30d;
-
-  elements.costToday.textContent = formatUsd(snapshots.today.estimated_cost_usd);
-  elements.costToday.title = `${formatUsd(snapshots.today.estimated_cost_usd)} estimated cost`;
-  elements.costTodayFoot.textContent = `${formatCompactNumber(snapshots.today.total_tokens)} tokens today`;
-  elements.costTodayFoot.title = formatFullNumber(snapshots.today.total_tokens);
-
-  elements.cost14d.textContent = formatUsd(lastThirty.estimated_cost_usd);
-  elements.cost14d.title = `${formatUsd(lastThirty.estimated_cost_usd)} estimated cost`;
-  elements.cost14dFoot.textContent = `${formatCompactNumber(lastThirty.total_tokens)} tokens over 30 days`;
-  elements.cost14dFoot.title = formatFullNumber(lastThirty.total_tokens);
-
-  elements.costMonth.textContent = formatUsd(snapshots.month_to_date.estimated_cost_usd);
-  elements.costMonth.title = `${formatUsd(snapshots.month_to_date.estimated_cost_usd)} estimated cost`;
-  elements.costMonthFoot.textContent = `${formatCompactNumber(snapshots.month_to_date.total_tokens)} tokens · ${formatComparisonFootline(
-    snapshots.month_to_date.cost_change_pct,
-    "same point last month"
-  )}`;
-  elements.costMonthFoot.title = formatFullNumber(snapshots.month_to_date.total_tokens);
-}
-
-function renderHeroProgress(dashboard) {
-  const boardDays = dashboard.habit_board?.days || [];
-  const metrics = dashboard.habit_metrics || {};
-  const now = todayDate(state.snapshotNow || new Date());
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const elapsedDays = Math.max(1, Math.round((now - monthStart) / 86400000) + 1);
-  const activeDaysThisMonth = boardDays.filter((day) => {
-    if (!day?.date) {
-      return false;
-    }
-
-    const date = new Date(`${day.date}T12:00:00`);
-    return date >= monthStart && date <= now && (day.total_tokens || 0) > 0;
-  }).length;
-  const ratio = elapsedDays ? activeDaysThisMonth / elapsedDays : 0;
-
-  elements.heroProgressLabel.textContent = "Monthly tokenmaxxing pace";
-  elements.heroProgressNote.textContent = metrics.today_has_usage
-    ? "Days this month with any Codex usage so far. Keep the squares lit."
-    : "No usage yet today. One workflow adds another square to the month.";
-  elements.heroProgressValue.textContent = `${activeDaysThisMonth} / ${elapsedDays} days`;
-  elements.heroProgressFoot.textContent = `${formatPercent(ratio)} active so far this month`;
-  elements.heroProgressFill.style.width = `${Math.max(ratio > 0 ? 6 : 0, Math.round(ratio * 100))}%`;
-  elements.heroProgressFill.title = `${activeDaysThisMonth} active days out of ${elapsedDays} elapsed this month`;
-}
-
-function renderSummary(dashboard) {
-  elements.lastRefresh.textContent = new Date(dashboard.generated_at).toLocaleString();
-  elements.sourceNote.textContent = `${formatDate(dashboard.habit_board.start_date)} - ${formatDate(dashboard.habit_board.end_date)}`;
-  elements.selectedRangeTitle.textContent = dashboard.selection.label;
-  elements.selectedRangeNote.textContent = "Choose the window and workspace behind the projects and workflows.";
-  elements.summaryTotal.textContent = formatCompactNumber(dashboard.summary.total_tokens);
-  elements.summaryTotal.title = formatFullNumber(dashboard.summary.total_tokens);
-  elements.summaryTotalFoot.textContent = `${dashboard.selection.label} · ${formatCountLabel(dashboard.summary.active_days, "active day")}`;
-  elements.summaryCost.textContent = formatUsd(dashboard.summary.estimated_cost_usd);
-  elements.summaryCost.title = formatUsd(dashboard.summary.estimated_cost_usd);
-  elements.summaryCostFoot.textContent = `${formatCountLabel(dashboard.summary.sessions, "workflow")} in range`;
-  elements.summaryDays.textContent = formatFullNumber(dashboard.project_usage?.length || 0);
-  elements.summaryDays.title = formatCountLabel(dashboard.project_usage?.length || 0, "active project");
-  elements.summaryDaysFoot.textContent = formatCountLabel(dashboard.summary.sessions || 0, "workflow");
-  const rangeComparison = dashboard.range_comparison;
-  elements.summaryBurst.textContent = rangeComparison.token_change_pct !== null
-    ? formatSignedPercent(rangeComparison.token_change_pct)
-    : "—";
-  elements.summaryBurst.title = rangeComparison.available
-    ? `${formatFullNumber(dashboard.summary.total_tokens)} tokens vs ${formatFullNumber(rangeComparison.previous_total_tokens)} in ${rangeComparison.label}`
-    : rangeComparison.label;
-  elements.summaryBurstFoot.textContent = rangeComparison.available
-    ? `${rangeComparison.cost_change_pct !== null ? `Cost ${formatSignedPercent(rangeComparison.cost_change_pct)}` : "No prior cost comparison"} · ${rangeComparison.label}`
-    : rangeComparison.label;
-  elements.costNote.textContent = buildEstimatedCostNote(dashboard.summary.unpriced_total_tokens);
-  updateRangeSelectionLabel(dashboard.selection.label);
-  elements.mobileSelectionSummary.textContent = buildMobileSelectionSummary(dashboard);
-  elements.mobileSelectionSummary.title = elements.mobileSelectionSummary.textContent;
-  renderHeroProgress(dashboard);
-}
-
-function renderWorkspaceFilter(dashboard) {
-  const previousValue = state.workspace;
-  elements.workspaceFilter.innerHTML = '<option value="all">All workspaces</option>';
-
-  for (const workspace of dashboard.workspaces) {
-    const option = document.createElement("option");
-    option.value = workspace.workspace_key;
-    option.textContent = workspace.workspace_label;
-    elements.workspaceFilter.append(option);
-  }
-
-  const availableValues = new Set(["all", ...dashboard.workspaces.map((workspace) => workspace.workspace_key)]);
-  state.workspace = availableValues.has(previousValue) ? previousValue : "all";
-  elements.workspaceFilter.value = state.workspace;
-}
-
-function renderWeekdayLabels() {
-  elements.heatmapWeekdays.innerHTML = "";
-
-  for (const { label, row } of WEEKDAY_LABELS) {
-    const span = document.createElement("span");
-    span.className = "weekday-label";
-    span.textContent = label;
-    span.style.gridRow = String(row);
-    elements.heatmapWeekdays.append(span);
-  }
-}
-
-function buildHeatmapHeadline(dashboard) {
-  const totalTokens = dashboard.habit_board.days.reduce((sum, day) =>
-    sum + (day.in_range ? (day.total_tokens || 0) : 0), 0
-  );
-  const totalCost = dashboard.habit_board.days.reduce((sum, day) =>
-    sum + (day.in_range ? (day.estimated_cost_usd || 0) : 0), 0
-  );
-
-  return `${formatFullNumber(totalTokens)} tokens · ${formatUsd(totalCost)} est. cost across the last 365 days`;
-}
-
-function heatmapWeekWidth() {
-  const styles = window.getComputedStyle(elements.heatmapGrid);
-  const cellSize = parseFloat(styles.gridAutoColumns) || parseFloat(styles.getPropertyValue("--cell-size")) || 14;
-  const gap = parseFloat(styles.columnGap || styles.gap) || 4;
-  return cellSize + gap;
-}
-
-function resetHeatmapViewportIfNeeded() {
-  if (!state.shouldResetHeatmapViewport) {
-    return;
-  }
-
-  state.shouldResetHeatmapViewport = false;
-  const applyViewport = () => {
-    const shell = elements.heatmapShell;
-    if (!shell) {
-      return;
-    }
-
-    const maxScrollLeft = Math.max(shell.scrollWidth - shell.clientWidth, 0);
-    shell.scrollLeft = maxScrollLeft;
+function readUrl() {
+  const query = new URLSearchParams(location.search);
+  return {
+    days: query.get("days") || "30", workspace: query.get("workspace") || "all",
+    includeSubagents: !["0", "false"].includes(query.get("include_subagents")),
+    startDate: query.get("start_date") || null, endDate: query.get("end_date") || null
   };
-
-  applyViewport();
-  window.requestAnimationFrame(applyViewport);
 }
 
-function renderHeatmap(dashboard) {
-  const weekWidth = heatmapWeekWidth();
-  const board = dashboard.habit_board;
-  const totalWeeks = (board.days.at(-1)?.week_index || 0) + 1;
-  const todayKey = state.snapshotNow ? dateKeyFromDate(state.snapshotNow) : null;
-
-  elements.heatmapSummary.textContent = buildHeatmapHeadline(dashboard);
-  elements.heatmapMonths.innerHTML = "";
-  elements.heatmapGrid.innerHTML = "";
-  elements.heatmapMonths.style.width = `${Math.max(weekWidth * totalWeeks, 120)}px`;
-
-  for (const label of board.month_labels) {
-    const span = document.createElement("span");
-    span.className = "month-label";
-    span.style.left = `${label.week_index * weekWidth}px`;
-    span.textContent = label.label;
-    elements.heatmapMonths.append(span);
-  }
-
-  for (const day of board.days) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `day-cell level-${day.level}`;
-    button.style.setProperty("--day-fill", `var(--level-${day.level})`);
-    button.dataset.date = day.date;
-    if (!day.in_range) {
-      button.classList.add("is-outside");
-      button.disabled = true;
-    }
-    if (todayKey && day.in_range && day.date === todayKey) {
-      button.classList.add("is-today");
-    }
-    if (state.selectedDate === day.date) {
-      button.classList.add("is-selected");
-    }
-    button.title = `${formatDate(day.date)}\n${formatFullNumber(day.total_tokens)} total tokens\n${formatUsd(day.estimated_cost_usd)} estimated cost`;
-    button.setAttribute(
-      "aria-label",
-      `${formatDate(day.date)}: ${formatFullNumber(day.total_tokens)} total tokens and ${formatUsd(day.estimated_cost_usd)} estimated cost`
-    );
-    button.addEventListener("click", () => {
-      if (!day.in_range) {
-        return;
-      }
-      state.selectedDate = day.date;
-      elements.heatmapGrid.querySelector(".day-cell.is-selected")?.classList.remove("is-selected");
-      button.classList.add("is-selected");
-      loadDay(day.date, { openDrawer: true });
-    });
-    elements.heatmapGrid.append(button);
-  }
-
-  resetHeatmapViewportIfNeeded();
+function writeUrl() {
+  const url = new URL(location.href);
+  for (const key of ["days", "workspace", "include_subagents", "start_date", "end_date", "refresh_ts"]) url.searchParams.delete(key);
+  if (state.params.startDate && state.params.endDate) {
+    url.searchParams.set("start_date", state.params.startDate);
+    url.searchParams.set("end_date", state.params.endDate);
+  } else url.searchParams.set("days", state.params.days);
+  url.searchParams.set("workspace", state.params.workspace);
+  url.searchParams.set("include_subagents", state.params.includeSubagents ? "1" : "0");
+  history.replaceState(null, "", url);
 }
 
-function renderTrend(dashboard) {
-  const trendDays = dashboard.trend_days || [];
-  const snapshots = dashboard.snapshot_windows || {};
-  const trailingSnapshot = snapshots.trailing_14d || null;
-  const tokenValues = trendDays.map((day) => day.total_tokens || 0);
-  const tokenScaleMax = Math.max(...tokenValues, 0) || 1;
-
-  if (elements.trendTotalTokens) {
-    elements.trendTotalTokens.textContent = trailingSnapshot
-      ? formatCompactNumber(trailingSnapshot.total_tokens)
-      : "—";
-    elements.trendTotalTokens.title = trailingSnapshot
-      ? formatFullNumber(trailingSnapshot.total_tokens)
-      : "";
-  }
-
-  if (elements.trendTotalCost) {
-    elements.trendTotalCost.textContent = trailingSnapshot
-      ? formatUsd(trailingSnapshot.estimated_cost_usd)
-      : "—";
-    elements.trendTotalCost.title = trailingSnapshot
-      ? formatUsd(trailingSnapshot.estimated_cost_usd)
-      : "";
-  }
-
-  if (!trendDays.length) {
-    elements.trendSparkline.innerHTML = '<div class="empty-state">No trend data for this range.</div>';
-    return;
-  }
-
-  const peakTokens = Math.max(...tokenValues, 0);
-  const todayKey = dateKeyFromDate(todayDate(state.snapshotNow || new Date()));
-
-  elements.trendSparkline.innerHTML = trendDays.map((day, index) => {
-    const totalTokens = day.total_tokens || 0;
-    const estimatedCost = day.estimated_cost_usd || 0;
-    const ratio = totalTokens / tokenScaleMax;
-    const level = totalTokens === 0
-      ? 0
-      : ratio <= 0.25
-        ? 1
-        : ratio <= 0.5
-          ? 2
-          : ratio <= 0.75
-            ? 3
-            : 4;
-    const isToday = day.date === todayKey;
-    const isPeak = peakTokens > 0 && totalTokens === peakTokens;
-    const classes = [
-      "trend-day-chip",
-      `level-${level}`,
-      totalTokens === 0 ? "is-zero" : "",
-      isPeak ? "is-peak" : "",
-      isToday ? "is-today" : ""
-    ].filter(Boolean).join(" ");
-    const hoverTitle = `${formatTrendDayLabel(day.date)}: ${formatFullNumber(totalTokens)} tokens · ${formatUsd(estimatedCost)} estimated cost`;
-
-    return `
-      <button
-        type="button"
-        class="${classes}"
-        data-date="${day.date}"
-        title="${hoverTitle}"
-        aria-label="${hoverTitle}"
-      >
-        <span class="trend-day-weekday">${formatTrendDayShort(day.date)}</span>
-        <span class="trend-day-swatch" style="--day-fill:var(--level-${level});"></span>
-        <span class="trend-day-date">${formatTrendDayNumber(day.date)}</span>
-      </button>
-    `;
-  }).join("");
-
-  for (const chip of elements.trendSparkline.querySelectorAll(".trend-day-chip")) {
-    chip.addEventListener("click", () => {
-      const selectedDate = chip.dataset.date;
-      if (!selectedDate) {
-        return;
-      }
-
-      state.selectedDate = selectedDate;
-      elements.heatmapGrid.querySelector(".day-cell.is-selected")?.classList.remove("is-selected");
-      elements.heatmapGrid.querySelector(`.day-cell[data-date="${selectedDate}"]`)?.classList.add("is-selected");
-      loadDay(selectedDate, { openDrawer: true });
-    });
-  }
+function notice(message = "", warning = false) {
+  $("notice").textContent = message;
+  $("notice").classList.toggle("warning", warning);
 }
 
-function renderCostBreakdown(dashboard) {
-  const rows = dashboard.cost_breakdown_by_model || [];
+function showError(error) {
+  $("error-state").hidden = false;
+  $("error-state").textContent = error instanceof Error ? error.message : String(error);
+}
 
-  if (!rows.length) {
-    elements.costBreakdownBody.innerHTML = '<tr><td colspan="10" class="cost-empty">No priced model usage in this selection.</td></tr>';
-    elements.costBreakdownFoot.innerHTML = "";
-    return;
+function hideError() { $("error-state").hidden = true; }
+
+function applySnapshot(snapshot, source = "published") {
+  const analysis = createAnalytics(snapshot, { annotations: state.annotations });
+  let report;
+  try { report = analysis.dashboard(state.params); }
+  catch {
+    state.params = { days: "30", workspace: "all", includeSubagents: true, startDate: null, endDate: null };
+    report = analysis.dashboard(state.params);
+    notice("The saved range was invalid. Showing the last 30 days instead.", true);
   }
+  Object.assign(state, { snapshot, analysis, report, source });
+  $("workspace").innerHTML = '<option value="all">All workspaces</option>' + report.workspaces.map((workspace) =>
+    '<option value="' + e(workspace.workspace_key) + '">' + e(workspace.workspace_label) + '</option>').join("");
+  if (![...$("workspace").options].some((option) => option.value === state.params.workspace)) state.params.workspace = "all";
+  render();
+  $("dashboard").setAttribute("aria-busy", "false");
+  hideError();
+}
 
-  elements.costBreakdownBody.innerHTML = rows.map((row) => `
-    <tr>
-      <th scope="row">${row.model}</th>
-      <td>${formatFullNumber(row.sessions)}</td>
-      <td>${formatFullNumber(row.uncached_input_tokens)}</td>
-      <td>${formatFullNumber(row.cached_input_tokens)}</td>
-      <td>${formatFullNumber(row.billed_output_tokens)}</td>
-      <td>${formatRate(row.rates.input)}</td>
-      <td>${formatRate(row.rates.cached_input)}</td>
-      <td>${formatRate(row.rates.output)}</td>
-      <td class="cost-cell-strong">${formatUsd(row.estimated_cost_usd)}</td>
-      <td>${formatPercent(row.share_of_total_cost)}</td>
-    </tr>
-  `).join("");
+function render() {
+  const report = state.analysis.dashboard(state.params);
+  state.report = report;
+  $("workspace").value = state.params.workspace;
+  $("include-helpers").checked = state.params.includeSubagents;
+  document.querySelectorAll("[data-days]").forEach((button) =>
+    button.setAttribute("aria-pressed", String(!state.params.startDate && button.dataset.days === String(state.params.days))));
+  $("custom-toggle").setAttribute("aria-pressed", String(Boolean(state.params.startDate)));
+  $("start-date").value = state.params.startDate || report.selection.start_date;
+  $("end-date").value = state.params.endDate || report.selection.end_date;
+  $("start-date").max = report.today;
+  $("end-date").max = report.today;
 
-  const totals = rows.reduce((accumulator, row) => {
-    accumulator.uncached_input_tokens += row.uncached_input_tokens || 0;
-    accumulator.cached_input_tokens += row.cached_input_tokens || 0;
-    accumulator.billed_output_tokens += row.billed_output_tokens || 0;
-    return accumulator;
-  }, {
-    uncached_input_tokens: 0,
-    cached_input_tokens: 0,
-    billed_output_tokens: 0
+  const time = new Date(report.generated_at);
+  $("updated-at").dateTime = report.generated_at;
+  $("updated-at").textContent = time.toLocaleString("en-US", { timeZone: report.timezone, month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" });
+  const staleDay = dayInZone(new Date(), report.timezone) !== report.today;
+  $("freshness-label").textContent = staleDay ? "Data as of" : state.source === "collector" ? "Collected on this Mac" : "Snapshot collected";
+  $("coverage-note").textContent = "History since " + dateLabel(report.available_range.start_date, { year: "numeric" }) + " · " + report.timezone;
+  if (staleDay && !$("notice").textContent) notice("This snapshot is from " + dateLabel(report.today, { year: "numeric" }) + ". Refresh to check for newer usage.", true);
+
+  $("fixed-metrics").innerHTML = renderFixedMetrics(report, staleDay);
+  const metrics = report.habit_board.metrics;
+  $("streak-line").textContent = metrics.current_streak + "-day streak · best " + metrics.best_streak + " · workweek " + metrics.workweek_green_days + "/5";
+  $("month-cadence-label").textContent = metrics.active_days_this_month + "/" + metrics.elapsed_days_this_month + " active days";
+  $("month-progress").value = metrics.active_days_this_month / Math.max(1, metrics.elapsed_days_this_month) * 100;
+  $("month-progress").setAttribute("aria-valuetext", $("month-cadence-label").textContent + " this month");
+
+  const boardKey = report.generated_at + "|" + state.params.workspace + "|" + state.params.includeSubagents;
+  if (boardKey !== state.boardKey) {
+    state.boardKey = boardKey;
+    const board = report.habit_board;
+    $("board-range").textContent = "365 days · " + rangeLabel(board);
+    $("heatmap-legend").innerHTML = '<span>Less</span>' + FILLS.map((fill) => '<i style="--level-fill:' + fill + '"></i>').join("") + "<span>More</span>";
+    $("heatmap-legend").title = "Intensity is relative to active days, so a single spike does not wash out normal work. Exact counts are unchanged.";
+    $("heatmap-grid").innerHTML = renderBoard(board, state.selectedDay);
+    $("heatmap-months").innerHTML = board.month_labels.map((month) =>
+      '<span style="--week:' + month.week + '">' + month.label + "</span>").join("");
+    $("recent-days").innerHTML = renderRecent(report.trend_days, state.selectedDay);
+    const recent = report.snapshot_windows.trailing_14d;
+    $("recent-total").textContent = tokens(recent.total_tokens) + " tokens · " + money(recent.estimated_cost_usd) + " estimated";
+    requestAnimationFrame(() => { $("heatmap-scroll").scrollLeft = $("heatmap-scroll").scrollWidth; });
+  }
+  syncSelection();
+
+  $("period-label").textContent = report.selection.mode === "custom" ? "Selected dates" : report.selection.label;
+  $("period-cost").textContent = money(report.summary.estimated_cost_usd);
+  $("period-tokens").textContent = tokens(report.summary.total_tokens) + " tokens";
+  $("period-work").textContent = report.summary.project_count + " projects · " + report.summary.workflow_count + " contributing runs";
+  $("period-dates").textContent = rangeLabel(report.selection);
+  $("project-count").textContent = report.summary.project_count + " projects in this period";
+  $("period-note").textContent = state.params.includeSubagents
+    ? "Includes direct work + " + money(report.summary.helper_cost_usd) + " of additional helper work. Replayed history is counted once."
+    : "Direct work only. Additional helper usage is excluded by your filter.";
+  renderProjects();
+
+  $("pricing-note").textContent = "Rates checked " + dateLabel(PRICING.checked_at, { year: "numeric" }) +
+    ". Fresh input, reused input, cache writes, and output are priced separately. Reasoning is already included in output." +
+    (report.summary.proxy_tokens ? " " + tokens(report.summary.proxy_tokens) + " tokens in this period use your Sol-rate assumption for unreleased or unidentified models." : "");
+  const quality = report.quality;
+  $("quality-note").textContent = exact(quality.inherited_tokens_removed) + " replayed tokens excluded across the recorded history. " +
+    exact(quality.duplicate_snapshots) + " repeated snapshots ignored. " +
+    (quality.invalid_records ? exact(quality.invalid_records) + " malformed log records were skipped; local logs are not a billing ledger. " : "") +
+    (report.summary.unallocated_tokens ? exact(report.summary.unallocated_tokens) + " tokens lack a priceable input/output split. Their cost is excluded. " : "") +
+    (quality.missing_parents ? quality.missing_parents + " parent conversations are missing; attribution may be incomplete. " : "") +
+    (report.summary.unknown_context_tokens ? tokens(report.summary.unknown_context_tokens) + " tokens lack request context size and use short-context rates." : "");
+  if ($("methodology").open) $("model-breakdown").innerHTML = renderModels(report.models);
+  if ($("breakdown-drawer").open) renderDrawer();
+  writeUrl();
+}
+
+function renderProjects() {
+  const query = state.search.trim().toLocaleLowerCase();
+  const projects = state.report.projects.filter((project) => project.name.toLocaleLowerCase().includes(query));
+  projects.sort((a, b) => {
+    if (state.sort === "tokens") return b.total_tokens - a.total_tokens || a.name.localeCompare(b.name);
+    if (state.sort === "recent") return b.last_active_at.localeCompare(a.last_active_at) || b.estimated_cost_usd - a.estimated_cost_usd;
+    return b.estimated_cost_usd - a.estimated_cost_usd || b.total_tokens - a.total_tokens || a.name.localeCompare(b.name);
   });
-
-  elements.costBreakdownFoot.innerHTML = `
-    <tr>
-      <th scope="row">Total</th>
-      <td>${formatFullNumber(dashboard.summary.sessions)}</td>
-      <td>${formatFullNumber(totals.uncached_input_tokens)}</td>
-      <td>${formatFullNumber(totals.cached_input_tokens)}</td>
-      <td>${formatFullNumber(totals.billed_output_tokens)}</td>
-      <td>&mdash;</td>
-      <td>&mdash;</td>
-      <td>&mdash;</td>
-      <td class="cost-cell-strong">${formatUsd(dashboard.summary.estimated_cost_usd)}</td>
-      <td>100%</td>
-    </tr>
-  `;
+  const shown = projects.slice(0, state.limit);
+  $("project-list").innerHTML = shown.length ? projectRows(shown) :
+    '<div class="empty-state">' + (query ? "No projects match that name." : "No usage recorded in this period and these filters.") + "</div>";
+  $("list-count").textContent = "Showing " + shown.length + " of " + projects.length + " projects" + (query ? " matching your search" : "");
+  $("show-more").hidden = shown.length >= projects.length;
+  $("show-more").textContent = "Show all " + projects.length + " projects";
 }
 
-function renderModelCostSnapshot(dashboard) {
-  const rows = dashboard.cost_breakdown_by_model || [];
-  if (!elements.modelCostList || !elements.modelCostTotal) {
-    return;
-  }
-
-  elements.modelCostTotal.textContent = `${formatUsd(dashboard.summary.estimated_cost_usd)} in selected range`;
-  elements.modelCostTotal.title = `${formatUsd(dashboard.summary.estimated_cost_usd)} total estimated cost`;
-
-  if (!rows.length) {
-    elements.modelCostList.innerHTML = '<div class="empty-state">No model-level cost in this selection.</div>';
-    return;
-  }
-
-  elements.modelCostList.innerHTML = rows.slice(0, 5).map((row) => {
-    const costShare = row.share_of_total_cost || 0;
-    const tokenShare = row.share_of_total_tokens || 0;
-    return `
-      <article class="model-cost-card" title="${row.model}: ${formatUsd(row.estimated_cost_usd)} estimated cost · ${formatFullNumber(row.total_tokens)} tokens">
-        <div class="model-cost-card-head">
-          <span>${row.model}</span>
-          <strong>${formatUsd(row.estimated_cost_usd)}</strong>
-        </div>
-        <div class="model-cost-bar" aria-hidden="true">
-          <span style="width:${Math.max(costShare * 100, costShare > 0 ? 5 : 0)}%;"></span>
-        </div>
-        <div class="model-cost-card-foot">
-          <span>${formatCompactNumber(row.total_tokens)} tokens</span>
-          <span>${formatPercent(costShare)} cost · ${formatPercent(tokenShare)} tokens</span>
-        </div>
-      </article>
-    `;
-  }).join("");
-}
-
-function getSortedProjects(projects) {
-  return [...projects].sort((left, right) => {
-    if (state.projectSort === "cost") {
-      return (right.estimated_cost_usd - left.estimated_cost_usd) ||
-        (right.total_tokens - left.total_tokens);
-    }
-
-    return (right.total_tokens - left.total_tokens) ||
-      (right.estimated_cost_usd - left.estimated_cost_usd);
+function syncSelection() {
+  document.querySelectorAll("[data-date]").forEach((node) => {
+    const selected = node.dataset.date === state.selectedDay;
+    node.classList.toggle("is-selected", selected);
+    node.setAttribute("aria-pressed", String(selected));
   });
 }
 
-function renderProjectUsage(dashboard) {
-  const projects = getSortedProjects(dashboard.project_usage || []);
-  const directSummary = state.directDashboard?.summary || dashboard.summary;
-  const helperTokens = Math.max(0, dashboard.summary.total_tokens - directSummary.total_tokens);
-  const helperCost = Math.max(0, dashboard.summary.estimated_cost_usd - directSummary.estimated_cost_usd);
-  const rangeLabel = dashboard.selection.label.toLowerCase();
-  const sortLabels = {
-    cost: "estimated cost",
-    tokens: "token volume"
-  };
-
-  elements.projectUsageNote.textContent =
-    `${formatCountLabel(projects.length, "active project")} and ${formatCountLabel(dashboard.summary.sessions || 0, "workflow")} in ${rangeLabel}, sorted by ${sortLabels[state.projectSort] || "token volume"}.`;
-
-  if (elements.projectImpactSummary) {
-    const topProject = [...projects].sort((left, right) => right.total_tokens - left.total_tokens)[0];
-    elements.projectImpactSummary.innerHTML = `
-      <article class="impact-summary-card impact-summary-card-featured">
-        <span>All work, including helpers</span>
-        <strong>${formatUsd(dashboard.summary.estimated_cost_usd)}</strong>
-        <small>${formatCompactNumber(dashboard.summary.total_tokens)} tokens across ${rangeLabel}</small>
-      </article>
-      <article class="impact-summary-card">
-        <span>Your direct work</span>
-        <strong>${formatUsd(directSummary.estimated_cost_usd)}</strong>
-        <small>${formatCompactNumber(directSummary.total_tokens)} tokens, excluding parallel helpers</small>
-      </article>
-      <article class="impact-summary-card">
-        <span>Parallel helper work</span>
-        <strong>${formatUsd(helperCost)}</strong>
-        <small>${formatCompactNumber(helperTokens)} tokens from delegated agent tasks</small>
-      </article>
-      <article class="impact-summary-card impact-summary-card-project">
-        <span>Biggest project</span>
-        <strong class="impact-project-name">${topProject ? escapeHtml(formatProjectName(topProject)) : "No activity yet"}</strong>
-        <small>${topProject ? `${formatCompactNumber(topProject.total_tokens)} tokens · ${formatUsd(topProject.estimated_cost_usd)}` : "Start a workflow to light the board."}</small>
-      </article>
-      ${dashboard.summary.unpriced_total_tokens > 0 ? `
-        <p class="pricing-confidence-note">${formatCompactNumber(dashboard.summary.unpriced_total_tokens)} tokens from unreleased or unidentified models are priced at GPT-5.6 Sol rates.</p>
-      ` : ""}
-    `;
+function openBreakdown(type, id, scopeDate = null) {
+  if (!state.analysis) return;
+  if (type === "day") { state.selectedDay = id; syncSelection(); }
+  if (!$("breakdown-drawer").open) {
+    state.detailStack = [];
+    state.returnFocus = document.activeElement;
   }
-
-  for (const button of elements.projectSortButtons) {
-    const isActive = button.dataset.projectSort === state.projectSort;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
-  }
-
-  if (!projects.length) {
-    elements.projectUsageList.innerHTML = '<div class="empty-state">No project usage in this selection.</div>';
-    return;
-  }
-
-  elements.projectUsageList.innerHTML = "";
-  for (const project of projects) {
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "project-usage-card";
-    card.dataset.workspaceKey = project.workspace_key;
-    const costSharePercent = formatPercent(project.cost_share || 0);
-    const tokenSharePercent = formatPercent(project.token_share || 0);
-
-    card.innerHTML = `
-      <div class="project-usage-main">
-        <span class="project-title">${escapeHtml(formatProjectName(project))}</span>
-        <span class="project-sub">${formatCountLabel(project.active_days || 0, "active day")} · ${formatCountLabel(project.workflows || 0, "workflow")}</span>
-      </div>
-      <div class="project-bar" aria-hidden="true">
-        <span style="width:${Math.max((project.token_share || 0) * 100, project.token_share > 0 ? 6 : 0)}%;"></span>
-      </div>
-      <div class="project-metric-grid">
-        <div class="project-metric-primary">
-          <span>Tokens</span>
-          <strong>${formatCompactNumber(project.total_tokens)}</strong>
-          <small>${tokenSharePercent} of all tokens</small>
-        </div>
-        <div class="project-metric-cost">
-          <span>Estimated cost</span>
-          <strong>${formatUsd(project.estimated_cost_usd)}</strong>
-          <small>${costSharePercent} of all cost</small>
-        </div>
-      </div>
-    `;
-    card.title = `${formatProjectName(project)}: ${formatFullNumber(project.total_tokens)} tokens · ${formatUsd(project.estimated_cost_usd)} estimated cost`;
-    card.addEventListener("click", async () => {
-      if (!project.workspace_key) {
-        return;
-      }
-
-      state.workspace = project.workspace_key;
-      closeMobileFilters();
-      await loadDashboard();
-      elements.threadTable.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    elements.projectUsageList.append(card);
-  }
+  state.detailStack.push({ type, id, scopeDate });
+  renderDrawer();
+  if (!$("breakdown-drawer").open) $("breakdown-drawer").showModal();
 }
 
-function renderRankRows(container, rows, formatter) {
-  if (!rows.length) {
-    container.innerHTML = '<div class="empty-state">No usage in this selection.</div>';
-    return;
-  }
-
-  container.innerHTML = "";
-  for (const row of rows) {
-    container.append(formatter(row));
-  }
+function renderDrawer() {
+  const target = state.detailStack.at(-1);
+  if (!target) return;
+  const params = { ...state.params };
+  if (target.scopeDate) { params.startDate = target.scopeDate; params.endDate = target.scopeDate; }
+  const detail = state.analysis.breakdown(target.type, target.id, params);
+  $("drawer-kicker").textContent = target.type === "day" ? "Day breakdown" : "Project breakdown";
+  $("drawer-back").hidden = state.detailStack.length < 2;
+  $("drawer-content").innerHTML = renderBreakdown(detail, state.report.timezone);
+  $("breakdown-drawer").scrollTop = 0;
 }
 
-function renderTopThreads(dashboard) {
-  renderRankRows(elements.threadTable, dashboard.top_threads, (thread) => {
-    const row = document.createElement("div");
-    row.className = "rank-row";
-    row.innerHTML = `
-      <div class="rank-main">
-        <span class="rank-title">${escapeHtml(formatWorkflowName(thread))}</span>
-        <span class="rank-sub">${escapeHtml(formatWorkflowContext(thread))} · ${formatCountLabel(thread.active_days || 0, "active day")}</span>
-      </div>
-      <div class="rank-metrics">
-        <span class="rank-value">${formatCompactNumber(thread.total_tokens)} tokens</span>
-        <span class="rank-value-sub">${formatUsd(thread.estimated_cost_usd)} estimated cost</span>
-      </div>
-    `;
-    row.title = `${formatWorkflowName(thread)}: ${formatFullNumber(thread.total_tokens)} total tokens · ${formatUsd(thread.estimated_cost_usd)} estimated cost · ${thread.dominant_model_family || "Other"} dominant model`;
-    return row;
-  });
+function updateParams(changes) {
+  Object.assign(state.params, changes);
+  state.limit = 12;
+  try { render(); hideError(); } catch (error) { showError(error); }
 }
 
-function projectNameForSession(session) {
-  const parentName = (session.parent_thread_name || "").trim();
-  if (session.is_subagent && parentName && !isGeneratedSessionName(parentName)) {
-    return parentName;
-  }
-
-  const threadName = (session.thread_name || "").trim();
-  if (threadName && !isGeneratedSessionName(threadName)) {
-    return threadName;
-  }
-
-  return session.workspace_label || "Unknown project";
-}
-
-function determineDominantModelFamily(modelTotals) {
-  if (!modelTotals || modelTotals.size === 0) {
-    return "Other";
-  }
-
-  let dominant = null;
-  for (const [model, totalTokens] of modelTotals.entries()) {
-    if (!dominant || totalTokens > dominant.total_tokens) {
-      dominant = { model, total_tokens: totalTokens };
-    }
-  }
-
-  return dominant?.model || "Other";
-}
-
-function buildDayOutcomeGroups(sessions) {
-  const groups = new Map();
-  for (const session of sessions) {
-    const projectName = projectNameForSession(session);
-    const key = `${session.workspace_key || "unknown"}:${projectName.toLowerCase()}`;
-    if (!groups.has(key)) {
-      groups.set(key, {
-        project_name: projectName,
-        total_tokens: 0,
-        estimated_cost_usd: 0,
-        workflows: 0,
-        helper_tasks: 0,
-        models: new Map(),
-        sessions: []
-      });
-    }
-
-    const group = groups.get(key);
-    group.total_tokens += session.total_tokens || 0;
-    group.estimated_cost_usd += session.estimated_cost_usd || 0;
-    group.workflows += 1;
-    group.sessions.push(session);
-    if (session.is_subagent) {
-      group.helper_tasks += 1;
-    }
-    if (session.dominant_model_family) {
-      group.models.set(
-        session.dominant_model_family,
-        (group.models.get(session.dominant_model_family) || 0) + (session.total_tokens || 0)
-      );
-    }
-  }
-
-  return [...groups.values()]
-    .map((group) => ({
-      ...group,
-      dominant_model_family: determineDominantModelFamily(group.models)
-    }))
-    .sort((left, right) =>
-      (right.estimated_cost_usd - left.estimated_cost_usd) ||
-      (right.total_tokens - left.total_tokens)
-    );
-}
-
-function renderDayOutcomeSummary(dayPayload, sessions) {
-  if (!elements.dayOutcomeSummary) {
-    return;
-  }
-
-  if (!sessions.length) {
-    elements.dayOutcomeSummary.innerHTML = `
-      <div class="day-outcome-card">
-        <span class="outcome-eyebrow">What happened</span>
-        <strong>No Codex usage recorded.</strong>
-        <p>This square is empty for the selected filters.</p>
-      </div>
-    `;
-    return;
-  }
-
-  const groups = buildDayOutcomeGroups(sessions);
-  const topGroup = groups[0];
-  const hasHelpers = sessions.some((session) => session.is_subagent);
-  const dateLabel = formatDate(dayPayload.date);
-
-  elements.dayOutcomeSummary.innerHTML = `
-    <div class="day-outcome-card day-outcome-card-primary">
-      <span class="outcome-eyebrow">What happened</span>
-      <strong>${escapeHtml(topGroup.project_name)} drove ${formatUsd(topGroup.estimated_cost_usd)} on ${dateLabel}.</strong>
-      <p>${formatCompactNumber(topGroup.total_tokens)} tokens across ${formatCountLabel(topGroup.workflows, "workflow")}${topGroup.helper_tasks ? `, including ${formatCountLabel(topGroup.helper_tasks, "parallel helper task")}` : ""}.</p>
-    </div>
-    ${hasHelpers ? `
-      <p class="day-helper-note">
-        Parallel helpers are background tasks spawned by a workflow. Their tokens and cost are included in the project that launched them.
-      </p>
-    ` : ""}
-  `;
-}
-
-function renderDayPanel(dayPayload) {
-  elements.dayTitle.textContent = formatDate(dayPayload.date);
-  elements.dayTotal.textContent = formatCompactNumber(dayPayload.summary.total_tokens);
-  elements.dayTotal.title = formatFullNumber(dayPayload.summary.total_tokens);
-  elements.dayCost.textContent = formatUsd(dayPayload.summary.estimated_cost_usd);
-  elements.dayCost.title = formatUsd(dayPayload.summary.estimated_cost_usd);
-  elements.dayInput.textContent = formatCompactNumber(dayPayload.summary.input_tokens);
-  elements.dayCached.textContent = formatCompactNumber(dayPayload.summary.cached_input_tokens);
-  elements.dayOutput.textContent = formatCompactNumber(dayPayload.summary.output_tokens);
-  elements.dayReasoning.textContent = formatCompactNumber(dayPayload.summary.reasoning_output_tokens);
-  elements.daySessions.textContent = formatFullNumber(dayPayload.sessions.length);
-  elements.dayCostNote.textContent = buildEstimatedCostNote(dayPayload.summary.unpriced_total_tokens);
-
-  const sessions = [...(dayPayload.sessions || [])].sort((left, right) => {
-    if ((right.estimated_cost_usd || 0) !== (left.estimated_cost_usd || 0)) {
-      return (right.estimated_cost_usd || 0) - (left.estimated_cost_usd || 0);
-    }
-    return (right.total_tokens || 0) - (left.total_tokens || 0);
-  });
-
-  renderDayOutcomeSummary(dayPayload, sessions);
-
-  if (!sessions.length) {
-    elements.daySessionList.innerHTML = '<div class="empty-state">No workflows contributed usage on this day.</div>';
-    return;
-  }
-
-  elements.daySessionList.innerHTML = "";
-  const totalCost = dayPayload.summary.estimated_cost_usd || 0;
-  for (const group of buildDayOutcomeGroups(sessions)) {
-    const card = document.createElement("article");
-    card.className = "session-card day-project-card";
-    const costShare = totalCost > 0 ? group.estimated_cost_usd / totalCost : 0;
-    const detailRows = [...group.sessions]
-      .sort((left, right) => (right.estimated_cost_usd || 0) - (left.estimated_cost_usd || 0))
-      .map((session) => `
-        <div class="day-task-row">
-          <div class="day-task-copy">
-            <strong>${escapeHtml(session.is_subagent ? "Parallel helper task" : formatWorkflowName(session))}</strong>
-            <span>${escapeHtml(session.dominant_model_family || "Model unavailable")}${session.agent_nickname ? ` · ${escapeHtml(session.agent_nickname)}` : ""}</span>
-          </div>
-          <div class="day-task-values">
-            <strong>${formatUsd(session.estimated_cost_usd)}</strong>
-            <span>${formatCompactNumber(session.total_tokens)} tokens</span>
-          </div>
-        </div>
-      `).join("");
-    card.innerHTML = `
-      <div class="session-head">
-        <div class="session-main">
-          <span class="session-title">${escapeHtml(group.project_name)}</span>
-          <span class="session-sub">${formatCountLabel(group.workflows, "workflow")}${group.helper_tasks ? ` · ${formatCountLabel(group.helper_tasks, "parallel helper")}` : ""}</span>
-        </div>
-        <span class="day-project-share">${formatPercent(costShare)} of day</span>
-      </div>
-      <div class="day-project-metrics">
-        <div><span>Estimated cost</span><strong>${formatUsd(group.estimated_cost_usd)}</strong></div>
-        <div><span>Tokens</span><strong>${formatCompactNumber(group.total_tokens)}</strong></div>
-      </div>
-      <details class="day-task-details">
-        <summary>${group.helper_tasks ? "See workflows and helper tasks" : "See workflow details"}</summary>
-        <div class="day-task-list">${detailRows}</div>
-      </details>
-    `;
-    elements.daySessionList.append(card);
-  }
-}
-
-async function loadDay(date, { openDrawer = false } = {}) {
+async function refresh() {
+  if (state.refreshing) return;
+  state.refreshing = true;
+  $("refresh-button").disabled = true;
+  hideError();
   try {
-    const payload = buildDayPayload(state.snapshot, date, {
-      days: state.rangeMode === "preset" ? state.days : undefined,
-      startDate: state.rangeMode === "custom" ? state.startDate : null,
-      endDate: state.rangeMode === "custom" ? state.endDate : null,
-      workspace: state.workspace,
-      includeSubagents: state.includeSubagents,
-      now: state.snapshotNow
+    const result = await refreshUsage({
+      publish: location.hostname === "kjmcawesome.github.io",
+      minimumGeneratedAt: state.snapshot?.generated_at,
+      onProgress: (message) => { $("refresh-label").textContent = message; notice(message); }
     });
-    renderDayPanel(payload);
-    if (openDrawer) {
-      setDayDrawerOpen(true);
-    }
+    applySnapshot(result.snapshot, result.source);
+    notice(result.message, !result.rebuilt);
   } catch (error) {
-    elements.daySessionList.innerHTML = `<div class="empty-state">${error.message}</div>`;
-    if (openDrawer) {
-      setDayDrawerOpen(true);
-    }
-  }
-}
-
-function chooseDefaultDay(dashboard) {
-  const activeDays = dashboard.habit_board.days.filter((day) => day.in_range && day.total_tokens > 0);
-  return activeDays.at(-1)?.date || dashboard.habit_board.end_date;
-}
-
-function syncDatePicker(dashboard) {
-  if (!window.flatpickr) {
-    return;
-  }
-
-  if (!state.datePicker) {
-    state.datePicker = window.flatpickr(elements.customRangeInput, {
-      mode: "range",
-      dateFormat: "Y-m-d",
-      monthSelectorType: "static",
-      showMonths: 2,
-      disableMobile: true,
-      clickOpens: false,
-      onChange(selectedDates) {
-        if (selectedDates.length !== 2) {
-          return;
-        }
-
-        state.rangeMode = "custom";
-        state.startDate = dateKeyFromDate(selectedDates[0]);
-        state.endDate = dateKeyFromDate(selectedDates[1]);
-        syncUrl();
-        renderRangeControls();
-        closeMobileFilters();
-        loadDashboard();
-        state.datePicker.close();
-      }
-    });
-  }
-
-  if (dashboard) {
-    state.datePicker.set("minDate", dashboard.available_range.start_date);
-    state.datePicker.set("maxDate", dashboard.available_range.end_date);
-  }
-
-  if (state.rangeMode === "custom" && state.startDate && state.endDate) {
-    state.datePicker.setDate([state.startDate, state.endDate], false, "Y-m-d");
-  } else {
-    state.datePicker.clear(false);
-  }
-}
-
-async function loadDashboard(forceReloadSnapshot = false, { suppressButtonToggle = false } = {}) {
-  if (!suppressButtonToggle) {
-    elements.refreshButton.disabled = true;
-  }
-  syncUrl();
-
-  try {
-    if (!state.snapshot || forceReloadSnapshot) {
-      await loadSnapshot(forceReloadSnapshot);
-    }
-
-    const dashboard = buildDashboardPayload(state.snapshot, {
-      days: state.rangeMode === "preset" ? state.days : undefined,
-      startDate: state.rangeMode === "custom" ? state.startDate : null,
-      endDate: state.rangeMode === "custom" ? state.endDate : null,
-      workspace: state.workspace,
-      includeSubagents: state.includeSubagents,
-      now: state.snapshotNow
-    });
-    state.directDashboard = state.includeSubagents
-      ? buildDashboardPayload(state.snapshot, {
-        days: state.rangeMode === "preset" ? state.days : undefined,
-        startDate: state.rangeMode === "custom" ? state.startDate : null,
-        endDate: state.rangeMode === "custom" ? state.endDate : null,
-        workspace: state.workspace,
-        includeSubagents: false,
-        now: state.snapshotNow
-      })
-      : dashboard;
-    const validDates = new Set(dashboard.habit_board.days.filter((day) => day.in_range).map((day) => day.date));
-    if (!state.selectedDate || !validDates.has(state.selectedDate)) {
-      state.selectedDate = chooseDefaultDay(dashboard);
-    }
-
-    state.dashboard = dashboard;
-    renderHabitRail(dashboard);
-    renderInsightCosts(dashboard);
-    renderSummary(dashboard);
-    renderWorkspaceFilter(dashboard);
-    renderProjectUsage(dashboard);
-    renderModelCostSnapshot(dashboard);
-    renderHeatmap(dashboard);
-    renderTrend(dashboard);
-    renderCostBreakdown(dashboard);
-    renderTopThreads(dashboard);
-    renderIcons();
-    syncDatePicker(dashboard);
-    await loadDay(state.selectedDate);
-  } catch (error) {
-    const detail = error?.message?.includes("404")
-      ? "No published usage snapshot was found. Run `npm run build:site` locally or publish a fresh snapshot."
-      : error.message;
-    const message = `<div class="empty-state">${detail}</div>`;
-    elements.costBreakdownBody.innerHTML = `<tr><td colspan="10" class="cost-empty">${detail}</td></tr>`;
-    elements.costBreakdownFoot.innerHTML = "";
-    if (elements.projectImpactSummary) {
-      elements.projectImpactSummary.innerHTML = "";
-    }
-    elements.projectUsageList.innerHTML = message;
-    if (elements.modelCostTotal) {
-      elements.modelCostTotal.textContent = "-";
-    }
-    if (elements.modelCostList) {
-      elements.modelCostList.innerHTML = message;
-    }
-    elements.threadTable.innerHTML = message;
-    elements.daySessionList.innerHTML = message;
-    elements.costToday.textContent = "-";
-    elements.costTodayFoot.textContent = "-";
-    elements.cost14d.textContent = "-";
-    elements.cost14dFoot.textContent = "-";
-    elements.costMonth.textContent = "-";
-    elements.costMonthFoot.textContent = "-";
-    elements.habitCurrentStreak.textContent = "-";
-    elements.habitCurrentNote.textContent = "-";
-    elements.habitBestStreak.textContent = "-";
-    elements.habitBestNote.textContent = "-";
-    elements.habitWorkweek.textContent = "-";
-    elements.habitWorkweekNote.textContent = "-";
-    elements.todayStatusHeadline.textContent = detail;
-    elements.todayStatusNote.textContent = "A fresh snapshot is required before the momentum view can load.";
-    elements.heatmapSummary.textContent = detail;
-    elements.heatmapGrid.innerHTML = "";
-    elements.heatmapMonths.innerHTML = "";
-    elements.heroProgressValue.textContent = "—";
-    elements.heroProgressFoot.textContent = "—";
-    elements.heroProgressNote.textContent = "A fresh snapshot is required before the hero can render.";
-    elements.heroProgressFill.style.width = "0%";
-    renderIcons();
+    showError(new Error("Refresh did not complete. " + error.message));
+    notice("Your previous data has not been replaced.", true);
   } finally {
-    if (!suppressButtonToggle) {
-      elements.refreshButton.disabled = false;
-      syncRefreshButtonMode();
-    }
+    state.refreshing = false;
+    $("refresh-button").disabled = false;
+    $("refresh-label").textContent = "Refresh";
   }
 }
 
-async function refreshDashboard() {
-  elements.refreshButton.disabled = true;
+$("filters").addEventListener("submit", (event) => event.preventDefault());
+document.querySelectorAll("[data-days]").forEach((button) => button.addEventListener("click", () => {
+  $("custom-range").hidden = true;
+  $("custom-toggle").setAttribute("aria-expanded", "false");
+  updateParams({ days: button.dataset.days, startDate: null, endDate: null });
+}));
+$("custom-toggle").addEventListener("click", () => {
+  $("custom-range").hidden = !$("custom-range").hidden;
+  $("custom-toggle").setAttribute("aria-expanded", String(!$("custom-range").hidden));
+});
+$("apply-range").addEventListener("click", () => {
+  const startDate = $("start-date").value;
+  const endDate = $("end-date").value;
+  if (!validDate(startDate) || !validDate(endDate) || startDate > endDate || endDate > state.report.today) {
+    showError(new Error("Choose a valid start and end date within the snapshot history.")); return;
+  }
+  updateParams({ startDate, endDate });
+  $("custom-range").hidden = true;
+  $("custom-toggle").setAttribute("aria-expanded", "false");
+});
+$("workspace").addEventListener("change", (event) => updateParams({ workspace: event.target.value }));
+$("include-helpers").addEventListener("change", (event) => updateParams({ includeSubagents: event.target.checked }));
+$("project-sort").addEventListener("change", (event) => { state.sort = event.target.value; renderProjects(); });
+$("project-search").addEventListener("input", (event) => { state.search = event.target.value; state.limit = 12; renderProjects(); });
+$("show-more").addEventListener("click", () => { state.limit = Infinity; renderProjects(); });
+$("project-list").addEventListener("click", (event) => {
+  const project = event.target.closest("[data-project-id]");
+  if (project) openBreakdown("project", project.dataset.projectId);
+});
+for (const id of ["heatmap-grid", "recent-days"]) $(id).addEventListener("click", (event) => {
+  const day = event.target.closest("[data-date]");
+  if (day && !day.disabled) openBreakdown("day", day.dataset.date);
+});
+$("heatmap-grid").addEventListener("keydown", (event) => {
+  const offsets = { ArrowLeft: -7, ArrowRight: 7, ArrowUp: -1, ArrowDown: 1 };
+  const cells = [...$("heatmap-grid").querySelectorAll("button")];
+  const index = cells.indexOf(event.target);
+  if (index < 0 || !(event.key in offsets || ["Home", "End"].includes(event.key))) return;
+  event.preventDefault();
+  const target = event.key === "Home" ? cells.find((cell) => !cell.disabled) :
+    event.key === "End" ? cells.findLast((cell) => !cell.disabled) : cells[index + offsets[event.key]];
+  if (target && !target.disabled) {
+    cells.forEach((cell) => { cell.tabIndex = -1; });
+    target.tabIndex = 0; target.focus();
+  }
+});
+$("drawer-close").addEventListener("click", () => $("breakdown-drawer").close());
+$("drawer-back").addEventListener("click", () => { state.detailStack.pop(); renderDrawer(); });
+$("drawer-content").addEventListener("click", (event) => {
+  const project = event.target.closest("[data-open-project]");
+  if (project) openBreakdown("project", project.dataset.openProject, project.dataset.scopeDate);
+});
+$("breakdown-drawer").addEventListener("click", (event) => {
+  if (event.target !== $("breakdown-drawer")) return;
+  const rect = event.target.getBoundingClientRect();
+  if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) event.target.close();
+});
+$("breakdown-drawer").addEventListener("close", () => {
+  state.detailStack = [];
+  if (state.returnFocus?.isConnected) state.returnFocus.focus({ preventScroll: true });
+  else $("project-search").focus({ preventScroll: true });
+});
+$("methodology").addEventListener("toggle", () => {
+  if ($("methodology").open && state.report) $("model-breakdown").innerHTML = renderModels(state.report.models);
+});
+$("refresh-button").addEventListener("click", refresh);
+window.addEventListener("popstate", () => { state.params = readUrl(); if (state.analysis) render(); });
 
+async function boot() {
   try {
-    if (isHostedSitesDashboard()) {
-      await refreshHostedDashboard();
-      return;
-    }
-
-    if (isPublicPagesSite()) {
-      if (!state.refreshHelperAvailable || !state.refreshHelperUrl) {
-        await probeRefreshHelper();
-      }
-
-      if (state.refreshHelperAvailable && state.refreshHelperUrl) {
-        await forceRefreshViaHelper();
-      } else {
-        launchRefreshBridge();
-      }
-      return;
-    }
-
-    await forceRefreshLocally();
+    // Annotations are optional and human-authored; never infer an outcome from tokens.
+    try {
+      const response = await fetch("./data/project-impact.json", { cache: "no-store", signal: AbortSignal.timeout(2500) });
+      if (response.ok) state.annotations = (await response.json()).projects || {};
+    } catch { /* Missing annotations do not block usage. */ }
+    const snapshot = await loadPublishedSnapshot();
+    notice();
+    applySnapshot(snapshot);
+    document.documentElement.dataset.release = RELEASE;
   } catch (error) {
-    if (state.refreshHelperAvailable && state.refreshHelperUrl) {
-      try {
-        await forceRefreshViaHelper();
-        return;
-      } catch {
-        state.refreshHelperAvailable = false;
-        state.refreshHelperUrl = null;
-      }
-    }
-
-    await loadDashboard(true, { suppressButtonToggle: true });
-    window.alert(error instanceof Error ? error.message : String(error));
-  } finally {
-    elements.refreshButton.disabled = false;
-    syncRefreshButtonMode();
-    probeRefreshHelper();
+    notice();
+    $("dashboard").setAttribute("aria-busy", "false");
+    showError(error);
   }
 }
 
-elements.customRangeButton.addEventListener("click", () => {
-  syncDatePicker(state.dashboard);
-  state.datePicker?.open();
-});
-
-elements.workspaceFilter.addEventListener("change", () => {
-  state.workspace = elements.workspaceFilter.value;
-  state.shouldResetHeatmapViewport = true;
-  closeMobileFilters();
-  loadDashboard();
-});
-
-elements.subagentToggle.addEventListener("change", () => {
-  state.includeSubagents = elements.subagentToggle.checked;
-  state.shouldResetHeatmapViewport = true;
-  closeMobileFilters();
-  loadDashboard();
-});
-
-for (const button of elements.projectSortButtons) {
-  button.addEventListener("click", () => {
-    state.projectSort = button.dataset.projectSort || "tokens";
-    if (state.dashboard) {
-      renderProjectUsage(state.dashboard);
-    }
-  });
-}
-
-elements.refreshButton.addEventListener("click", refreshDashboard);
-elements.mobileFiltersButton?.addEventListener("click", openMobileFilters);
-elements.mobileFiltersClose?.addEventListener("click", closeMobileFilters);
-elements.mobileFiltersBackdrop?.addEventListener("click", closeMobileFilters);
-elements.dayDrawerClose?.addEventListener("click", () => setDayDrawerOpen(false));
-elements.dayDrawerBackdrop?.addEventListener("click", () => setDayDrawerOpen(false));
-window.addEventListener("resize", () => {
-  if (!isMobileViewport()) {
-    closeMobileFilters();
-  }
-});
-window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    closeMobileFilters();
-    setDayDrawerOpen(false);
-  }
-});
-
-initializeStateFromUrl();
-renderRangeControls();
-renderWeekdayLabels();
-syncDatePicker(null);
-setDayDrawerOpen(false);
-syncRefreshButtonMode();
-renderIcons();
-loadDashboard(true);
-probeRefreshHelper();
-window.addEventListener("focus", probeRefreshHelper);
+if (location.protocol !== "file:") boot();

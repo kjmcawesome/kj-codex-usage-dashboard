@@ -1,373 +1,111 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="./" />
-    <title>KJ Codex Usage Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./vendor/flatpickr/flatpickr.min.css" />
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <div class="page-shell">
-      <header class="hero">
-        <div class="hero-top">
-          <div class="hero-copy">
-            <p class="eyebrow">Tokenmaxxing</p>
-            <h1>KJ Codex Usage Dashboard</h1>
-            <p class="hero-note">
-              What you built, how much Codex you used, and what the work cost.
-            </p>
-            <section class="hero-progress-card" aria-labelledby="hero-progress-label">
-              <div class="hero-progress-head">
-                <div class="hero-progress-copy">
-                  <p class="hero-progress-kicker">
-                    <i data-lucide="activity" aria-hidden="true"></i>
-                    Codex cadence
-                  </p>
-                  <strong id="hero-progress-label">Monthly tokenmaxxing pace</strong>
-                  <span id="hero-progress-note">Loading current month activity...</span>
-                </div>
-                <div class="hero-progress-side">
-                  <strong id="hero-progress-value">—</strong>
-                  <span id="hero-progress-foot">—</span>
-                </div>
-              </div>
-              <div class="hero-progress-track" aria-hidden="true">
-                <span id="hero-progress-fill"></span>
-              </div>
-            </section>
-          </div>
-          <div class="hero-meta">
-            <button id="refresh-button" class="refresh-button refresh-button-header" type="button">Refresh</button>
-            <div class="meta-card">
-              <span class="meta-label">Updated</span>
-              <strong id="last-refresh">Loading...</strong>
-            </div>
-            <div class="meta-card">
-              <span class="meta-label">Snapshot</span>
-              <strong id="source-note">365-day board + fixed windows</strong>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <section class="panel momentum-panel">
-        <div class="panel-head momentum-panel-head">
-          <div>
-            <p class="panel-eyebrow">Codex momentum</p>
-            <h2>Keep the squares lit</h2>
-            <p class="heatmap-summary" id="heatmap-summary">Loading heatmap...</p>
-          </div>
-          <div class="momentum-head-status">
-            <span id="today-status-pill" class="status-pill">Checking today</span>
-            <div class="momentum-status-copy">
-              <strong id="today-status-headline">Loading today’s momentum...</strong>
-              <span id="today-status-note">Pulling today’s token volume and estimated cost.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="momentum-ribbon">
-          <article class="cost-window-card cost-window-card-primary">
-            <span class="cost-window-label">Today cost</span>
-            <strong id="cost-today">-</strong>
-            <span id="cost-today-foot" class="cost-window-foot">-</span>
-          </article>
-          <article class="cost-window-card cost-window-card-primary">
-            <span class="cost-window-label">30-day cost</span>
-            <strong id="cost-14d">-</strong>
-            <span id="cost-14d-foot" class="cost-window-foot">-</span>
-          </article>
-          <article class="cost-window-card cost-window-card-primary">
-            <span class="cost-window-label">Month-to-date cost</span>
-            <strong id="cost-month">-</strong>
-            <span id="cost-month-foot" class="cost-window-foot">-</span>
-          </article>
-          <article class="habit-stat">
-            <span class="habit-stat-label">Current streak</span>
-            <strong id="habit-current-streak">-</strong>
-            <span id="habit-current-note" class="habit-stat-foot">-</span>
-          </article>
-          <article class="habit-stat">
-            <span class="habit-stat-label">Best streak</span>
-            <strong id="habit-best-streak">-</strong>
-            <span id="habit-best-note" class="habit-stat-foot">-</span>
-          </article>
-          <article class="habit-stat">
-            <span class="habit-stat-label">This workweek</span>
-            <strong id="habit-workweek">-</strong>
-            <span id="habit-workweek-note" class="habit-stat-foot">-</span>
-          </article>
-        </div>
-
-        <section class="habit-board">
-          <div class="habit-board-head">
-            <h3>365-day habit board</h3>
-            <div class="legend" aria-label="Heatmap legend">
-              <span>Less</span>
-              <div class="legend-swatches">
-                <span class="swatch level-0"></span>
-                <span class="swatch level-1"></span>
-                <span class="swatch level-2"></span>
-                <span class="swatch level-3"></span>
-                <span class="swatch level-4"></span>
-              </div>
-              <span>More</span>
-            </div>
-          </div>
-          <div class="heatmap-chart heatmap-chart-board">
-            <div id="heatmap-weekdays" class="heatmap-weekdays" aria-hidden="true"></div>
-            <div class="heatmap-shell">
-              <div id="heatmap-months" class="heatmap-months"></div>
-              <div id="heatmap-grid" class="heatmap-grid" role="grid" aria-label="Codex token activity by day"></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="trend-strip trend-strip-hero">
-          <div class="trend-strip-head">
-            <div>
-              <h3>Recent 14 days</h3>
-              <p class="activity-note">One square per day.</p>
-            </div>
-            <div class="trend-strip-summary">
-              <div class="trend-strip-stat">
-                <span class="trend-strip-label">Tokens</span>
-                <strong id="trend-total-tokens">-</strong>
-              </div>
-              <div class="trend-strip-stat">
-                <span class="trend-strip-label">Est. cost</span>
-                <strong id="trend-total-cost">-</strong>
-              </div>
-            </div>
-          </div>
-          <div id="trend-sparkline" class="trend-strip-grid" aria-label="Trailing 14 day usage strip"></div>
-        </section>
-      </section>
-
-      <section class="panel project-usage-panel" id="project-usage-section">
-        <div class="panel-head project-usage-head">
-          <div>
-            <p class="panel-eyebrow">Work that shipped</p>
-            <h2>Where the work went</h2>
-            <p class="ranking-note" id="project-usage-note">
-              Real projects, their token volume, and the estimated cost of getting them done.
-            </p>
-          </div>
-          <div class="project-sort-controls" aria-label="Project sort">
-            <button class="project-sort-button is-active" type="button" data-project-sort="tokens">Tokens</button>
-            <button class="project-sort-button" type="button" data-project-sort="cost">Cost</button>
-          </div>
-        </div>
-        <div id="project-impact-summary" class="project-impact-summary"></div>
-        <div id="project-usage-list" class="project-usage-list"></div>
-      </section>
-
-      <section class="panel selected-range-panel">
-        <div class="panel-head">
-          <div>
-            <p class="panel-eyebrow">Your view</p>
-            <h2 id="selected-range-title">Last 30 days</h2>
-            <p class="ranking-note" id="selected-range-note">
-              Change the time window or focus on one workspace.
-            </p>
-          </div>
-        </div>
-
-        <div class="mobile-selection-bar">
-          <div class="mobile-selection-copy">
-            <span class="mobile-selection-label">Active filters</span>
-            <strong id="mobile-selection-summary">Last 30 days · All workspaces · Subagents on</strong>
-          </div>
-          <button id="mobile-filters-button" class="mobile-filters-button" type="button" aria-haspopup="dialog" aria-controls="mobile-filters-sheet">
-            Filters
-          </button>
-        </div>
-
-        <div id="mobile-filters-sheet" class="mobile-filters-sheet" aria-hidden="true">
-          <div id="mobile-filters-backdrop" class="mobile-filters-backdrop"></div>
-          <div class="mobile-filters-dialog" role="dialog" aria-modal="true" aria-labelledby="mobile-filters-title">
-            <div class="mobile-filters-head">
-              <div>
-                <span class="mobile-filters-label">Selected range</span>
-                <h3 id="mobile-filters-title">Filters</h3>
-              </div>
-              <button id="mobile-filters-close" class="mobile-filters-close" type="button" aria-label="Close filters">Close</button>
-            </div>
-            <div class="controls-panel controls-panel-inline controls-panel-sheet">
-              <div class="toolbar-group toolbar-group-range">
-                <div class="toolbar-field">
-                  <span class="toolbar-label">Range</span>
-                  <div class="range-controls">
-                    <div class="range-chips" id="range-chips" aria-label="Date range"></div>
-                    <button id="custom-range-button" class="chip chip-secondary" type="button">Custom range</button>
-                    <input id="custom-range-input" class="visually-hidden" type="text" aria-hidden="true" tabindex="-1" />
-                    <strong id="active-range-pill" class="active-range-pill">Last 30 days</strong>
-                  </div>
-                </div>
-              </div>
-
-              <div class="toolbar-group toolbar-group-filters">
-                <label class="control control-stacked">
-                  <span>Workspace</span>
-                  <select id="workspace-filter">
-                    <option value="all">All workspaces</option>
-                  </select>
-                </label>
-
-                <label class="toggle toggle-stacked">
-                  <span>Subagents</span>
-                  <span class="toggle-row">
-                    <input id="subagent-toggle" type="checkbox" checked />
-                    <span>Include subagents</span>
-                  </span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <section class="summary-grid range-summary-grid" aria-label="Selected range totals">
-          <article class="summary-card">
-            <span class="card-label">Tokens used</span>
-            <strong class="card-value" id="summary-total">-</strong>
-            <span class="card-foot" id="summary-total-foot">Selected range</span>
-          </article>
-
-          <article class="summary-card">
-            <span class="card-label">Estimated cost</span>
-            <strong class="card-value" id="summary-cost">-</strong>
-            <span class="card-foot" id="summary-cost-foot">Estimated from public model pricing</span>
-          </article>
-
-          <article class="summary-card">
-            <span class="card-label">Active projects</span>
-            <strong class="card-value" id="summary-days">-</strong>
-            <span class="card-foot" id="summary-days-foot">Meaningful work in this view</span>
-          </article>
-
-          <article class="summary-card">
-            <span class="card-label">Momentum vs prior</span>
-            <strong class="card-value" id="summary-burst">-</strong>
-            <span class="card-foot" id="summary-burst-foot">Previous equal-length window</span>
-          </article>
-        </section>
-      </section>
-
-      <section class="lower-grid">
-        <article class="panel ranking-panel workflow-panel">
-          <div class="panel-head">
-            <div>
-              <p class="panel-eyebrow">Behind the projects</p>
-              <h2>Work that drove the usage</h2>
-              <p class="ranking-note">Your biggest workflows, with their real token volume and estimated cost.</p>
-            </div>
-          </div>
-          <div id="thread-table" class="rank-table"></div>
-        </article>
-      </section>
-
-      <div id="day-drawer-shell" class="day-drawer-shell" aria-hidden="true">
-        <div id="day-drawer-backdrop" class="day-drawer-backdrop"></div>
-        <aside class="panel day-drawer" role="dialog" aria-modal="true" aria-labelledby="day-title">
-          <div class="day-drawer-head">
-            <div>
-              <p class="panel-eyebrow">Day breakdown</p>
-              <h2 id="day-title">Select a day</h2>
-            </div>
-            <button id="day-drawer-close" class="day-drawer-close" type="button" aria-label="Close day breakdown">
-              Close
-            </button>
-          </div>
-
-          <div class="day-summary-grid">
-            <div class="mini-stat">
-              <span>Total tokens</span>
-              <strong id="day-total">-</strong>
-            </div>
-            <div class="mini-stat">
-              <span>Estimated cost</span>
-              <strong id="day-cost">-</strong>
-            </div>
-            <div class="mini-stat">
-              <span>Workflows</span>
-              <strong id="day-sessions">-</strong>
-            </div>
-          </div>
-
-          <div class="day-drawer-body">
-            <div id="day-outcome-summary" class="day-outcome-summary"></div>
-            <p class="day-explainer">Projects below include the parent workflow and any parallel helper tasks.</p>
-            <div id="day-session-list" class="session-list"></div>
-            <details class="day-token-details">
-              <summary>How the tokens break down</summary>
-              <div class="day-token-grid">
-                <div class="mini-stat"><span>Input</span><strong id="day-input">-</strong></div>
-                <div class="mini-stat"><span>Reused input</span><strong id="day-cached">-</strong></div>
-                <div class="mini-stat"><span>Output</span><strong id="day-output">-</strong></div>
-                <div class="mini-stat"><span>Reasoning</span><strong id="day-reasoning">-</strong></div>
-              </div>
-              <p class="day-explainer" id="day-cost-note">Estimated cost uses public OpenAI API token pricing.</p>
-            </details>
-          </div>
-        </aside>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="KJ's Codex work, token activity, and transparent project cost estimates.">
+  <meta property="og:title" content="KJ Codex Usage Dashboard">
+  <meta property="og:description" content="The work. The tokens. The cost.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://kjmcawesome.github.io/kj-codex-usage-dashboard/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="KJ Codex Usage Dashboard">
+  <meta name="twitter:description" content="The work. The tokens. The cost.">
+  <meta name="twitter:image" content="https://kjmcawesome.github.io/kj-codex-usage-dashboard/og.png">
+  <meta name="reporting-schema" content="3">
+  <meta name="theme-color" content="#0b0d14">
+  <title>KJ Codex Usage Dashboard</title>
+  <link rel="stylesheet" href="./styles.css?v=work-cost-3">
+</head>
+<body>
+  <a class="skip-link" href="#projects">Skip to project costs</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="identity">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <div><h1>KJ Codex Usage Dashboard</h1><p>What I'm working on. What it costs.</p></div>
       </div>
+      <div class="refresh-area">
+        <div class="freshness"><span id="freshness-label">Loading usage</span><time id="updated-at"></time></div>
+        <button class="button refresh-button" id="refresh-button" type="button"><span class="refresh-icon" aria-hidden="true">&#8635;</span><span id="refresh-label">Refresh</span></button>
+      </div>
+    </header>
 
-      <details class="panel budget-panel">
-        <summary class="budget-toggle">
-          <div>
-            <p class="panel-eyebrow">Cost details</p>
-            <h2>Estimated cost breakdown</h2>
-            <p class="ranking-note">Model-level estimated cost detail behind the token usage snapshot.</p>
+    <p id="notice" class="notice" role="status" aria-live="polite">Loading the latest usage snapshot...</p>
+    <div id="error-state" class="error-state" role="alert" hidden></div>
+
+    <main id="dashboard" aria-busy="true">
+      <section class="momentum" aria-labelledby="momentum-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Daily momentum</p><h2 id="momentum-title">Keep the squares lit.</h2></div>
+          <div class="cadence"><span id="streak-line">365 days of Codex</span><div class="month-cadence"><span id="month-cadence-label"></span><progress id="month-progress" max="100" value="0" aria-label="Active days this month"></progress></div></div>
+        </div>
+        <div id="fixed-metrics" class="fixed-metrics"></div>
+        <div class="board-heading"><span id="board-range">365-day contribution board</span><div class="legend" id="heatmap-legend" aria-label="Usage intensity"></div></div>
+        <div class="heatmap-layout">
+          <div class="weekday-labels" aria-hidden="true"><span style="grid-row:2">Mon</span><span style="grid-row:4">Wed</span><span style="grid-row:6">Fri</span></div>
+          <div class="heatmap-scroll" id="heatmap-scroll" tabindex="0" aria-label="365-day activity, scroll for older weeks">
+            <div class="heatmap-content"><div id="heatmap-months" class="heatmap-months" aria-hidden="true"></div><div id="heatmap-grid" class="heatmap-grid" aria-label="Daily token usage"></div></div>
           </div>
-        </summary>
-        <div class="budget-details-body">
-          <p class="section-note" id="cost-note">
-            Estimated cost uses OpenAI API token pricing as a directional planning lens.
-          </p>
-          <section class="model-cost-panel" aria-labelledby="model-cost-title">
-            <div class="model-cost-head">
-              <div>
-                <p class="panel-eyebrow">Cost by model</p>
-                <h3 id="model-cost-title">Which models did the work?</h3>
-              </div>
-              <span id="model-cost-total" class="model-cost-total">-</span>
-            </div>
-            <div id="model-cost-list" class="model-cost-list"></div>
-          </section>
-          <div class="cost-table-shell">
-            <table class="cost-table">
-              <thead>
-                <tr>
-                  <th>Model</th>
-                  <th>Workflows</th>
-                  <th>Fresh input</th>
-                  <th>Reused input</th>
-                  <th>Billed output</th>
-                  <th>Input rate</th>
-                  <th>Reused rate</th>
-                  <th>Output rate</th>
-                  <th>Est. cost</th>
-                  <th>Share</th>
-                </tr>
-              </thead>
-              <tbody id="cost-breakdown-body"></tbody>
-              <tfoot id="cost-breakdown-foot"></tfoot>
-            </table>
+        </div>
+        <details class="recent-module">
+          <summary class="recent-heading"><span>Recent 14 days</span><span id="recent-total"></span></summary>
+          <div class="recent-days" id="recent-days" aria-label="Recent daily usage and costs"></div>
+        </details>
+      </section>
+
+      <section class="work-section" id="projects" aria-labelledby="projects-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">The work behind the numbers</p><h2 id="projects-title">Project costs</h2></div>
+          <span id="project-count" class="quiet"></span>
+        </div>
+        <form class="filterbar" id="filters">
+          <div class="range-controls" role="group" aria-label="Date range">
+            <button type="button" data-days="7" aria-pressed="false">7d</button>
+            <button type="button" data-days="30" aria-pressed="true">30d</button>
+            <button type="button" data-days="90" aria-pressed="false">90d</button>
+            <button type="button" data-days="all" aria-pressed="false">All history</button>
+            <button type="button" id="custom-toggle" aria-expanded="false" aria-controls="custom-range">Custom</button>
           </div>
+          <div class="filter-options">
+            <label class="workspace-label"><span class="sr-only">Workspace</span><select id="workspace"><option value="all">All workspaces</option></select></label>
+            <label class="checkbox"><input type="checkbox" id="include-helpers" checked>Include helpers</label>
+          </div>
+          <div id="custom-range" class="custom-range" hidden><label>From <input type="date" id="start-date" required></label><label>To <input type="date" id="end-date" required></label><button type="button" id="apply-range" class="button">Apply range</button></div>
+        </form>
+
+        <div class="period-overview">
+          <div class="period-cost"><span id="period-label">Last 30 days</span><strong id="period-cost">-</strong><span>estimated API cost</span></div>
+          <div class="period-context"><strong id="period-tokens">-</strong><span id="period-work"></span><span id="period-dates"></span></div>
+          <p class="period-note" id="period-note">One total for your work and its helper tasks. Replayed history is counted once.</p>
+        </div>
+
+        <div class="list-toolbar">
+          <label class="search-field"><span class="sr-only">Find a project</span><input type="search" id="project-search" placeholder="Find a project..." autocomplete="off"></label>
+          <label class="sort-label">Sort by <select id="project-sort"><option value="cost">Cost</option><option value="tokens">Tokens</option><option value="recent">Recent activity</option></select></label>
+        </div>
+        <div class="project-columns" aria-hidden="true"><span>Project / work</span><span>Tokens</span><span>Est. cost</span><span></span></div>
+        <div id="project-list" class="project-list"></div>
+        <div class="list-footer"><span id="list-count"></span><button class="text-button" type="button" id="show-more" hidden>Show all projects</button></div>
+      </section>
+
+      <details class="methodology" id="methodology">
+        <summary><span>How these numbers are calculated</span><span class="quiet">Pricing, attribution &amp; data coverage</span></summary>
+        <div class="method-content">
+          <div class="method-copy"><h3>Usage is measured. Dollars are estimated.</h3><p id="pricing-note"></p><p>These are current Standard API token-price estimates, not your Codex bill or OpenAI's internal operating cost. Subscription fees, tool fees, and special processing or regional adjustments are not included.</p><p>Projects are named root conversations. Only their own usage and new work by linked helpers or forks are added. Separate conversations are not merged just because they have similar titles.</p><p id="quality-note"></p><p><a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener">OpenAI API pricing</a></p></div>
+          <div id="model-breakdown"></div>
         </div>
       </details>
-    </div>
+    </main>
+    <footer class="site-footer"><span>Local Codex history. Current API price estimates. Not billed spend.</span><span id="coverage-note"></span></footer>
+  </div>
 
-    <script src="./vendor/flatpickr/flatpickr.min.js"></script>
-    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
-    <script type="module" src="./app.js?v=20260806-decision-rebuild"></script>
-  </body>
+  <dialog class="breakdown-drawer" id="breakdown-drawer" aria-labelledby="drawer-title">
+    <div class="drawer-heading"><button class="text-button" id="drawer-back" type="button" hidden>&larr; Back</button><span class="eyebrow" id="drawer-kicker">Breakdown</span><button class="close-button" type="button" id="drawer-close" aria-label="Close breakdown">&times;</button></div>
+    <div class="drawer-content" id="drawer-content"></div>
+  </dialog>
+  <noscript><p class="error-state">JavaScript is required to load this usage dashboard.</p></noscript>
+  <script>if(location.protocol==="file:"){document.getElementById("error-state").hidden=false;document.getElementById("error-state").textContent="Open the hosted dashboard instead of this local file. Its data needs an HTTP connection.";}</script>
+  <script type="module" src="./app.js?v=work-cost-3"></script>
+</body>
 </html>
