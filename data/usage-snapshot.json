@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-08-26T22:00:06.125Z",
+  "generated_at": "2026-08-26T22:30:06.212Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-08-26T17:54:25.431Z",
+  "latest_event_at": "2026-08-26T22:30:01.414Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 43691,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1822
+    "log_files": 1826
   },
   "workspaces": [
     {
@@ -69919,6 +69919,146 @@
           "cached_input_tokens": 260608,
           "output_tokens": 647,
           "reasoning_output_tokens": 334,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0401a-8817-7830-be1d-bab71bde37e6",
+      "parent_session_id": null,
+      "thread_name": "Find customers in my teams book",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-26T22:04:35.736Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 609349,
+      "input_tokens": 606459,
+      "cached_input_tokens": 531032,
+      "output_tokens": 2890,
+      "reasoning_output_tokens": 151,
+      "cache_write_input_tokens": 75394,
+      "events": [
+        {
+          "date": "2026-08-26",
+          "timestamp": "2026-08-26T22:04:44.827Z",
+          "last_timestamp": "2026-08-26T22:05:47.761Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 11,
+          "total_tokens": 609349,
+          "input_tokens": 606459,
+          "cached_input_tokens": 531032,
+          "output_tokens": 2890,
+          "reasoning_output_tokens": 151,
+          "cache_write_input_tokens": 75394
+        }
+      ]
+    },
+    {
+      "session_id": "01a0401b-08d2-7dd3-9c65-a322d98b46fd",
+      "parent_session_id": "01a0401a-8817-7830-be1d-bab71bde37e6",
+      "thread_name": null,
+      "parent_thread_name": "Find customers in my teams book",
+      "session_started_at": "2026-08-26T22:05:08.690Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 66947,
+      "input_tokens": 66511,
+      "cached_input_tokens": 49408,
+      "output_tokens": 436,
+      "reasoning_output_tokens": 243,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-26",
+          "timestamp": "2026-08-26T22:05:14.058Z",
+          "last_timestamp": "2026-08-26T22:05:41.741Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 3,
+          "total_tokens": 66947,
+          "input_tokens": 66511,
+          "cached_input_tokens": 49408,
+          "output_tokens": 436,
+          "reasoning_output_tokens": 243,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a04030-cd51-7922-9d4d-3afed2e5b882",
+      "parent_session_id": null,
+      "thread_name": "Pay parking tickets",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-26T22:28:55.251Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 492996,
+      "input_tokens": 491987,
+      "cached_input_tokens": 421824,
+      "output_tokens": 1009,
+      "reasoning_output_tokens": 54,
+      "cache_write_input_tokens": 70061,
+      "events": [
+        {
+          "date": "2026-08-26",
+          "timestamp": "2026-08-26T22:29:04.131Z",
+          "last_timestamp": "2026-08-26T22:30:01.414Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 10,
+          "total_tokens": 492996,
+          "input_tokens": 491987,
+          "cached_input_tokens": 421824,
+          "output_tokens": 1009,
+          "reasoning_output_tokens": 54,
+          "cache_write_input_tokens": 70061
+        }
+      ]
+    },
+    {
+      "session_id": "01a04031-01a9-7d92-b7d6-80c67be8d775",
+      "parent_session_id": "01a04030-cd51-7922-9d4d-3afed2e5b882",
+      "thread_name": null,
+      "parent_thread_name": "Pay parking tickets",
+      "session_started_at": "2026-08-26T22:29:08.649Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 195269,
+      "input_tokens": 194612,
+      "cached_input_tokens": 155904,
+      "output_tokens": 657,
+      "reasoning_output_tokens": 249,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-26",
+          "timestamp": "2026-08-26T22:29:14.816Z",
+          "last_timestamp": "2026-08-26T22:29:58.677Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 7,
+          "total_tokens": 195269,
+          "input_tokens": 194612,
+          "cached_input_tokens": 155904,
+          "output_tokens": 657,
+          "reasoning_output_tokens": 249,
           "cache_write_input_tokens": 0
         }
       ]
