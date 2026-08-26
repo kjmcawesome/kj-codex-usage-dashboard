@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createAnalytics } from "../public/analytics.js";
-import { escape, money, renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderBreakdown } from "../public/view.js";
+import { escape, money, renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderModelUsage, renderBreakdown } from "../public/view.js";
 
 function engine() {
   return createAnalytics({ counting_version: 3, generated_at: "2026-08-26T20:00:00Z", timezone: "America/Los_Angeles", earliest_date: "2026-01-01", sessions: [{
@@ -22,13 +22,16 @@ test("Every UI id referenced by the app exists and is unique", async () => {
   assert.match(html, /grid-row:6">Fri/);
   assert.match(html, /<dialog[^>]+aria-labelledby="drawer-title"/);
   assert.match(html, /id="methodology"(?![^>]*\bopen\b)/);
+  assert.match(html, /href="#model-usage"/);
+  assert.ok(html.indexOf('id="projects"') < html.indexOf('id="model-usage"'));
+  assert.ok(html.indexOf('id="model-usage"') < html.indexOf('id="methodology"'));
 });
 
 test("All major token surfaces include USD costs, never credits or undefined values", () => {
   const data = engine();
   const report = data.dashboard();
   const outputs = [renderFixedMetrics(report), renderBoard(report.habit_board), renderRecent(report.trend_days),
-    projectRows(report.projects), renderModels(report.models), renderBreakdown(data.breakdown("day", "2026-08-26"), "America/Los_Angeles")];
+    projectRows(report.projects), renderModels(report.models), renderModelUsage(report.models), renderBreakdown(data.breakdown("day", "2026-08-26"), "America/Los_Angeles")];
   for (const html of outputs) {
     assert.match(html, /\$/);
     assert.doesNotMatch(html, /NaN|undefined|\[object Object\]|credits/i);
@@ -68,6 +71,8 @@ test("Project drawer distinguishes the selected-period amount from all recorded 
   assert.match(detail, /Total recorded for this project/);
   assert.match(detail, /Direct work/);
   assert.match(detail, /Additional helper work/);
-  assert.match(detail, /Cost by model/);
+  assert.match(detail, /Model usage/);
+  assert.match(detail, /of tokens/);
+  assert.match(detail, /of est\. cost/);
   assert.match(detail, /Contributing runs/);
 });

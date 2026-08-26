@@ -2,10 +2,10 @@ import { createAnalytics, validDate, dayInZone } from "./analytics.js";
 import { PRICING } from "./pricing.js";
 import { loadPublishedSnapshot, refreshUsage } from "./refresh-client.js";
 import { FILLS, tokens, exact, money, escape as e, dateLabel, rangeLabel,
-  renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderBreakdown } from "./view.js";
+  renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderModelUsage, renderBreakdown } from "./view.js?v=work-cost-3-models-1";
 
 const $ = (id) => document.getElementById(id);
-const RELEASE = "work-cost-3";
+const RELEASE = "work-cost-3-models-1";
 const state = {
   snapshot: null, analysis: null, report: null, params: readUrl(), sort: "cost",
   search: "", limit: 12, selectedDay: null, detailStack: [], boardKey: null,
@@ -118,6 +118,11 @@ function render() {
     ? "Includes direct work + " + money(report.summary.helper_cost_usd) + " of additional helper work. Replayed history is counted once."
     : "Direct work only. Additional helper usage is excluded by your filter.";
   renderProjects();
+
+  $("model-usage-scope").textContent = rangeLabel(report.selection);
+  $("model-usage-list").innerHTML = renderModelUsage(report.models);
+  $("model-usage-note").textContent = "Follows the date, workspace, and helper filters above; project search only filters the project list." +
+    (report.summary.proxy_tokens ? " Unreleased or unidentified usage stays separate and is priced at your Sol-rate assumption." : "");
 
   $("pricing-note").textContent = "Rates checked " + dateLabel(PRICING.checked_at, { year: "numeric" }) +
     ". Fresh input, reused input, cache writes, and output are priced separately. Reasoning is already included in output." +

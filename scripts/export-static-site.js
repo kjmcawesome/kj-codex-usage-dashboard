@@ -35,7 +35,7 @@ export async function exportStaticSite(options = {}) {
   await writeJson(localSnapshotPath, snapshot);
   const { stdout: sourceCommit } = await execFileAsync("git", ["rev-parse", "HEAD"], { cwd: repoRoot });
   await writeJson(join(publicRoot, "data", "build-info.json"), {
-    release: "work-cost-3", counting_version: snapshot.counting_version,
+    release: "work-cost-3-models-1", counting_version: snapshot.counting_version,
     source_commit: sourceCommit.trim(),
     generated_at: snapshot.generated_at, pricing_checked_at: PRICING.checked_at,
     snapshot_sha256: createHash("sha256").update(await readFile(localSnapshotPath)).digest("hex")

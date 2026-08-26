@@ -23,6 +23,7 @@ No framework, charting service, or model calls are required to collect or render
 - The project list and its total use one selected period (30 days by default). Project drawers also show total recorded project cost.
 - The board, today, trailing 30 days, and month-to-date are fixed windows based on the collection date in the collector's timezone. Stale snapshots identify their latest day instead of calling it today.
 - All project rows are available; the initial display limit is not the active-project count.
+- Model usage shows token share and estimated cost share for the active range/workspace/helper filters. Project and day drawers show the same breakdown scoped to that work or day. Context tiers are combined for the headline and remain separate in expanded rate formulas; confirmed Sol usage and Sol-proxy estimates are never merged.
 - Usage does not prove a business outcome shipped. Outcomes are human annotations, never inferred.
 
 ## Data and privacy
@@ -42,6 +43,7 @@ Work names are still potentially sensitive: review them before sharing outside t
 - `lib/telemetry.js`: ingestion, caching, inherited-history reconciliation, and safe snapshot export.
 - `public/pricing.js`: one auditable rate table, alias/proxy policy, cache and context pricing.
 - `public/analytics.js`: the shared server/browser transform. Project, model, day, and overall totals come from the same events.
+- `public/model-usage.js`: presentation rollup of already-priced model context tiers; no repricing or token counting.
 - `public/view.js`: pure presentation functions.
 - `public/app.js`: filters, accessible drawer, heatmap interactions, and refresh state.
 - `public/refresh-client.js`: safe fresh-data loading, timeouts, and no stale-data downgrade.
