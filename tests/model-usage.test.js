@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createAnalytics } from "../public/analytics.js";
 import { summarizeModelUsage } from "../public/model-usage.js";
-import { renderModelUsage } from "../public/view.js";
+import { renderModels, renderModelUsage } from "../public/view.js";
 
 const close = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-8, `${actual} != ${expected}`);
 const row = (model, context, tokens, cost, proxy = false) => ({
@@ -25,7 +25,7 @@ test("Model overview combines context tiers without merging confirmed models and
   assert.equal(sol.estimated_cost_usd, 8);
   assert.equal(sol.variants.length, 2);
   const proxy = groups.find((group) => group.is_proxy);
-  assert.equal(proxy.name, "Unreleased / unidentified");
+  assert.equal(proxy.name, "Unreleased");
   assert.equal(proxy.total_tokens, 400);
   close(groups.reduce((total, group) => total + group.token_share, 0), 1);
   close(groups.reduce((total, group) => total + group.cost_share, 0), 1);
@@ -61,11 +61,21 @@ test("Model rows expose tokens and cost, with assumptions and formulas in native
   assert.match(html, /of est\. cost/);
   assert.match(html, /\$9\.00/);
   assert.match(html, /&lt;\$0\.01/);
-  assert.match(html, /Priced as Sol/);
+  assert.match(html, /Unreleased/);
+  assert.match(html, /Sol-rate assumption/);
   assert.match(html, /Long-context requests/);
   assert.match(html, /Short-context rates assumed/);
   assert.match(html, /Reasoning is part of output, not an extra charge/);
   assert.doesNotMatch(html, /<details[^>]+\bopen\b|credits/i);
+});
+
+test("Unreleased usage never exposes an internal model name in overview or rate details", () => {
+  const model = row("gpt-5.6-sol", "short", 100, 1, true);
+  model.name = "private-model-codename";
+  for (const html of [renderModelUsage([model]), renderModels([model])]) {
+    assert.match(html, /Unreleased/);
+    assert.doesNotMatch(html, /private-model-codename|gpt-5\.6-sol/);
+  }
 });
 
 test("Model names are escaped and unpriceable token portions remain explicit", () => {

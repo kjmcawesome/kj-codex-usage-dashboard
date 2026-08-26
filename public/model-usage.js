@@ -6,6 +6,10 @@ const names = {
   "gpt-5.6-luna": "Luna"
 };
 
+export function modelDisplayName(model) {
+  return model.is_proxy ? "Unreleased" : names[model.model] || model.model.replace(/^gpt-/, "GPT-").replace(/-codex/g, " Codex");
+}
+
 export function summarizeModelUsage(models) {
   const groups = new Map();
   let totalTokens = 0;
@@ -15,7 +19,7 @@ export function summarizeModelUsage(models) {
     const id = `${model.model}|${Boolean(model.is_proxy)}`;
     if (!groups.has(id)) groups.set(id, {
       id, model: model.model, is_proxy: Boolean(model.is_proxy), variants: [],
-      name: model.is_proxy ? "Unreleased / unidentified" : names[model.model] || model.model.replace(/^gpt-/, "GPT-").replace(/-codex/g, " Codex"),
+      name: modelDisplayName(model),
       ...Object.fromEntries(TOTAL_FIELDS.map((field) => [field, 0]))
     });
     const group = groups.get(id);

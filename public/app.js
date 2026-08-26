@@ -2,10 +2,10 @@ import { createAnalytics, validDate, dayInZone } from "./analytics.js";
 import { PRICING } from "./pricing.js";
 import { loadPublishedSnapshot, refreshUsage } from "./refresh-client.js";
 import { FILLS, tokens, exact, money, escape as e, dateLabel, rangeLabel,
-  renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderModelUsage, renderBreakdown } from "./view.js?v=work-cost-3-models-1";
+  renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderModelUsage, renderBreakdown } from "./view.js?v=work-cost-3-models-2";
 
 const $ = (id) => document.getElementById(id);
-const RELEASE = "work-cost-3-models-1";
+const RELEASE = "work-cost-3-models-2";
 const state = {
   snapshot: null, analysis: null, report: null, params: readUrl(), sort: "cost",
   search: "", limit: 12, selectedDay: null, detailStack: [], boardKey: null,

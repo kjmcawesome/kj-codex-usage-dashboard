@@ -24,6 +24,7 @@ No framework, charting service, or model calls are required to collect or render
 - The board, today, trailing 30 days, and month-to-date are fixed windows based on the collection date in the collector's timezone. Stale snapshots identify their latest day instead of calling it today.
 - All project rows are available; the initial display limit is not the active-project count.
 - Model usage shows token share and estimated cost share for the active range/workspace/helper filters. Project and day drawers show the same breakdown scoped to that work or day. Context tiers are combined for the headline and remain separate in expanded rate formulas; confirmed Sol usage and Sol-proxy estimates are never merged.
+- Proxy-priced models are labeled **Unreleased** without internal names; expanded details disclose the Sol-rate assumption and that unidentified usage may be included in this group.
 - Usage does not prove a business outcome shipped. Outcomes are human annotations, never inferred.
 
 ## Data and privacy

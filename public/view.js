@@ -1,4 +1,4 @@
-import { summarizeModelUsage } from "./model-usage.js";
+import { modelDisplayName, summarizeModelUsage } from "./model-usage.js?v=work-cost-3-models-2";
 
 export const FILLS = ["#222637", "#414b7f", "#5565ad", "#647be0", "#7b78f2", "#9681fa", "#b394ff", "#d0b3ff"];
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
@@ -70,7 +70,7 @@ function modelFormula(model) {
 export function renderModels(models) {
   if (!models.length) return '<p class="quiet">No model usage in this period.</p>';
   return models.map((model) => `<details class="model-detail"><summary class="model-cost-row">
-    <span>${e(model.name)}<small>${tokens(model.total_tokens)} tokens · ${e(share(model.cost_share))} of cost${model.context === "long" ? " · long context" : model.context === "unknown" ? " · short-context assumption" : ""}</small></span>
+    <span>${e(modelDisplayName(model))}<small>${tokens(model.total_tokens)} tokens · ${e(share(model.cost_share))} of cost${model.context === "long" ? " · long context" : model.context === "unknown" ? " · short-context assumption" : ""}</small></span>
     <strong>${e(money(model.estimated_cost_usd))}</strong>
     <span class="project-bar" aria-hidden="true"><span style="--share:${(model.cost_share * 100).toFixed(3)}%"></span></span>
     </summary><div class="model-formula">${modelFormula(model)}<p>Reasoning is included in output, not charged again.${model.is_proxy ? " This is the Sol proxy you selected for unreleased or unidentified models." : ""}</p></div></details>`).join("");
@@ -83,14 +83,14 @@ export function renderModelUsage(models, { compact = false } = {}) {
   const context = (model) => model.context === "long" ? "Long-context requests" : model.context === "unknown" ? "Context size not recorded" : "Standard-context requests";
   return `<div class="model-usage-list${compact ? " is-compact" : ""}">${groups.map((group) => `<details class="model-usage-row${group.is_proxy ? " is-proxy" : ""}">
     <summary>
-      <span class="model-identity"><strong>${e(group.name)}</strong><small>${group.is_proxy ? "Priced as Sol · estimate" : e(group.model)}${group.unallocated_tokens ? " · partially priced" : ""}</small></span>
+      <span class="model-identity"><strong>${e(group.name)}</strong><small>${group.is_proxy ? "Proxy estimate" : "Published API rates"}${group.unallocated_tokens ? " · partially priced" : ""}</small></span>
       <span class="model-usage-number"><strong title="${exact(group.total_tokens)} tokens">${tokens(group.total_tokens)}</strong><small>${e(share(group.token_share))} of tokens</small>${bar(group.token_share)}</span>
       <span class="model-usage-number cost"><strong>${e(money(group.estimated_cost_usd))}</strong><small>${e(share(group.cost_share))} of est. cost</small>${bar(group.cost_share)}</span>
       <span class="model-expand" aria-hidden="true"></span>
     </summary>
     <div class="model-usage-details">
       <div class="model-token-split"><span>Input<strong>${tokens(group.input_tokens)} tokens</strong></span><span>Output<strong>${tokens(group.output_tokens)} tokens</strong></span></div>
-      <p>Reused input is part of input. Reasoning is part of output, not an extra charge.${group.is_proxy ? " This group uses your Sol-rate assumption; it does not identify which unreleased model was used." : ""}${group.unallocated_tokens ? ` ${exact(group.unallocated_tokens)} tokens lack an input/output split and are excluded from cost.` : ""}</p>
+      <p>Reused input is part of input. Reasoning is part of output, not an extra charge.${group.is_proxy ? " The Unreleased group uses your Sol-rate assumption for unreleased or unidentified usage; it is not a single confirmed model. Internal names are omitted." : ""}${group.unallocated_tokens ? ` ${exact(group.unallocated_tokens)} tokens lack an input/output split and are excluded from cost.` : ""}</p>
       ${group.variants.map((model) => `<section class="model-rate-tier"><h4>${context(model)}<span>${tokens(model.total_tokens)} tokens · ${e(money(model.estimated_cost_usd))}</span></h4>${model.context === "unknown" ? '<p>Short-context rates assumed.</p>' : ""}${modelFormula(model)}</section>`).join("")}
     </div>
   </details>`).join("")}</div>`;
