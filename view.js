@@ -1,3 +1,5 @@
+import { modelDisplayName, summarizeModelUsage } from "./model-usage.js?v=work-cost-3-models-2";
+
 export const FILLS = ["#222637", "#414b7f", "#5565ad", "#647be0", "#7b78f2", "#9681fa", "#b394ff", "#d0b3ff"];
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
 const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -68,10 +70,30 @@ function modelFormula(model) {
 export function renderModels(models) {
   if (!models.length) return '<p class="quiet">No model usage in this period.</p>';
   return models.map((model) => `<details class="model-detail"><summary class="model-cost-row">
-    <span>${e(model.name)}<small>${tokens(model.total_tokens)} tokens · ${e(share(model.cost_share))} of cost${model.context === "long" ? " · long context" : model.context === "unknown" ? " · short-context assumption" : ""}</small></span>
+    <span>${e(modelDisplayName(model))}<small>${tokens(model.total_tokens)} tokens · ${e(share(model.cost_share))} of cost${model.context === "long" ? " · long context" : model.context === "unknown" ? " · short-context assumption" : ""}</small></span>
     <strong>${e(money(model.estimated_cost_usd))}</strong>
     <span class="project-bar" aria-hidden="true"><span style="--share:${(model.cost_share * 100).toFixed(3)}%"></span></span>
     </summary><div class="model-formula">${modelFormula(model)}<p>Reasoning is included in output, not charged again.${model.is_proxy ? " This is the Sol proxy you selected for unreleased or unidentified models." : ""}</p></div></details>`).join("");
+}
+
+export function renderModelUsage(models, { compact = false } = {}) {
+  const groups = summarizeModelUsage(models);
+  if (!groups.length) return '<p class="empty-state">No model usage in this period and these filters.</p>';
+  const bar = (fraction) => `<span class="model-share-track" aria-hidden="true"><span style="--share:${Math.max(0, Math.min(100, fraction * 100)).toFixed(3)}%"></span></span>`;
+  const context = (model) => model.context === "long" ? "Long-context requests" : model.context === "unknown" ? "Context size not recorded" : "Standard-context requests";
+  return `<div class="model-usage-list${compact ? " is-compact" : ""}">${groups.map((group) => `<details class="model-usage-row${group.is_proxy ? " is-proxy" : ""}">
+    <summary>
+      <span class="model-identity"><strong>${e(group.name)}</strong><small>${group.is_proxy ? "Proxy estimate" : "Published API rates"}${group.unallocated_tokens ? " · partially priced" : ""}</small></span>
+      <span class="model-usage-number"><strong title="${exact(group.total_tokens)} tokens">${tokens(group.total_tokens)}</strong><small>${e(share(group.token_share))} of tokens</small>${bar(group.token_share)}</span>
+      <span class="model-usage-number cost"><strong>${e(money(group.estimated_cost_usd))}</strong><small>${e(share(group.cost_share))} of est. cost</small>${bar(group.cost_share)}</span>
+      <span class="model-expand" aria-hidden="true"></span>
+    </summary>
+    <div class="model-usage-details">
+      <div class="model-token-split"><span>Input<strong>${tokens(group.input_tokens)} tokens</strong></span><span>Output<strong>${tokens(group.output_tokens)} tokens</strong></span></div>
+      <p>Reused input is part of input. Reasoning is part of output, not an extra charge.${group.is_proxy ? " The Unreleased group uses your Sol-rate assumption for unreleased or unidentified usage; it is not a single confirmed model. Internal names are omitted." : ""}${group.unallocated_tokens ? ` ${exact(group.unallocated_tokens)} tokens lack an input/output split and are excluded from cost.` : ""}</p>
+      ${group.variants.map((model) => `<section class="model-rate-tier"><h4>${context(model)}<span>${tokens(model.total_tokens)} tokens · ${e(money(model.estimated_cost_usd))}</span></h4>${model.context === "unknown" ? '<p>Short-context rates assumed.</p>' : ""}${modelFormula(model)}</section>`).join("")}
+    </div>
+  </details>`).join("")}</div>`;
 }
 
 export function workflowRows(workflows, timezone) {
@@ -96,7 +118,7 @@ export function renderBreakdown(detail, timezone) {
     ${detail.outcome ? `<p class="outcome"><span class="eyebrow">Recorded outcome</span><br>${e(detail.outcome)}</p>` : ""}
     ${totals.total_tokens ? `<div class="drawer-split"><div><span>Direct work</span><strong>${e(money(totals.direct_cost_usd))}</strong><span>${tokens(totals.direct_tokens)} tokens</span></div><div><span>Additional helper work</span><strong>${e(money(totals.helper_cost_usd))}</strong><span>${tokens(totals.helper_tokens)} tokens</span></div></div>` : '<div class="empty-state">No usage recorded for this day and these filters.</div>'}
     ${detail.type === "day" && detail.projects.length ? `<section class="drawer-section"><h3>What I worked on</h3>${detail.projects.map((project) => `<button class="drawer-project" type="button" data-open-project="${e(project.id)}" data-scope-date="${detail.id}"><span>${e(project.name)}<small>${tokens(project.total_tokens)} tokens · ${e(share(project.cost_share))} of the day</small></span><strong>${e(money(project.estimated_cost_usd))}</strong></button>`).join("")}</section>` : ""}
-    ${detail.models.length ? `<section class="drawer-section"><h3>Cost by model</h3>${renderModels(detail.models)}</section>` : ""}
+    ${detail.models.length ? `<section class="drawer-section"><h3>Model usage</h3><p class="model-usage-helper">Tokens and cost for this breakdown. Expand a model for its rates.</p>${renderModelUsage(detail.models, { compact: true })}</section>` : ""}
     ${detail.workflows.length ? `<section class="drawer-section"><h3>Contributing runs</h3>${workflowRows(detail.workflows, timezone)}</section>` : ""}
     <p class="drawer-caveat">Current Standard API prices, not billed spend. Parent history replayed in helpers is excluded.${totals.proxy_tokens ? ` ${tokens(totals.proxy_tokens)} tokens use the Sol proxy for unreleased or unidentified models.` : ""}${totals.unallocated_tokens ? ` ${exact(totals.unallocated_tokens)} tokens have no input/output split; their cost is not included.` : ""} Usage alone cannot establish whether an outcome shipped.</p>`;
 }

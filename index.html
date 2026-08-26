@@ -15,7 +15,7 @@
   <meta name="reporting-schema" content="3">
   <meta name="theme-color" content="#0b0d14">
   <title>KJ Codex Usage Dashboard</title>
-  <link rel="stylesheet" href="./styles.css?v=work-cost-3">
+  <link rel="stylesheet" href="./styles.css?v=work-cost-3-models-2">
 </head>
 <body>
   <a class="skip-link" href="#projects">Skip to project costs</a>
@@ -76,7 +76,7 @@
 
         <div class="period-overview">
           <div class="period-cost"><span id="period-label">Last 30 days</span><strong id="period-cost">-</strong><span>estimated API cost</span></div>
-          <div class="period-context"><strong id="period-tokens">-</strong><span id="period-work"></span><span id="period-dates"></span></div>
+          <div class="period-context"><strong id="period-tokens">-</strong><span id="period-work"></span><span id="period-dates"></span><a class="context-link" href="#model-usage">View model usage &#8595;</a></div>
           <p class="period-note" id="period-note">One total for your work and its helper tasks. Replayed history is counted once.</p>
         </div>
 
@@ -87,6 +87,13 @@
         <div class="project-columns" aria-hidden="true"><span>Project / work</span><span>Tokens</span><span>Est. cost</span><span></span></div>
         <div id="project-list" class="project-list"></div>
         <div class="list-footer"><span id="list-count"></span><button class="text-button" type="button" id="show-more" hidden>Show all projects</button></div>
+      </section>
+
+      <section class="model-usage-section" id="model-usage" aria-labelledby="model-usage-title">
+        <div class="section-heading"><div><p class="eyebrow">Behind the work</p><h2 id="model-usage-title">Model usage</h2></div><span id="model-usage-scope" class="quiet"></span></div>
+        <p class="model-usage-helper">Token share and estimated cost share. Expand a model for input, output, and rates.</p>
+        <div id="model-usage-list"></div>
+        <p id="model-usage-note" class="model-usage-note"></p>
       </section>
 
       <details class="methodology" id="methodology">
@@ -106,6 +113,6 @@
   </dialog>
   <noscript><p class="error-state">JavaScript is required to load this usage dashboard.</p></noscript>
   <script>if(location.protocol==="file:"){document.getElementById("error-state").hidden=false;document.getElementById("error-state").textContent="Open the hosted dashboard instead of this local file. Its data needs an HTTP connection.";}</script>
-  <script type="module" src="./app.js?v=work-cost-3"></script>
+  <script type="module" src="./app.js?v=work-cost-3-models-2"></script>
 </body>
 </html>
