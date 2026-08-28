@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-08-28T23:00:06.357Z",
+  "generated_at": "2026-08-28T23:30:06.267Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-08-28T22:48:43.794Z",
+  "latest_event_at": "2026-08-28T23:09:01.082Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 43691,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1840
+    "log_files": 1844
   },
   "workspaces": [
     {
@@ -70715,6 +70715,146 @@
           "output_tokens": 715,
           "reasoning_output_tokens": 88,
           "cache_write_input_tokens": 41703
+        }
+      ]
+    },
+    {
+      "session_id": "01a04a9a-55a6-7cc1-a86f-fac5a536577b",
+      "parent_session_id": null,
+      "thread_name": "DN Land Friday Recap + Jason Draft",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-28T23:00:23.648Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 3685398,
+      "input_tokens": 3676239,
+      "cached_input_tokens": 3545523,
+      "output_tokens": 9159,
+      "reasoning_output_tokens": 1660,
+      "cache_write_input_tokens": 130584,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T23:00:33.351Z",
+          "last_timestamp": "2026-08-28T23:06:25.288Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 44,
+          "total_tokens": 3685398,
+          "input_tokens": 3676239,
+          "cached_input_tokens": 3545523,
+          "output_tokens": 9159,
+          "reasoning_output_tokens": 1660,
+          "cache_write_input_tokens": 130584
+        }
+      ]
+    },
+    {
+      "session_id": "01a04a9e-2c8a-7fb2-9f54-b538b7438ef8",
+      "parent_session_id": "01a04a9a-55a6-7cc1-a86f-fac5a536577b",
+      "thread_name": null,
+      "parent_thread_name": "DN Land Friday Recap + Jason Draft",
+      "session_started_at": "2026-08-28T23:04:35.236Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 177676,
+      "input_tokens": 176866,
+      "cached_input_tokens": 144896,
+      "output_tokens": 810,
+      "reasoning_output_tokens": 444,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T23:04:40.786Z",
+          "last_timestamp": "2026-08-28T23:06:08.781Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 6,
+          "total_tokens": 177676,
+          "input_tokens": 176866,
+          "cached_input_tokens": 144896,
+          "output_tokens": 810,
+          "reasoning_output_tokens": 444,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a04a9f-d3ac-7253-8608-efe7bdbd1a6c",
+      "parent_session_id": null,
+      "thread_name": "Capture DN Land Friday Reporting Snapshot",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-28T23:06:23.566Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 1710981,
+      "input_tokens": 1704828,
+      "cached_input_tokens": 1610227,
+      "output_tokens": 6153,
+      "reasoning_output_tokens": 1630,
+      "cache_write_input_tokens": 94535,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T23:06:31.762Z",
+          "last_timestamp": "2026-08-28T23:09:01.082Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 22,
+          "total_tokens": 1710981,
+          "input_tokens": 1704828,
+          "cached_input_tokens": 1610227,
+          "output_tokens": 6153,
+          "reasoning_output_tokens": 1630,
+          "cache_write_input_tokens": 94535
+        }
+      ]
+    },
+    {
+      "session_id": "01a04aa1-8df2-7361-ae7f-ae8ef9b6cef2",
+      "parent_session_id": "01a04a9f-d3ac-7253-8608-efe7bdbd1a6c",
+      "thread_name": null,
+      "parent_thread_name": "Capture DN Land Friday Reporting Snapshot",
+      "session_started_at": "2026-08-28T23:08:16.778Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 50255,
+      "input_tokens": 50050,
+      "cached_input_tokens": 32256,
+      "output_tokens": 205,
+      "reasoning_output_tokens": 86,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T23:08:21.722Z",
+          "last_timestamp": "2026-08-28T23:08:32.811Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 2,
+          "total_tokens": 50255,
+          "input_tokens": 50050,
+          "cached_input_tokens": 32256,
+          "output_tokens": 205,
+          "reasoning_output_tokens": 86,
+          "cache_write_input_tokens": 0
         }
       ]
     }
