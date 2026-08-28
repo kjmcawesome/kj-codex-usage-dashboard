@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-08-28T19:08:18.005Z",
+  "generated_at": "2026-08-28T19:30:06.328Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-08-28T18:25:31.645Z",
+  "latest_event_at": "2026-08-28T19:18:59.467Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 43691,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1834
+    "log_files": 1836
   },
   "workspaces": [
     {
@@ -52364,12 +52364,12 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 56907959,
-      "input_tokens": 56748627,
-      "cached_input_tokens": 55060742,
-      "output_tokens": 159332,
-      "reasoning_output_tokens": 25372,
-      "cache_write_input_tokens": 1077838,
+      "total_tokens": 62329398,
+      "input_tokens": 62163367,
+      "cached_input_tokens": 59937201,
+      "output_tokens": 166031,
+      "reasoning_output_tokens": 27081,
+      "cache_write_input_tokens": 1613699,
       "events": [
         {
           "date": "2026-07-09",
@@ -52464,17 +52464,32 @@
         {
           "date": "2026-08-28",
           "timestamp": "2026-08-28T18:21:43.560Z",
-          "last_timestamp": "2026-08-28T18:25:31.645Z",
+          "last_timestamp": "2026-08-28T19:15:51.910Z",
           "model": "gpt-5.6-sol",
           "is_proxy": true,
           "pricing_context": "short",
-          "request_count": 16,
-          "total_tokens": 3478281,
-          "input_tokens": 3471852,
-          "cached_input_tokens": 3242814,
-          "output_tokens": 6429,
-          "reasoning_output_tokens": 1210,
-          "cache_write_input_tokens": 228990
+          "request_count": 25,
+          "total_tokens": 5773694,
+          "input_tokens": 5765708,
+          "cached_input_tokens": 5036428,
+          "output_tokens": 7986,
+          "reasoning_output_tokens": 1403,
+          "cache_write_input_tokens": 727081
+        },
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T19:16:05.164Z",
+          "last_timestamp": "2026-08-28T19:18:59.467Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "long",
+          "request_count": 11,
+          "total_tokens": 3126026,
+          "input_tokens": 3120884,
+          "cached_input_tokens": 3082845,
+          "output_tokens": 5142,
+          "reasoning_output_tokens": 1516,
+          "cache_write_input_tokens": 37770
         }
       ]
     },
@@ -70094,11 +70109,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 2794376,
-      "input_tokens": 2789373,
-      "cached_input_tokens": 2416368,
-      "output_tokens": 5003,
-      "reasoning_output_tokens": 740,
+      "total_tokens": 4008543,
+      "input_tokens": 4001664,
+      "cached_input_tokens": 3512560,
+      "output_tokens": 6879,
+      "reasoning_output_tokens": 1285,
       "cache_write_input_tokens": 372819,
       "events": [
         {
@@ -70130,6 +70145,21 @@
           "output_tokens": 3044,
           "reasoning_output_tokens": 549,
           "cache_write_input_tokens": 294967
+        },
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T19:11:57.097Z",
+          "last_timestamp": "2026-08-28T19:16:40.211Z",
+          "model": "gpt-5.6-terra",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 11,
+          "total_tokens": 1214167,
+          "input_tokens": 1212291,
+          "cached_input_tokens": 1096192,
+          "output_tokens": 1876,
+          "reasoning_output_tokens": 545,
+          "cache_write_input_tokens": 0
         }
       ]
     },
@@ -70439,26 +70469,96 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 328796,
-      "input_tokens": 328078,
-      "cached_input_tokens": 277760,
-      "output_tokens": 718,
-      "reasoning_output_tokens": 294,
+      "total_tokens": 1107791,
+      "input_tokens": 1105932,
+      "cached_input_tokens": 995840,
+      "output_tokens": 1859,
+      "reasoning_output_tokens": 810,
       "cache_write_input_tokens": 0,
       "events": [
         {
           "date": "2026-08-28",
           "timestamp": "2026-08-28T18:22:56.168Z",
-          "last_timestamp": "2026-08-28T18:24:33.785Z",
+          "last_timestamp": "2026-08-28T19:18:22.658Z",
           "model": "gpt-5.3-codex",
           "is_proxy": false,
           "pricing_context": "short",
-          "request_count": 7,
-          "total_tokens": 328796,
-          "input_tokens": 328078,
-          "cached_input_tokens": 277760,
-          "output_tokens": 718,
-          "reasoning_output_tokens": 294,
+          "request_count": 17,
+          "total_tokens": 1107791,
+          "input_tokens": 1105932,
+          "cached_input_tokens": 995840,
+          "output_tokens": 1859,
+          "reasoning_output_tokens": 810,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a049c8-246e-7520-94bf-629f85b56e35",
+      "parent_session_id": null,
+      "thread_name": "Draft MB West arrival instructions",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-28T19:10:48.460Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 190252,
+      "input_tokens": 189773,
+      "cached_input_tokens": 147585,
+      "output_tokens": 479,
+      "reasoning_output_tokens": 90,
+      "cache_write_input_tokens": 42173,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T19:10:56.281Z",
+          "last_timestamp": "2026-08-28T19:11:28.618Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 5,
+          "total_tokens": 190252,
+          "input_tokens": 189773,
+          "cached_input_tokens": 147585,
+          "output_tokens": 479,
+          "reasoning_output_tokens": 90,
+          "cache_write_input_tokens": 42173
+        }
+      ]
+    },
+    {
+      "session_id": "01a049c8-5a40-76d0-9aba-297f0f059ad6",
+      "parent_session_id": "01a049c8-246e-7520-94bf-629f85b56e35",
+      "thread_name": null,
+      "parent_thread_name": "Draft MB West arrival instructions",
+      "session_started_at": "2026-08-28T19:11:02.238Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 14754,
+      "input_tokens": 14645,
+      "cached_input_tokens": 7936,
+      "output_tokens": 109,
+      "reasoning_output_tokens": 44,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T19:11:06.882Z",
+          "last_timestamp": "2026-08-28T19:11:06.882Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 1,
+          "total_tokens": 14754,
+          "input_tokens": 14645,
+          "cached_input_tokens": 7936,
+          "output_tokens": 109,
+          "reasoning_output_tokens": 44,
           "cache_write_input_tokens": 0
         }
       ]
