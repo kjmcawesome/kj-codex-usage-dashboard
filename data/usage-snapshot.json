@@ -1,14 +1,14 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-08-28T17:32:31.027Z",
+  "generated_at": "2026-08-28T18:00:06.192Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-08-28T15:26:23.765Z",
+  "latest_event_at": "2026-08-28T17:49:20.395Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 43691,
-    "duplicate_snapshots": 9144,
+    "duplicate_snapshots": 9145,
     "counter_resets": 4,
     "invalid_records": 459,
     "inconsistent_snapshots": 1,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1830
+    "log_files": 1833
   },
   "workspaces": [
     {
@@ -49910,11 +49910,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 11491911,
-      "input_tokens": 11468108,
-      "cached_input_tokens": 11020544,
-      "output_tokens": 23803,
-      "reasoning_output_tokens": 8756,
+      "total_tokens": 13444218,
+      "input_tokens": 13414771,
+      "cached_input_tokens": 12622848,
+      "output_tokens": 29447,
+      "reasoning_output_tokens": 10268,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -49930,6 +49930,21 @@
           "cached_input_tokens": 11020544,
           "output_tokens": 23803,
           "reasoning_output_tokens": 8756,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T17:36:40.620Z",
+          "last_timestamp": "2026-08-28T17:40:46.873Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 22,
+          "total_tokens": 1952307,
+          "input_tokens": 1946663,
+          "cached_input_tokens": 1602304,
+          "output_tokens": 5644,
+          "reasoning_output_tokens": 1512,
           "cache_write_input_tokens": 0
         }
       ]
@@ -70289,6 +70304,111 @@
           "cached_input_tokens": 403968,
           "output_tokens": 1168,
           "reasoning_output_tokens": 331,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0496e-7574-78d0-9123-b893c7f2b32f",
+      "parent_session_id": null,
+      "thread_name": "Find accounts for Wen transfer",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-28T17:32:50.948Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 7868007,
+      "input_tokens": 7856952,
+      "cached_input_tokens": 7664748,
+      "output_tokens": 11055,
+      "reasoning_output_tokens": 1706,
+      "cache_write_input_tokens": 192042,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T17:33:46.688Z",
+          "last_timestamp": "2026-08-28T17:49:20.395Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 54,
+          "total_tokens": 7868007,
+          "input_tokens": 7856952,
+          "cached_input_tokens": 7664748,
+          "output_tokens": 11055,
+          "reasoning_output_tokens": 1706,
+          "cache_write_input_tokens": 192042
+        }
+      ]
+    },
+    {
+      "session_id": "01a04973-ea8c-7b13-9955-b9432ea4ab59",
+      "parent_session_id": "019f144d-0b4b-7671-a142-1543e08f3872",
+      "thread_name": null,
+      "parent_thread_name": "Match Corpdev attendees to ADs",
+      "session_started_at": "2026-08-28T17:38:48.589Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 79231,
+      "input_tokens": 78983,
+      "cached_input_tokens": 71936,
+      "output_tokens": 248,
+      "reasoning_output_tokens": 78,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T17:39:01.862Z",
+          "last_timestamp": "2026-08-28T17:40:02.662Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 3,
+          "total_tokens": 79231,
+          "input_tokens": 78983,
+          "cached_input_tokens": 71936,
+          "output_tokens": 248,
+          "reasoning_output_tokens": 78,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0497c-e6c8-7a73-82c3-2254962ef526",
+      "parent_session_id": "01a0496e-7574-78d0-9123-b893c7f2b32f",
+      "thread_name": null,
+      "parent_thread_name": "Find accounts for Wen transfer",
+      "session_started_at": "2026-08-28T17:48:37.449Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 72875,
+      "input_tokens": 72529,
+      "cached_input_tokens": 52480,
+      "output_tokens": 346,
+      "reasoning_output_tokens": 158,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-28T17:48:43.287Z",
+          "last_timestamp": "2026-08-28T17:49:10.957Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 3,
+          "total_tokens": 72875,
+          "input_tokens": 72529,
+          "cached_input_tokens": 52480,
+          "output_tokens": 346,
+          "reasoning_output_tokens": 158,
           "cache_write_input_tokens": 0
         }
       ]
