@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-08-29T00:00:06.447Z",
+  "generated_at": "2026-08-29T00:30:06.289Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-08-29T00:00:04.750Z",
+  "latest_event_at": "2026-08-29T00:11:14.181Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 43691,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1850
+    "log_files": 1851
   },
   "workspaces": [
     {
@@ -32372,11 +32372,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 287286048,
-      "input_tokens": 286510820,
-      "cached_input_tokens": 267767552,
-      "output_tokens": 775228,
-      "reasoning_output_tokens": 257236,
+      "total_tokens": 300122021,
+      "input_tokens": 299329109,
+      "cached_input_tokens": 280513792,
+      "output_tokens": 792912,
+      "reasoning_output_tokens": 261955,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -32667,16 +32667,16 @@
         {
           "date": "2026-08-28",
           "timestamp": "2026-08-28T23:58:04.224Z",
-          "last_timestamp": "2026-08-29T00:00:04.750Z",
+          "last_timestamp": "2026-08-29T00:11:14.181Z",
           "model": "gpt-5.6-terra",
           "is_proxy": false,
           "pricing_context": "short",
-          "request_count": 21,
-          "total_tokens": 3729782,
-          "input_tokens": 3725606,
-          "cached_input_tokens": 3522048,
-          "output_tokens": 4176,
-          "reasoning_output_tokens": 1907,
+          "request_count": 81,
+          "total_tokens": 16565755,
+          "input_tokens": 16543895,
+          "cached_input_tokens": 16268288,
+          "output_tokens": 21860,
+          "reasoning_output_tokens": 6626,
           "cache_write_input_tokens": 0
         }
       ]
@@ -71063,6 +71063,41 @@
           "cached_input_tokens": 82944,
           "output_tokens": 472,
           "reasoning_output_tokens": 226,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a04ad3-39f3-7d11-b3f4-21e2b1787091",
+      "parent_session_id": "019de4a3-c0c8-7790-bcf5-f94ba76a6a19",
+      "thread_name": null,
+      "parent_thread_name": "Friday recap framework",
+      "session_started_at": "2026-08-29T00:02:32.148Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 170858,
+      "input_tokens": 170328,
+      "cached_input_tokens": 126976,
+      "output_tokens": 530,
+      "reasoning_output_tokens": 271,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-28",
+          "timestamp": "2026-08-29T00:02:38.424Z",
+          "last_timestamp": "2026-08-29T00:08:16.964Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 4,
+          "total_tokens": 170858,
+          "input_tokens": 170328,
+          "cached_input_tokens": 126976,
+          "output_tokens": 530,
+          "reasoning_output_tokens": 271,
           "cache_write_input_tokens": 0
         }
       ]
