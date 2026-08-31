@@ -1,14 +1,14 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-08-29T01:00:06.135Z",
+  "generated_at": "2026-08-31T16:30:11.004Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-08-29T00:41:44.024Z",
+  "latest_event_at": "2026-08-31T16:30:07.110Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 43691,
-    "duplicate_snapshots": 9148,
+    "duplicate_snapshots": 9153,
     "counter_resets": 4,
     "invalid_records": 459,
     "inconsistent_snapshots": 1,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1852
+    "log_files": 1857
   },
   "workspaces": [
     {
@@ -65023,12 +65023,12 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 40628917,
-      "input_tokens": 40550766,
+      "total_tokens": 40785908,
+      "input_tokens": 40707533,
       "cached_input_tokens": 36387158,
-      "output_tokens": 78151,
-      "reasoning_output_tokens": 10619,
-      "cache_write_input_tokens": 4140602,
+      "output_tokens": 78375,
+      "reasoning_output_tokens": 10676,
+      "cache_write_input_tokens": 4297130,
       "events": [
         {
           "date": "2026-08-12",
@@ -65284,6 +65284,21 @@
           "output_tokens": 4611,
           "reasoning_output_tokens": 964,
           "cache_write_input_tokens": 272509
+        },
+        {
+          "date": "2026-08-31",
+          "timestamp": "2026-08-31T14:05:12.325Z",
+          "last_timestamp": "2026-08-31T14:05:12.325Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 1,
+          "total_tokens": 156991,
+          "input_tokens": 156767,
+          "cached_input_tokens": 0,
+          "output_tokens": 224,
+          "reasoning_output_tokens": 57,
+          "cache_write_input_tokens": 156528
         }
       ]
     },
@@ -71133,6 +71148,181 @@
           "cached_input_tokens": 67840,
           "output_tokens": 465,
           "reasoning_output_tokens": 277,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a04ffc-cacc-7482-868e-f0b8f101b7ca",
+      "parent_session_id": null,
+      "thread_name": "Draft Codex Security response",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-30T00:06:02.190Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 314276,
+      "input_tokens": 312658,
+      "cached_input_tokens": 252505,
+      "output_tokens": 1618,
+      "reasoning_output_tokens": 524,
+      "cache_write_input_tokens": 59427,
+      "events": [
+        {
+          "date": "2026-08-29",
+          "timestamp": "2026-08-30T00:07:26.311Z",
+          "last_timestamp": "2026-08-30T00:08:24.497Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 6,
+          "total_tokens": 314276,
+          "input_tokens": 312658,
+          "cached_input_tokens": 252505,
+          "output_tokens": 1618,
+          "reasoning_output_tokens": 524,
+          "cache_write_input_tokens": 59427
+        }
+      ]
+    },
+    {
+      "session_id": "01a05291-6b00-7343-95cf-a820a7af9b87",
+      "parent_session_id": null,
+      "thread_name": "DevDay DN Registration Alerts",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-30T12:07:37.158Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 810670,
+      "input_tokens": 808343,
+      "cached_input_tokens": 760320,
+      "output_tokens": 2327,
+      "reasoning_output_tokens": 329,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-30",
+          "timestamp": "2026-08-30T17:50:30.673Z",
+          "last_timestamp": "2026-08-31T02:13:06.657Z",
+          "model": "gpt-5.6-luna",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 14,
+          "total_tokens": 810670,
+          "input_tokens": 808343,
+          "cached_input_tokens": 760320,
+          "output_tokens": 2327,
+          "reasoning_output_tokens": 329,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a057bd-b2f7-7df0-9521-b8cc9c6f75a5",
+      "parent_session_id": null,
+      "thread_name": "DevDay DN Registration Alerts",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-31T12:14:05.113Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 278114,
+      "input_tokens": 277532,
+      "cached_input_tokens": 256512,
+      "output_tokens": 582,
+      "reasoning_output_tokens": 169,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-31",
+          "timestamp": "2026-08-31T16:29:15.733Z",
+          "last_timestamp": "2026-08-31T16:30:02.673Z",
+          "model": "gpt-5.6-luna",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 6,
+          "total_tokens": 278114,
+          "input_tokens": 277532,
+          "cached_input_tokens": 256512,
+          "output_tokens": 582,
+          "reasoning_output_tokens": 169,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a058a6-dd39-7552-be78-fb4dc2635209",
+      "parent_session_id": null,
+      "thread_name": "Refresh DN Outbound Motion Dashboard",
+      "parent_thread_name": null,
+      "session_started_at": "2026-08-31T16:28:45.810Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 311271,
+      "input_tokens": 309930,
+      "cached_input_tokens": 246631,
+      "output_tokens": 1341,
+      "reasoning_output_tokens": 190,
+      "cache_write_input_tokens": 63281,
+      "events": [
+        {
+          "date": "2026-08-31",
+          "timestamp": "2026-08-31T16:29:00.301Z",
+          "last_timestamp": "2026-08-31T16:29:27.930Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 6,
+          "total_tokens": 311271,
+          "input_tokens": 309930,
+          "cached_input_tokens": 246631,
+          "output_tokens": 1341,
+          "reasoning_output_tokens": 190,
+          "cache_write_input_tokens": 63281
+        }
+      ]
+    },
+    {
+      "session_id": "01a058a7-e897-72e2-bf4c-c100a818f723",
+      "parent_session_id": "01a058a6-dd39-7552-be78-fb4dc2635209",
+      "thread_name": null,
+      "parent_thread_name": "Refresh DN Outbound Motion Dashboard",
+      "session_started_at": "2026-08-31T16:29:54.292Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 18757,
+      "input_tokens": 18577,
+      "cached_input_tokens": 7936,
+      "output_tokens": 180,
+      "reasoning_output_tokens": 122,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-08-31",
+          "timestamp": "2026-08-31T16:30:07.110Z",
+          "last_timestamp": "2026-08-31T16:30:07.110Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 1,
+          "total_tokens": 18757,
+          "input_tokens": 18577,
+          "cached_input_tokens": 7936,
+          "output_tokens": 180,
+          "reasoning_output_tokens": 122,
           "cache_write_input_tokens": 0
         }
       ]
