@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-09T20:00:05.234Z",
+  "generated_at": "2026-09-09T20:30:06.357Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-09T18:47:47.776Z",
+  "latest_event_at": "2026-09-09T20:18:13.523Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1889
+    "log_files": 1890
   },
   "workspaces": [
     {
@@ -72420,6 +72420,41 @@
           "cached_input_tokens": 415488,
           "output_tokens": 2605,
           "reasoning_output_tokens": 59,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a087d0-61a3-79c0-8308-904dc4d49d69",
+      "parent_session_id": null,
+      "thread_name": "Verify September 5% iCARR credit",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-09T20:16:15.788Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 844551,
+      "input_tokens": 842953,
+      "cached_input_tokens": 757120,
+      "output_tokens": 1598,
+      "reasoning_output_tokens": 50,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-09",
+          "timestamp": "2026-09-09T20:17:07.431Z",
+          "last_timestamp": "2026-09-09T20:18:13.523Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 11,
+          "total_tokens": 844551,
+          "input_tokens": 842953,
+          "cached_input_tokens": 757120,
+          "output_tokens": 1598,
+          "reasoning_output_tokens": 50,
           "cache_write_input_tokens": 0
         }
       ]
