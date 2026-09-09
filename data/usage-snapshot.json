@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-09T21:30:06.523Z",
+  "generated_at": "2026-09-09T22:02:28.302Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-09T20:18:13.523Z",
+  "latest_event_at": "2026-09-09T21:35:55.207Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1890
+    "log_files": 1891
   },
   "workspaces": [
     {
@@ -72455,6 +72455,41 @@
           "cached_input_tokens": 757120,
           "output_tokens": 1598,
           "reasoning_output_tokens": 50,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a08814-235b-7462-a890-8b8ef34e1f70",
+      "parent_session_id": null,
+      "thread_name": "Find private equity project",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-09T21:30:16.299Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 647788,
+      "input_tokens": 645657,
+      "cached_input_tokens": 584320,
+      "output_tokens": 2131,
+      "reasoning_output_tokens": 27,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-09",
+          "timestamp": "2026-09-09T21:30:38.452Z",
+          "last_timestamp": "2026-09-09T21:35:55.207Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 10,
+          "total_tokens": 647788,
+          "input_tokens": 645657,
+          "cached_input_tokens": 584320,
+          "output_tokens": 2131,
+          "reasoning_output_tokens": 27,
           "cache_write_input_tokens": 0
         }
       ]
