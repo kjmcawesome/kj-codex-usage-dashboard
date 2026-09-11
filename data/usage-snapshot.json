@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-11T23:00:10.317Z",
+  "generated_at": "2026-09-11T23:30:05.551Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-11T18:24:09.329Z",
+  "latest_event_at": "2026-09-11T23:23:02.411Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1906
+    "log_files": 1910
   },
   "workspaces": [
     {
@@ -72061,11 +72061,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 1667954,
-      "input_tokens": 1662849,
-      "cached_input_tokens": 1576860,
-      "output_tokens": 5105,
-      "reasoning_output_tokens": 1468,
+      "total_tokens": 1953196,
+      "input_tokens": 1947249,
+      "cached_input_tokens": 1764764,
+      "output_tokens": 5947,
+      "reasoning_output_tokens": 1494,
       "cache_write_input_tokens": 85911,
       "events": [
         {
@@ -72082,6 +72082,21 @@
           "output_tokens": 5105,
           "reasoning_output_tokens": 1468,
           "cache_write_input_tokens": 85911
+        },
+        {
+          "date": "2026-09-11",
+          "timestamp": "2026-09-11T23:00:19.700Z",
+          "last_timestamp": "2026-09-11T23:00:26.952Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 3,
+          "total_tokens": 285242,
+          "input_tokens": 284400,
+          "cached_input_tokens": 187904,
+          "output_tokens": 842,
+          "reasoning_output_tokens": 26,
+          "cache_write_input_tokens": 0
         }
       ]
     },
@@ -72550,11 +72565,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 1135916,
-      "input_tokens": 1134157,
-      "cached_input_tokens": 1051008,
-      "output_tokens": 1759,
-      "reasoning_output_tokens": 55,
+      "total_tokens": 1244240,
+      "input_tokens": 1241816,
+      "cached_input_tokens": 1069440,
+      "output_tokens": 2424,
+      "reasoning_output_tokens": 72,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -72570,6 +72585,21 @@
           "cached_input_tokens": 1051008,
           "output_tokens": 1759,
           "reasoning_output_tokens": 55,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-11",
+          "timestamp": "2026-09-11T23:00:36.044Z",
+          "last_timestamp": "2026-09-11T23:00:36.044Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 1,
+          "total_tokens": 108324,
+          "input_tokens": 107659,
+          "cached_input_tokens": 18432,
+          "output_tokens": 665,
+          "reasoning_output_tokens": 17,
           "cache_write_input_tokens": 0
         }
       ]
@@ -73047,6 +73077,146 @@
       "reasoning_output_tokens": 0,
       "cache_write_input_tokens": 0,
       "events": []
+    },
+    {
+      "session_id": "01a092b3-bb95-7063-aea8-c910c5c8bd68",
+      "parent_session_id": null,
+      "thread_name": "Follow up with candidates",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-11T23:00:47.655Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 1928391,
+      "input_tokens": 1924767,
+      "cached_input_tokens": 1827968,
+      "output_tokens": 3624,
+      "reasoning_output_tokens": 106,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-11",
+          "timestamp": "2026-09-11T23:00:59.480Z",
+          "last_timestamp": "2026-09-11T23:23:02.411Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 23,
+          "total_tokens": 1928391,
+          "input_tokens": 1924767,
+          "cached_input_tokens": 1827968,
+          "output_tokens": 3624,
+          "reasoning_output_tokens": 106,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a092b4-cfec-7cc0-945d-6db776acad9c",
+      "parent_session_id": null,
+      "thread_name": "DN Land Friday Recap + Jason Draft",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-11T23:01:58.397Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 3940744,
+      "input_tokens": 3930684,
+      "cached_input_tokens": 3822464,
+      "output_tokens": 10060,
+      "reasoning_output_tokens": 1148,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-11",
+          "timestamp": "2026-09-11T23:02:10.154Z",
+          "last_timestamp": "2026-09-11T23:10:59.794Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 46,
+          "total_tokens": 3940744,
+          "input_tokens": 3930684,
+          "cached_input_tokens": 3822464,
+          "output_tokens": 10060,
+          "reasoning_output_tokens": 1148,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a092b8-794c-7ef0-86a7-5d117c4aa45f",
+      "parent_session_id": null,
+      "thread_name": "Capture DN Land Friday Reporting Snapshot",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-11T23:05:58.361Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 2026294,
+      "input_tokens": 2021048,
+      "cached_input_tokens": 1935232,
+      "output_tokens": 5246,
+      "reasoning_output_tokens": 238,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-11",
+          "timestamp": "2026-09-11T23:06:08.104Z",
+          "last_timestamp": "2026-09-11T23:10:10.633Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 28,
+          "total_tokens": 2026294,
+          "input_tokens": 2021048,
+          "cached_input_tokens": 1935232,
+          "output_tokens": 5246,
+          "reasoning_output_tokens": 238,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a092be-12f5-72f0-82dd-1a2465a77015",
+      "parent_session_id": null,
+      "thread_name": "Build PE portfolio alignment site",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-11T23:12:05.482Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 1973784,
+      "input_tokens": 1957162,
+      "cached_input_tokens": 1831424,
+      "output_tokens": 16622,
+      "reasoning_output_tokens": 841,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-11",
+          "timestamp": "2026-09-11T23:12:14.937Z",
+          "last_timestamp": "2026-09-11T23:19:35.119Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 19,
+          "total_tokens": 1973784,
+          "input_tokens": 1957162,
+          "cached_input_tokens": 1831424,
+          "output_tokens": 16622,
+          "reasoning_output_tokens": 841,
+          "cache_write_input_tokens": 0
+        }
+      ]
     }
   ]
 }
