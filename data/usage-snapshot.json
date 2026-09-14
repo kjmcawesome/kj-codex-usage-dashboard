@@ -1,14 +1,14 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-14T21:30:06.067Z",
+  "generated_at": "2026-09-14T22:00:06.577Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-14T20:33:56.718Z",
+  "latest_event_at": "2026-09-14T21:58:56.014Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
-    "duplicate_snapshots": 8113,
+    "duplicate_snapshots": 8115,
     "counter_resets": 4,
     "invalid_records": 315,
     "inconsistent_snapshots": 1,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1918
+    "log_files": 1920
   },
   "workspaces": [
     {
@@ -55663,11 +55663,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 256762657,
-      "input_tokens": 256192261,
-      "cached_input_tokens": 244805178,
-      "output_tokens": 570396,
-      "reasoning_output_tokens": 145888,
+      "total_tokens": 261110739,
+      "input_tokens": 260535844,
+      "cached_input_tokens": 248910522,
+      "output_tokens": 574895,
+      "reasoning_output_tokens": 147034,
       "cache_write_input_tokens": 3139659,
       "events": [
         {
@@ -55968,6 +55968,21 @@
           "cached_input_tokens": 18380416,
           "output_tokens": 38653,
           "reasoning_output_tokens": 6620,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-14",
+          "timestamp": "2026-09-14T21:56:40.482Z",
+          "last_timestamp": "2026-09-14T21:58:56.014Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 23,
+          "total_tokens": 4348082,
+          "input_tokens": 4343583,
+          "cached_input_tokens": 4105344,
+          "output_tokens": 4499,
+          "reasoning_output_tokens": 1146,
           "cache_write_input_tokens": 0
         }
       ]
@@ -73509,6 +73524,76 @@
           "cached_input_tokens": 393344,
           "output_tokens": 313,
           "reasoning_output_tokens": 0,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a1d5-951f-7fa0-8871-16e19cf1b9dc",
+      "parent_session_id": null,
+      "thread_name": "Find Azure-lost opps for AWS",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-14T21:32:04.257Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 9613636,
+      "input_tokens": 9577888,
+      "cached_input_tokens": 9296768,
+      "output_tokens": 35748,
+      "reasoning_output_tokens": 6158,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-14",
+          "timestamp": "2026-09-14T21:33:09.879Z",
+          "last_timestamp": "2026-09-14T21:58:16.972Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 75,
+          "total_tokens": 9613636,
+          "input_tokens": 9577888,
+          "cached_input_tokens": 9296768,
+          "output_tokens": 35748,
+          "reasoning_output_tokens": 6158,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a1ec-71a0-7340-9418-552a4dd2cfbf",
+      "parent_session_id": "019f8633-5b25-78b0-8955-62eb4c4bf871",
+      "thread_name": null,
+      "parent_thread_name": "Q3 forecast",
+      "session_started_at": "2026-09-14T21:57:02.498Z",
+      "is_subagent": true,
+      "is_fork": true,
+      "agent_nickname": "Mill",
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 1416701,
+      "input_tokens": 1413285,
+      "cached_input_tokens": 1244288,
+      "output_tokens": 3416,
+      "reasoning_output_tokens": 224,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-14",
+          "timestamp": "2026-09-14T21:57:11.360Z",
+          "last_timestamp": "2026-09-14T21:58:31.089Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 10,
+          "total_tokens": 1416701,
+          "input_tokens": 1413285,
+          "cached_input_tokens": 1244288,
+          "output_tokens": 3416,
+          "reasoning_output_tokens": 224,
           "cache_write_input_tokens": 0
         }
       ]
