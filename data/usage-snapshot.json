@@ -1,14 +1,14 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-12T04:00:06.214Z",
+  "generated_at": "2026-09-14T18:00:02.060Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-11T23:23:02.411Z",
+  "latest_event_at": "2026-09-14T16:54:40.654Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
-    "duplicate_snapshots": 8108,
+    "duplicate_snapshots": 8113,
     "counter_resets": 4,
     "invalid_records": 315,
     "inconsistent_snapshots": 1,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1910
+    "log_files": 1917
   },
   "workspaces": [
     {
@@ -73214,6 +73214,251 @@
           "cached_input_tokens": 1831424,
           "output_tokens": 16622,
           "reasoning_output_tokens": 841,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a09586-2de6-72f2-aa5f-121a2033f274",
+      "parent_session_id": null,
+      "thread_name": "DevDay DN Registration Alerts",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-12T12:09:54.002Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 952104,
+      "input_tokens": 949002,
+      "cached_input_tokens": 678912,
+      "output_tokens": 3102,
+      "reasoning_output_tokens": 674,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-12",
+          "timestamp": "2026-09-12T12:10:09.045Z",
+          "last_timestamp": "2026-09-12T23:33:43.127Z",
+          "model": "gpt-5.6-luna",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 16,
+          "total_tokens": 952104,
+          "input_tokens": 949002,
+          "cached_input_tokens": 678912,
+          "output_tokens": 3102,
+          "reasoning_output_tokens": 674,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a09aad-8af6-76e1-898c-ee23727b6ca0",
+      "parent_session_id": null,
+      "thread_name": "DevDay DN Registration Alerts",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-13T12:10:59.758Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 1157797,
+      "input_tokens": 1154750,
+      "cached_input_tokens": 930048,
+      "output_tokens": 3047,
+      "reasoning_output_tokens": 742,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-13",
+          "timestamp": "2026-09-13T17:04:15.233Z",
+          "last_timestamp": "2026-09-14T02:13:59.562Z",
+          "model": "gpt-5.6-luna",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 18,
+          "total_tokens": 1157797,
+          "input_tokens": 1154750,
+          "cached_input_tokens": 930048,
+          "output_tokens": 3047,
+          "reasoning_output_tokens": 742,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a09fce-bb24-7b70-b74f-557f2ccc5e32",
+      "parent_session_id": null,
+      "thread_name": "DevDay DN Registration Alerts",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-14T12:05:20.854Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 1193830,
+      "input_tokens": 1190532,
+      "cached_input_tokens": 1105152,
+      "output_tokens": 3298,
+      "reasoning_output_tokens": 731,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-14",
+          "timestamp": "2026-09-14T16:06:18.998Z",
+          "last_timestamp": "2026-09-14T16:12:57.171Z",
+          "model": "gpt-5.6-luna",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 20,
+          "total_tokens": 1193830,
+          "input_tokens": 1190532,
+          "cached_input_tokens": 1105152,
+          "output_tokens": 3298,
+          "reasoning_output_tokens": 731,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a0b0-68f1-7671-bab0-14e72f649941",
+      "parent_session_id": null,
+      "thread_name": "Triage Slack DMs command center",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-14T16:11:50.911Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 6410164,
+      "input_tokens": 6396966,
+      "cached_input_tokens": 6099200,
+      "output_tokens": 13198,
+      "reasoning_output_tokens": 923,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-14",
+          "timestamp": "2026-09-14T16:12:37.225Z",
+          "last_timestamp": "2026-09-14T16:23:19.762Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 54,
+          "total_tokens": 6410164,
+          "input_tokens": 6396966,
+          "cached_input_tokens": 6099200,
+          "output_tokens": 13198,
+          "reasoning_output_tokens": 923,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a0b4-cc2e-7e01-9e26-e5b508a3fbe5",
+      "parent_session_id": null,
+      "thread_name": "Refresh DN Outbound Motion Dashboard",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-14T16:16:38.469Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 562366,
+      "input_tokens": 560327,
+      "cached_input_tokens": 520576,
+      "output_tokens": 2039,
+      "reasoning_output_tokens": 136,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-14",
+          "timestamp": "2026-09-14T16:16:52.198Z",
+          "last_timestamp": "2026-09-14T16:18:41.294Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 11,
+          "total_tokens": 562366,
+          "input_tokens": 560327,
+          "cached_input_tokens": 520576,
+          "output_tokens": 2039,
+          "reasoning_output_tokens": 136,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a0b8-6376-7960-8b71-bff9237d0a43",
+      "parent_session_id": null,
+      "thread_name": "Review recent pipeline numbers",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-14T16:20:33.796Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 378651,
+      "input_tokens": 377365,
+      "cached_input_tokens": 331520,
+      "output_tokens": 1286,
+      "reasoning_output_tokens": 57,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-14",
+          "timestamp": "2026-09-14T16:21:06.905Z",
+          "last_timestamp": "2026-09-14T16:21:40.351Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 7,
+          "total_tokens": 378651,
+          "input_tokens": 377365,
+          "cached_input_tokens": 331520,
+          "output_tokens": 1286,
+          "reasoning_output_tokens": 57,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a0ba-27e2-7a61-a2f7-51055030734b",
+      "parent_session_id": null,
+      "thread_name": "Prep Banco Plata meeting",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-14T16:22:29.620Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 1365852,
+      "input_tokens": 1361929,
+      "cached_input_tokens": 1257216,
+      "output_tokens": 3923,
+      "reasoning_output_tokens": 26,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-14",
+          "timestamp": "2026-09-14T16:22:50.642Z",
+          "last_timestamp": "2026-09-14T16:54:40.654Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 15,
+          "total_tokens": 1365852,
+          "input_tokens": 1361929,
+          "cached_input_tokens": 1257216,
+          "output_tokens": 3923,
+          "reasoning_output_tokens": 26,
           "cache_write_input_tokens": 0
         }
       ]
