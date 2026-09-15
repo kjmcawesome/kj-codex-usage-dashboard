@@ -1,14 +1,14 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-15T04:10:38.798Z",
+  "generated_at": "2026-09-15T18:00:06.881Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-14T22:28:58.034Z",
+  "latest_event_at": "2026-09-15T18:00:03.600Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
-    "duplicate_snapshots": 8120,
+    "duplicate_snapshots": 8124,
     "counter_resets": 4,
     "invalid_records": 315,
     "inconsistent_snapshots": 1,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1921
+    "log_files": 1926
   },
   "workspaces": [
     {
@@ -55663,11 +55663,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 284432243,
-      "input_tokens": 283796295,
-      "cached_input_tokens": 271728186,
-      "output_tokens": 635948,
-      "reasoning_output_tokens": 159525,
+      "total_tokens": 293071399,
+      "input_tokens": 292426160,
+      "cached_input_tokens": 279838906,
+      "output_tokens": 645239,
+      "reasoning_output_tokens": 161975,
       "cache_write_input_tokens": 3139659,
       "events": [
         {
@@ -55983,6 +55983,21 @@
           "cached_input_tokens": 26923008,
           "output_tokens": 65552,
           "reasoning_output_tokens": 13637,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T16:37:18.860Z",
+          "last_timestamp": "2026-09-15T18:00:03.600Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 55,
+          "total_tokens": 8639156,
+          "input_tokens": 8629865,
+          "cached_input_tokens": 8110720,
+          "output_tokens": 9291,
+          "reasoning_output_tokens": 2450,
           "cache_write_input_tokens": 0
         }
       ]
@@ -65068,11 +65083,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 52002004,
-      "input_tokens": 51903903,
-      "cached_input_tokens": 46571019,
-      "output_tokens": 98101,
-      "reasoning_output_tokens": 14368,
+      "total_tokens": 53934056,
+      "input_tokens": 53829874,
+      "cached_input_tokens": 48345611,
+      "output_tokens": 104182,
+      "reasoning_output_tokens": 16990,
       "cache_write_input_tokens": 4489964,
       "events": [
         {
@@ -65418,6 +65433,21 @@
           "cached_input_tokens": 1914880,
           "output_tokens": 3289,
           "reasoning_output_tokens": 453,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T16:22:18.833Z",
+          "last_timestamp": "2026-09-15T16:26:30.651Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 18,
+          "total_tokens": 1932052,
+          "input_tokens": 1925971,
+          "cached_input_tokens": 1774592,
+          "output_tokens": 6081,
+          "reasoning_output_tokens": 2622,
           "cache_write_input_tokens": 0
         }
       ]
@@ -72285,11 +72315,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 9818102,
-      "input_tokens": 9796167,
-      "cached_input_tokens": 9458176,
-      "output_tokens": 21935,
-      "reasoning_output_tokens": 1588,
+      "total_tokens": 24943901,
+      "input_tokens": 24890473,
+      "cached_input_tokens": 24089216,
+      "output_tokens": 53428,
+      "reasoning_output_tokens": 5492,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -72320,6 +72350,21 @@
           "cached_input_tokens": 8091264,
           "output_tokens": 14014,
           "reasoning_output_tokens": 1260,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T16:41:00.355Z",
+          "last_timestamp": "2026-09-15T17:34:37.034Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 101,
+          "total_tokens": 15125799,
+          "input_tokens": 15094306,
+          "cached_input_tokens": 14631040,
+          "output_tokens": 31493,
+          "reasoning_output_tokens": 3904,
           "cache_write_input_tokens": 0
         }
       ]
@@ -73609,11 +73654,11 @@
       "agent_nickname": "Turing",
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 843507,
-      "input_tokens": 839184,
-      "cached_input_tokens": 760704,
-      "output_tokens": 4323,
-      "reasoning_output_tokens": 1234,
+      "total_tokens": 1408313,
+      "input_tokens": 1402749,
+      "cached_input_tokens": 1225728,
+      "output_tokens": 5564,
+      "reasoning_output_tokens": 1548,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -73629,6 +73674,196 @@
           "cached_input_tokens": 760704,
           "output_tokens": 4323,
           "reasoning_output_tokens": 1234,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T16:39:20.372Z",
+          "last_timestamp": "2026-09-15T16:39:48.315Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 6,
+          "total_tokens": 564806,
+          "input_tokens": 563565,
+          "cached_input_tokens": 465024,
+          "output_tokens": 1241,
+          "reasoning_output_tokens": 314,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a5e2-91c9-7740-bac4-fa56a5a99c3b",
+      "parent_session_id": "019ff6f6-a60c-7bd0-86e0-3000e61d370f",
+      "thread_name": null,
+      "parent_thread_name": "Recap computer history patterns",
+      "session_started_at": "2026-09-15T16:24:44.328Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 36907,
+      "input_tokens": 36768,
+      "cached_input_tokens": 7936,
+      "output_tokens": 139,
+      "reasoning_output_tokens": 83,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T16:24:50.855Z",
+          "last_timestamp": "2026-09-15T16:24:50.855Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 1,
+          "total_tokens": 36907,
+          "input_tokens": 36768,
+          "cached_input_tokens": 7936,
+          "output_tokens": 139,
+          "reasoning_output_tokens": 83,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a5f8-708b-7820-bd14-9467170a2177",
+      "parent_session_id": null,
+      "thread_name": "Improve Salesforce workflow",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-15T16:48:37.529Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 995409,
+      "input_tokens": 991781,
+      "cached_input_tokens": 937216,
+      "output_tokens": 3628,
+      "reasoning_output_tokens": 167,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T16:49:21.209Z",
+          "last_timestamp": "2026-09-15T16:57:53.637Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 16,
+          "total_tokens": 995409,
+          "input_tokens": 991781,
+          "cached_input_tokens": 937216,
+          "output_tokens": 3628,
+          "reasoning_output_tokens": 167,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a605-f4f5-7443-84c4-29e3c862b188",
+      "parent_session_id": "01a0839e-e475-79c3-84a1-02573257c8c6",
+      "thread_name": null,
+      "parent_thread_name": "Event strategy",
+      "session_started_at": "2026-09-15T17:03:23.403Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 2515237,
+      "input_tokens": 2512660,
+      "cached_input_tokens": 2050816,
+      "output_tokens": 2577,
+      "reasoning_output_tokens": 1531,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T17:03:37.513Z",
+          "last_timestamp": "2026-09-15T17:33:50.265Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 17,
+          "total_tokens": 2515237,
+          "input_tokens": 2512660,
+          "cached_input_tokens": 2050816,
+          "output_tokens": 2577,
+          "reasoning_output_tokens": 1531,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a613-bba2-7ee3-9176-39bd3bccf129",
+      "parent_session_id": null,
+      "thread_name": "Set up meeting follow-up automation",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-15T17:18:26.221Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 236091,
+      "input_tokens": 235121,
+      "cached_input_tokens": 202112,
+      "output_tokens": 970,
+      "reasoning_output_tokens": 135,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T17:19:26.881Z",
+          "last_timestamp": "2026-09-15T17:24:56.759Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 5,
+          "total_tokens": 236091,
+          "input_tokens": 235121,
+          "cached_input_tokens": 202112,
+          "output_tokens": 970,
+          "reasoning_output_tokens": 135,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0a639-8c60-7120-85ed-42dbd9bed5c2",
+      "parent_session_id": "019f8633-5b25-78b0-8955-62eb4c4bf871",
+      "thread_name": null,
+      "parent_thread_name": "Q3 forecast",
+      "session_started_at": "2026-09-15T17:59:44.486Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 47836,
+      "input_tokens": 47671,
+      "cached_input_tokens": 7936,
+      "output_tokens": 165,
+      "reasoning_output_tokens": 101,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T17:59:55.220Z",
+          "last_timestamp": "2026-09-15T17:59:55.220Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 1,
+          "total_tokens": 47836,
+          "input_tokens": 47671,
+          "cached_input_tokens": 7936,
+          "output_tokens": 165,
+          "reasoning_output_tokens": 101,
           "cache_write_input_tokens": 0
         }
       ]
