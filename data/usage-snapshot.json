@@ -1,7 +1,7 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-15T21:00:05.908Z",
+  "generated_at": "2026-09-15T21:30:06.126Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
   "latest_event_at": "2026-09-15T20:44:54.862Z",
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1932
+    "log_files": 1933
   },
   "workspaces": [
     {
@@ -74152,6 +74152,25 @@
           "cache_write_input_tokens": 0
         }
       ]
+    },
+    {
+      "session_id": "01a0a6ea-fc44-7b02-b31a-338fe6582e92",
+      "parent_session_id": "019fd378-41c3-77d0-94af-0826692ca2fc",
+      "thread_name": null,
+      "parent_thread_name": "Outbound Cyber Campaign",
+      "session_started_at": "2026-09-15T21:13:33.150Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "events": []
     }
   ]
 }
