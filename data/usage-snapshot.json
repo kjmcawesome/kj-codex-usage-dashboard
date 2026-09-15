@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-15T21:30:06.126Z",
+  "generated_at": "2026-09-15T22:00:06.145Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-15T20:44:54.862Z",
+  "latest_event_at": "2026-09-15T21:39:26.032Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
@@ -72950,11 +72950,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 200518,
-      "input_tokens": 200103,
-      "cached_input_tokens": 163072,
-      "output_tokens": 415,
-      "reasoning_output_tokens": 41,
+      "total_tokens": 813834,
+      "input_tokens": 812349,
+      "cached_input_tokens": 708096,
+      "output_tokens": 1485,
+      "reasoning_output_tokens": 117,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -72970,6 +72970,21 @@
           "cached_input_tokens": 163072,
           "output_tokens": 415,
           "reasoning_output_tokens": 41,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-15",
+          "timestamp": "2026-09-15T21:36:40.792Z",
+          "last_timestamp": "2026-09-15T21:39:26.032Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 8,
+          "total_tokens": 613316,
+          "input_tokens": 612246,
+          "cached_input_tokens": 545024,
+          "output_tokens": 1070,
+          "reasoning_output_tokens": 76,
           "cache_write_input_tokens": 0
         }
       ]
