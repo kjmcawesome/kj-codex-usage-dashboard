@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-16T19:00:04.271Z",
+  "generated_at": "2026-09-16T19:30:06.119Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-16T17:32:58.164Z",
+  "latest_event_at": "2026-09-16T19:02:32.218Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1938
+    "log_files": 1939
   },
   "workspaces": [
     {
@@ -74382,26 +74382,61 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 741152,
-      "input_tokens": 739516,
-      "cached_input_tokens": 689024,
-      "output_tokens": 1636,
-      "reasoning_output_tokens": 42,
+      "total_tokens": 1768226,
+      "input_tokens": 1766000,
+      "cached_input_tokens": 1685248,
+      "output_tokens": 2226,
+      "reasoning_output_tokens": 81,
       "cache_write_input_tokens": 0,
       "events": [
         {
           "date": "2026-09-16",
           "timestamp": "2026-09-16T17:31:11.211Z",
-          "last_timestamp": "2026-09-16T17:32:58.164Z",
+          "last_timestamp": "2026-09-16T19:02:32.218Z",
           "model": "gpt-5.6-sol",
           "is_proxy": true,
           "pricing_context": "short",
-          "request_count": 12,
-          "total_tokens": 741152,
-          "input_tokens": 739516,
-          "cached_input_tokens": 689024,
-          "output_tokens": 1636,
-          "reasoning_output_tokens": 42,
+          "request_count": 24,
+          "total_tokens": 1768226,
+          "input_tokens": 1766000,
+          "cached_input_tokens": 1685248,
+          "output_tokens": 2226,
+          "reasoning_output_tokens": 81,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0ab98-a1a2-79f2-bbff-4ee0ad58e25f",
+      "parent_session_id": "01a0ab45-a233-75a0-9419-21bbcd3e0818",
+      "thread_name": null,
+      "parent_thread_name": "Draft GTM DevDay channel ask",
+      "session_started_at": "2026-09-16T19:01:41.944Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 27432,
+      "input_tokens": 27230,
+      "cached_input_tokens": 7936,
+      "output_tokens": 202,
+      "reasoning_output_tokens": 143,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-16",
+          "timestamp": "2026-09-16T19:01:45.681Z",
+          "last_timestamp": "2026-09-16T19:01:45.681Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 1,
+          "total_tokens": 27432,
+          "input_tokens": 27230,
+          "cached_input_tokens": 7936,
+          "output_tokens": 202,
+          "reasoning_output_tokens": 143,
           "cache_write_input_tokens": 0
         }
       ]
