@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-18T21:00:06.037Z",
+  "generated_at": "2026-09-18T21:30:05.849Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-18T19:49:58.605Z",
+  "latest_event_at": "2026-09-18T21:25:53.782Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1983
+    "log_files": 1985
   },
   "workspaces": [
     {
@@ -76126,6 +76126,76 @@
           "cached_input_tokens": 164352,
           "output_tokens": 851,
           "reasoning_output_tokens": 0,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0b662-9e02-79a0-a64f-03950dc52443",
+      "parent_session_id": null,
+      "thread_name": "Find Matt Hansen quota attainment",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-18T21:18:31.457Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 489024,
+      "input_tokens": 487845,
+      "cached_input_tokens": 418176,
+      "output_tokens": 1179,
+      "reasoning_output_tokens": 30,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-18",
+          "timestamp": "2026-09-18T21:18:38.821Z",
+          "last_timestamp": "2026-09-18T21:19:53.035Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 9,
+          "total_tokens": 489024,
+          "input_tokens": 487845,
+          "cached_input_tokens": 418176,
+          "output_tokens": 1179,
+          "reasoning_output_tokens": 30,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0b668-4c29-7161-a323-96d25c6b67af",
+      "parent_session_id": null,
+      "thread_name": "Rank top 10 DevDay ADs",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-18T21:24:43.710Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 217980,
+      "input_tokens": 216885,
+      "cached_input_tokens": 159744,
+      "output_tokens": 1095,
+      "reasoning_output_tokens": 86,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-18",
+          "timestamp": "2026-09-18T21:25:00.487Z",
+          "last_timestamp": "2026-09-18T21:25:53.782Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 4,
+          "total_tokens": 217980,
+          "input_tokens": 216885,
+          "cached_input_tokens": 159744,
+          "output_tokens": 1095,
+          "reasoning_output_tokens": 86,
           "cache_write_input_tokens": 0
         }
       ]
