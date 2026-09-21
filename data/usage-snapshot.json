@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-21T20:00:06.201Z",
+  "generated_at": "2026-09-21T20:30:02.946Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-07-21",
-  "latest_event_at": "2026-09-21T18:44:53.093Z",
+  "latest_event_at": "2026-09-21T20:30:01.828Z",
   "quality": {
     "inherited_tokens_removed": 0,
     "inherited_events_removed": 0,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 88
+    "log_files": 90
   },
   "workspaces": [
     {
@@ -1380,11 +1380,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 10468258,
-      "input_tokens": 10430931,
-      "cached_input_tokens": 10054784,
-      "output_tokens": 37327,
-      "reasoning_output_tokens": 6210,
+      "total_tokens": 14714535,
+      "input_tokens": 14662698,
+      "cached_input_tokens": 14103040,
+      "output_tokens": 51837,
+      "reasoning_output_tokens": 6989,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -1415,6 +1415,21 @@
           "cached_input_tokens": 758016,
           "output_tokens": 1579,
           "reasoning_output_tokens": 52,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-21",
+          "timestamp": "2026-09-21T20:24:39.456Z",
+          "last_timestamp": "2026-09-21T20:30:01.828Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 30,
+          "total_tokens": 4246277,
+          "input_tokens": 4231767,
+          "cached_input_tokens": 4048256,
+          "output_tokens": 14510,
+          "reasoning_output_tokens": 779,
           "cache_write_input_tokens": 0
         }
       ]
@@ -4213,6 +4228,60 @@
       "reasoning_output_tokens": 0,
       "cache_write_input_tokens": 0,
       "events": []
+    },
+    {
+      "session_id": "01a0c5a3-9d7e-70b2-9a9c-61bebc827576",
+      "parent_session_id": "01a0a1d5-951f-7fa0-8871-16e19cf1b9dc",
+      "thread_name": null,
+      "parent_thread_name": "Find Azure-lost opps for AWS",
+      "session_started_at": "2026-09-21T20:23:49.375Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "events": []
+    },
+    {
+      "session_id": "01a0c5a5-1f68-7422-b144-f0b5d46e6a0b",
+      "parent_session_id": "01a0a1d5-951f-7fa0-8871-16e19cf1b9dc",
+      "thread_name": null,
+      "parent_thread_name": "Find Azure-lost opps for AWS",
+      "session_started_at": "2026-09-21T20:25:28.169Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_2f7f3ddb18123d59",
+      "workspace_label": "Codex",
+      "total_tokens": 292248,
+      "input_tokens": 291437,
+      "cached_input_tokens": 230912,
+      "output_tokens": 811,
+      "reasoning_output_tokens": 410,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-21",
+          "timestamp": "2026-09-21T20:25:35.791Z",
+          "last_timestamp": "2026-09-21T20:29:38.009Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 6,
+          "total_tokens": 292248,
+          "input_tokens": 291437,
+          "cached_input_tokens": 230912,
+          "output_tokens": 811,
+          "reasoning_output_tokens": 410,
+          "cache_write_input_tokens": 0
+        }
+      ]
     }
   ]
 }
