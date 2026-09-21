@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-19T01:00:02.986Z",
+  "generated_at": "2026-09-21T16:31:07.309Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-01-30",
-  "latest_event_at": "2026-09-19T00:51:59.689Z",
+  "latest_event_at": "2026-09-21T16:27:13.568Z",
   "quality": {
     "inherited_tokens_removed": 7263244374,
     "inherited_events_removed": 8968,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 1989
+    "log_files": 1990
   },
   "workspaces": [
     {
@@ -76351,6 +76351,41 @@
           "cached_input_tokens": 2542976,
           "output_tokens": 6523,
           "reasoning_output_tokens": 271,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0c4ca-5429-7380-90f2-a1a88cf00f65",
+      "parent_session_id": null,
+      "thread_name": "Refresh DN Outbound Motion Dashboard",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-21T16:26:29.322Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 177165,
+      "input_tokens": 176106,
+      "cached_input_tokens": 113664,
+      "output_tokens": 1059,
+      "reasoning_output_tokens": 284,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-21",
+          "timestamp": "2026-09-21T16:26:50.337Z",
+          "last_timestamp": "2026-09-21T16:27:13.568Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 4,
+          "total_tokens": 177165,
+          "input_tokens": 176106,
+          "cached_input_tokens": 113664,
+          "output_tokens": 1059,
+          "reasoning_output_tokens": 284,
           "cache_write_input_tokens": 0
         }
       ]
