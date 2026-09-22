@@ -1,10 +1,10 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-22T00:00:03.061Z",
+  "generated_at": "2026-09-22T16:30:02.375Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-07-21",
-  "latest_event_at": "2026-09-21T21:18:11.135Z",
+  "latest_event_at": "2026-09-22T00:02:45.326Z",
   "quality": {
     "inherited_tokens_removed": 0,
     "inherited_events_removed": 0,
@@ -1335,41 +1335,6 @@
       ]
     },
     {
-      "session_id": "01a0a153-76ac-78f0-abf8-d60e8a029101",
-      "parent_session_id": null,
-      "thread_name": "Process Matt SFDC approval",
-      "parent_thread_name": null,
-      "session_started_at": "2026-09-14T19:09:56.799Z",
-      "is_subagent": false,
-      "is_fork": false,
-      "agent_nickname": null,
-      "workspace_key": "ws_8389cad5caafa947",
-      "workspace_label": "Codex projects",
-      "total_tokens": 466044,
-      "input_tokens": 465731,
-      "cached_input_tokens": 393344,
-      "output_tokens": 313,
-      "reasoning_output_tokens": 0,
-      "cache_write_input_tokens": 0,
-      "events": [
-        {
-          "date": "2026-09-14",
-          "timestamp": "2026-09-14T19:10:33.610Z",
-          "last_timestamp": "2026-09-14T19:10:50.998Z",
-          "model": "gpt-5.6-sol",
-          "is_proxy": true,
-          "pricing_context": "short",
-          "request_count": 6,
-          "total_tokens": 466044,
-          "input_tokens": 465731,
-          "cached_input_tokens": 393344,
-          "output_tokens": 313,
-          "reasoning_output_tokens": 0,
-          "cache_write_input_tokens": 0
-        }
-      ]
-    },
-    {
       "session_id": "01a0a1d5-951f-7fa0-8871-16e19cf1b9dc",
       "parent_session_id": null,
       "thread_name": "Find Azure-lost opps for AWS",
@@ -1695,11 +1660,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 2344378,
-      "input_tokens": 2338306,
-      "cached_input_tokens": 1962112,
-      "output_tokens": 6072,
-      "reasoning_output_tokens": 651,
+      "total_tokens": 3189675,
+      "input_tokens": 3182494,
+      "cached_input_tokens": 2629120,
+      "output_tokens": 7181,
+      "reasoning_output_tokens": 680,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -1745,6 +1710,21 @@
           "cached_input_tokens": 0,
           "output_tokens": 52,
           "reasoning_output_tokens": 46,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-21",
+          "timestamp": "2026-09-22T00:02:18.463Z",
+          "last_timestamp": "2026-09-22T00:02:45.326Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 5,
+          "total_tokens": 845297,
+          "input_tokens": 844188,
+          "cached_input_tokens": 667008,
+          "output_tokens": 1109,
+          "reasoning_output_tokens": 29,
           "cache_write_input_tokens": 0
         }
       ]
@@ -4282,6 +4262,25 @@
           "cache_write_input_tokens": 0
         }
       ]
+    },
+    {
+      "session_id": "01a0c99d-7ada-7f83-bd22-0c4f7a29e1d9",
+      "parent_session_id": "019ff6f6-a60c-7bd0-86e0-3000e61d370f",
+      "thread_name": null,
+      "parent_thread_name": "Recap computer history patterns",
+      "session_started_at": "2026-09-22T14:55:36.201Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "events": []
     }
   ]
 }
