@@ -1,14 +1,14 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-22T20:30:05.671Z",
+  "generated_at": "2026-09-22T21:00:05.416Z",
   "timezone": "America/Los_Angeles",
   "earliest_date": "2026-07-21",
-  "latest_event_at": "2026-09-22T00:02:45.326Z",
+  "latest_event_at": "2026-09-22T20:58:11.318Z",
   "quality": {
     "inherited_tokens_removed": 0,
     "inherited_events_removed": 0,
-    "duplicate_snapshots": 157,
+    "duplicate_snapshots": 159,
     "counter_resets": 0,
     "invalid_records": 5,
     "inconsistent_snapshots": 0,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 92
+    "log_files": 95
   },
   "workspaces": [
     {
@@ -1035,11 +1035,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 42259699,
-      "input_tokens": 42190534,
-      "cached_input_tokens": 40719360,
-      "output_tokens": 69165,
-      "reasoning_output_tokens": 6406,
+      "total_tokens": 50833519,
+      "input_tokens": 50756369,
+      "cached_input_tokens": 48972928,
+      "output_tokens": 77150,
+      "reasoning_output_tokens": 7736,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -1100,6 +1100,21 @@
           "cached_input_tokens": 4499456,
           "output_tokens": 2882,
           "reasoning_output_tokens": 123,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-22",
+          "timestamp": "2026-09-22T20:31:09.693Z",
+          "last_timestamp": "2026-09-22T20:58:11.318Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 48,
+          "total_tokens": 8573820,
+          "input_tokens": 8565835,
+          "cached_input_tokens": 8253568,
+          "output_tokens": 7985,
+          "reasoning_output_tokens": 1330,
           "cache_write_input_tokens": 0
         }
       ]
@@ -4319,6 +4334,95 @@
       "reasoning_output_tokens": 0,
       "cache_write_input_tokens": 0,
       "events": []
+    },
+    {
+      "session_id": "01a0cacf-db53-78c3-9a1e-df081ad89f6b",
+      "parent_session_id": "01a0839e-e475-79c3-84a1-02573257c8c6",
+      "thread_name": null,
+      "parent_thread_name": "Event strategy",
+      "session_started_at": "2026-09-22T20:30:14.899Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "events": []
+    },
+    {
+      "session_id": "01a0cad0-e619-7a70-ba94-93857c5a577f",
+      "parent_session_id": "01a0839e-e475-79c3-84a1-02573257c8c6",
+      "thread_name": null,
+      "parent_thread_name": "Event strategy",
+      "session_started_at": "2026-09-22T20:31:23.179Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 773746,
+      "input_tokens": 773022,
+      "cached_input_tokens": 662528,
+      "output_tokens": 724,
+      "reasoning_output_tokens": 258,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-22",
+          "timestamp": "2026-09-22T20:31:26.915Z",
+          "last_timestamp": "2026-09-22T20:56:16.205Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 8,
+          "total_tokens": 773746,
+          "input_tokens": 773022,
+          "cached_input_tokens": 662528,
+          "output_tokens": 724,
+          "reasoning_output_tokens": 258,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0cae9-1a57-7491-b2db-0d4566685363",
+      "parent_session_id": "01a0839e-e475-79c3-84a1-02573257c8c6",
+      "thread_name": null,
+      "parent_thread_name": "Event strategy",
+      "session_started_at": "2026-09-22T20:57:49.427Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 40984,
+      "input_tokens": 40828,
+      "cached_input_tokens": 7936,
+      "output_tokens": 156,
+      "reasoning_output_tokens": 97,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-22",
+          "timestamp": "2026-09-22T20:57:53.759Z",
+          "last_timestamp": "2026-09-22T20:57:53.759Z",
+          "model": "gpt-5.3-codex",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 1,
+          "total_tokens": 40984,
+          "input_tokens": 40828,
+          "cached_input_tokens": 7936,
+          "output_tokens": 156,
+          "reasoning_output_tokens": 97,
+          "cache_write_input_tokens": 0
+        }
+      ]
     }
   ]
 }
