@@ -1,14 +1,14 @@
 {
   "snapshot_version": 3,
   "counting_version": 3,
-  "generated_at": "2026-09-22T23:30:05.994Z",
+  "generated_at": "2026-09-23T00:00:06.552Z",
   "timezone": "America/Los_Angeles",
-  "earliest_date": "2026-07-21",
-  "latest_event_at": "2026-09-22T23:24:26.512Z",
+  "earliest_date": "2026-07-16",
+  "latest_event_at": "2026-09-23T00:00:05.417Z",
   "quality": {
     "inherited_tokens_removed": 0,
     "inherited_events_removed": 0,
-    "duplicate_snapshots": 161,
+    "duplicate_snapshots": 193,
     "counter_resets": 0,
     "invalid_records": 5,
     "inconsistent_snapshots": 0,
@@ -16,7 +16,7 @@
     "lineage_cycles": 0
   },
   "source": {
-    "log_files": 97
+    "log_files": 100
   },
   "workspaces": [
     {
@@ -30,6 +30,86 @@
   ],
   "sessions": [
     {
+      "session_id": "019f6b0f-60ae-7960-a676-8a91970d3c02",
+      "parent_session_id": null,
+      "thread_name": "Team KJ Q3 Pipeline Snapshot",
+      "parent_thread_name": null,
+      "session_started_at": "2026-07-16T13:13:17.793Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 107529073,
+      "input_tokens": 107231023,
+      "cached_input_tokens": 103135872,
+      "output_tokens": 298050,
+      "reasoning_output_tokens": 90528,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-07-16",
+          "timestamp": "2026-07-16T13:26:28.618Z",
+          "last_timestamp": "2026-07-16T18:44:50.939Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 322,
+          "total_tokens": 43818185,
+          "input_tokens": 43674228,
+          "cached_input_tokens": 42240512,
+          "output_tokens": 143957,
+          "reasoning_output_tokens": 38511,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-08-01",
+          "timestamp": "2026-08-02T02:49:59.418Z",
+          "last_timestamp": "2026-08-02T03:00:00.217Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 80,
+          "total_tokens": 10829937,
+          "input_tokens": 10801258,
+          "cached_input_tokens": 10302464,
+          "output_tokens": 28679,
+          "reasoning_output_tokens": 8885,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-08-06",
+          "timestamp": "2026-08-06T17:45:33.581Z",
+          "last_timestamp": "2026-08-07T02:40:15.818Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 336,
+          "total_tokens": 48146920,
+          "input_tokens": 48038604,
+          "cached_input_tokens": 46227840,
+          "output_tokens": 108316,
+          "reasoning_output_tokens": 38380,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-08-12",
+          "timestamp": "2026-08-12T21:25:18.381Z",
+          "last_timestamp": "2026-08-12T21:29:47.370Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 44,
+          "total_tokens": 4734031,
+          "input_tokens": 4716933,
+          "cached_input_tokens": 4365056,
+          "output_tokens": 17098,
+          "reasoning_output_tokens": 4752,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
       "session_id": "019f8633-5b25-78b0-8955-62eb4c4bf871",
       "parent_session_id": null,
       "thread_name": "Q3 forecast",
@@ -40,11 +120,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 301231113,
-      "input_tokens": 300558124,
-      "cached_input_tokens": 287617082,
-      "output_tokens": 672989,
-      "reasoning_output_tokens": 169590,
+      "total_tokens": 303599844,
+      "input_tokens": 302922609,
+      "cached_input_tokens": 289611322,
+      "output_tokens": 677235,
+      "reasoning_output_tokens": 170406,
       "cache_write_input_tokens": 3139659,
       "events": [
         {
@@ -390,6 +470,21 @@
           "cached_input_tokens": 5131904,
           "output_tokens": 10124,
           "reasoning_output_tokens": 5057,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-22",
+          "timestamp": "2026-09-22T23:55:14.415Z",
+          "last_timestamp": "2026-09-23T00:00:05.417Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 17,
+          "total_tokens": 2368731,
+          "input_tokens": 2364485,
+          "cached_input_tokens": 1994240,
+          "output_tokens": 4246,
+          "reasoning_output_tokens": 816,
           "cache_write_input_tokens": 0
         }
       ]
@@ -1035,11 +1130,11 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 72421374,
-      "input_tokens": 72329835,
-      "cached_input_tokens": 70224896,
-      "output_tokens": 91539,
-      "reasoning_output_tokens": 9383,
+      "total_tokens": 92980002,
+      "input_tokens": 92878156,
+      "cached_input_tokens": 90530304,
+      "output_tokens": 101846,
+      "reasoning_output_tokens": 10098,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -1105,16 +1200,16 @@
         {
           "date": "2026-09-22",
           "timestamp": "2026-09-22T20:31:09.693Z",
-          "last_timestamp": "2026-09-22T23:24:26.512Z",
+          "last_timestamp": "2026-09-22T23:49:27.376Z",
           "model": "gpt-5.6-sol",
           "is_proxy": true,
           "pricing_context": "short",
-          "request_count": 182,
-          "total_tokens": 30161675,
-          "input_tokens": 30139301,
-          "cached_input_tokens": 29505536,
-          "output_tokens": 22374,
-          "reasoning_output_tokens": 2977,
+          "request_count": 279,
+          "total_tokens": 50720303,
+          "input_tokens": 50687622,
+          "cached_input_tokens": 49810944,
+          "output_tokens": 32681,
+          "reasoning_output_tokens": 3692,
           "cache_write_input_tokens": 0
         }
       ]
@@ -1425,11 +1520,11 @@
       "agent_nickname": "Mill",
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 5916914,
-      "input_tokens": 5907747,
-      "cached_input_tokens": 5199488,
-      "output_tokens": 9167,
-      "reasoning_output_tokens": 1369,
+      "total_tokens": 8090374,
+      "input_tokens": 8077889,
+      "cached_input_tokens": 7160704,
+      "output_tokens": 12485,
+      "reasoning_output_tokens": 2095,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -1476,6 +1571,21 @@
           "output_tokens": 3437,
           "reasoning_output_tokens": 393,
           "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-22",
+          "timestamp": "2026-09-22T23:58:20.758Z",
+          "last_timestamp": "2026-09-22T23:59:42.024Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 13,
+          "total_tokens": 2173460,
+          "input_tokens": 2170142,
+          "cached_input_tokens": 1961216,
+          "output_tokens": 3318,
+          "reasoning_output_tokens": 726,
+          "cache_write_input_tokens": 0
         }
       ]
     },
@@ -1490,11 +1600,11 @@
       "agent_nickname": "Turing",
       "workspace_key": "ws_2f7f3ddb18123d59",
       "workspace_label": "Codex",
-      "total_tokens": 2046796,
-      "input_tokens": 2038030,
-      "cached_input_tokens": 1747456,
-      "output_tokens": 8766,
-      "reasoning_output_tokens": 3360,
+      "total_tokens": 4422775,
+      "input_tokens": 4407629,
+      "cached_input_tokens": 3936000,
+      "output_tokens": 15146,
+      "reasoning_output_tokens": 5482,
       "cache_write_input_tokens": 0,
       "events": [
         {
@@ -1540,6 +1650,21 @@
           "cached_input_tokens": 20352,
           "output_tokens": 727,
           "reasoning_output_tokens": 516,
+          "cache_write_input_tokens": 0
+        },
+        {
+          "date": "2026-09-22",
+          "timestamp": "2026-09-22T23:57:36.231Z",
+          "last_timestamp": "2026-09-22T23:59:37.946Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 15,
+          "total_tokens": 2375979,
+          "input_tokens": 2369599,
+          "cached_input_tokens": 2188544,
+          "output_tokens": 6380,
+          "reasoning_output_tokens": 2122,
           "cache_write_input_tokens": 0
         }
       ]
@@ -4435,26 +4560,26 @@
       "agent_nickname": null,
       "workspace_key": "ws_8389cad5caafa947",
       "workspace_label": "Codex projects",
-      "total_tokens": 4328929,
-      "input_tokens": 4325004,
-      "cached_input_tokens": 4168960,
-      "output_tokens": 3925,
-      "reasoning_output_tokens": 1543,
+      "total_tokens": 12750682,
+      "input_tokens": 12743597,
+      "cached_input_tokens": 12473344,
+      "output_tokens": 7085,
+      "reasoning_output_tokens": 2259,
       "cache_write_input_tokens": 0,
       "events": [
         {
           "date": "2026-09-22",
           "timestamp": "2026-09-22T22:56:27.378Z",
-          "last_timestamp": "2026-09-22T23:24:21.545Z",
+          "last_timestamp": "2026-09-22T23:49:07.641Z",
           "model": "gpt-5.3-codex",
           "is_proxy": false,
           "pricing_context": "short",
-          "request_count": 43,
-          "total_tokens": 4328929,
-          "input_tokens": 4325004,
-          "cached_input_tokens": 4168960,
-          "output_tokens": 3925,
-          "reasoning_output_tokens": 1543,
+          "request_count": 88,
+          "total_tokens": 12750682,
+          "input_tokens": 12743597,
+          "cached_input_tokens": 12473344,
+          "output_tokens": 7085,
+          "reasoning_output_tokens": 2259,
           "cache_write_input_tokens": 0
         }
       ]
@@ -4490,6 +4615,60 @@
           "cached_input_tokens": 482816,
           "output_tokens": 957,
           "reasoning_output_tokens": 68,
+          "cache_write_input_tokens": 0
+        }
+      ]
+    },
+    {
+      "session_id": "01a0cb76-4bdf-74a3-bf06-4560ae862c39",
+      "parent_session_id": "019f6b0f-60ae-7960-a676-8a91970d3c02",
+      "thread_name": null,
+      "parent_thread_name": "Team KJ Q3 Pipeline Snapshot",
+      "session_started_at": "2026-09-22T23:32:02.704Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "cached_input_tokens": 0,
+      "output_tokens": 0,
+      "reasoning_output_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "events": []
+    },
+    {
+      "session_id": "01a0cb82-dd29-76f2-a703-b4cfc71e2abe",
+      "parent_session_id": null,
+      "thread_name": "Find DevDay attendee list",
+      "parent_thread_name": null,
+      "session_started_at": "2026-09-22T23:45:46.294Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_8389cad5caafa947",
+      "workspace_label": "Codex projects",
+      "total_tokens": 1271037,
+      "input_tokens": 1269727,
+      "cached_input_tokens": 1146112,
+      "output_tokens": 1310,
+      "reasoning_output_tokens": 17,
+      "cache_write_input_tokens": 0,
+      "events": [
+        {
+          "date": "2026-09-22",
+          "timestamp": "2026-09-22T23:45:55.249Z",
+          "last_timestamp": "2026-09-22T23:48:15.307Z",
+          "model": "gpt-5.6-sol",
+          "is_proxy": true,
+          "pricing_context": "short",
+          "request_count": 14,
+          "total_tokens": 1271037,
+          "input_tokens": 1269727,
+          "cached_input_tokens": 1146112,
+          "output_tokens": 1310,
+          "reasoning_output_tokens": 17,
           "cache_write_input_tokens": 0
         }
       ]
