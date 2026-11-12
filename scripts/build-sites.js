@@ -88,7 +88,7 @@ export async function buildSitesDeployment(options = {}) {
   const assets = await collectAssets(distRoot);
   const workerDirectory = join(distRoot, "server");
   await mkdir(workerDirectory, { recursive: true });
-  for (const file of ['cloud-runtime.js','cloud-snapshot.js']) await cp(join(repoRoot,'lib',file),join(workerDirectory,file));
+  for (const file of ['cloud-runtime.js','cloud-snapshot.js','github-contributions.js']) await cp(join(repoRoot,'lib',file),join(workerDirectory,file));
   await writeFile(join(workerDirectory, "index.js"), buildWorkerSource(assets), "utf8");
 
   return {

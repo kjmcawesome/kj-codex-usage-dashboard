@@ -1,6 +1,6 @@
 # Project Economics Dashboard
 
-A dependency-free local dashboard for exploring Codex token activity, estimated API-equivalent cost, and project ROI scenarios. This branch includes the working app and synthetic examples only. It contains no personal usage history, customer annotations, credentials, or production deployment bindings.
+A dependency-free local dashboard for exploring Codex token activity, estimated API-equivalent cost, and project ROI scenarios. The Codex usage in the demo is synthetic. The separate GitHub calendar shows real contributions visible on [@kjmcawesome’s public profile](https://github.com/kjmcawesome). It contains no personal usage history, customer annotations, credentials, or production deployment bindings.
 
 ## Run the demo
 
@@ -10,11 +10,11 @@ Use Node.js 22 or newer. No package install or API key is needed.
 npm start
 ```
 
-Open http://localhost:3184. Startup generates three fictional sessions and serves the app locally. Demo mode does not read your Codex logs or sync to a remote account. Change `PORT` if that port is occupied.
+Open http://localhost:3184. Startup generates three fictional sessions and serves the app locally. Demo mode does not read your Codex logs or sync to a remote account. The GitHub calendar reads publicly visible daily totals from GitHub without a token. It does not turn Codex usage into GitHub contributions. Change `PORT` if that port is occupied.
 
 Select a project, enter hours saved and an hourly value or other benefit, and inspect modeled investment, net value, ROI, and break-even hours. Assumptions are saved in that browser. Clear the fields to reset them. Empty or incomplete inputs do not create a claimed return.
 
-The period, workspace, helper toggle, model breakdowns, activity board, and project/day details all use the same underlying records. Presentation view substitutes descriptive labels for screen sharing; it does not change data access or hosting permissions.
+The period, workspace, helper toggle, model breakdowns, Codex activity board, and project/day details all use the same underlying records. Presentation view substitutes descriptive labels for screen sharing; it does not change data access or hosting permissions.
 
 ## Data definitions
 
@@ -33,7 +33,7 @@ npm run build:site
 npm run verify:snapshot
 ```
 
-`build:site` produces only the synthetic demo in the ignored `demo-dist` directory. Demo builds neither read nor overwrite personal snapshots under `public/data`. No deployment runs automatically. Legacy GitHub Pages publication is disabled.
+`build:site` produces a demo with synthetic Codex usage and a verified public GitHub calendar when available, in the ignored `demo-dist` directory. Demo builds neither read nor overwrite personal snapshots under `public/data`. No deployment runs automatically. Legacy GitHub Pages publication is disabled.
 
 ## Collect your own data explicitly
 

@@ -13,7 +13,7 @@
   <meta name="reporting-schema" content="3">
   <meta name="theme-color" content="#ffffff">
   <title>Project Economics | Demo</title>
-  <link rel="stylesheet" href="./styles.css?v=economics-1">
+  <link rel="stylesheet" href="./styles.css?v=github-1">
 </head>
 <body>
   <a class="skip-link" href="#projects">Skip to project costs</a>
@@ -21,7 +21,7 @@
     <header class="topbar">
       <div class="identity">
         <span class="brand-mark" aria-hidden="true">PE</span>
-        <div class="masthead"><strong>Project Economics</strong><p>Builder notebook <span id="demo-label" hidden>· Synthetic demo</span></p></div>
+        <div class="masthead"><strong>Project Economics</strong><p>Builder notebook <span id="demo-label" hidden>· Sample Codex usage</span></p></div>
       </div>
       <div class="refresh-area">
         <div class="freshness"><span id="freshness-label">Loading usage</span><time id="updated-at"></time></div>
@@ -34,8 +34,20 @@
     <div class="presentation-bar"><p id="presentation-note"></p><label class="checkbox"><input id="presentation-toggle" type="checkbox" checked>Presentation view</label></div>
 
     <main id="dashboard" aria-busy="true">
-      <nav class="section-nav" aria-label="Dashboard sections"><a href="#projects">Project ledger</a><a href="#scenario">ROI worksheet</a><a href="#activity">Activity</a><a href="#model-usage">Models</a><a href="#methodology">About the data</a></nav>
-      <header class="intro"><div><p class="eyebrow">Sales leaders build, too.</p><h1>Project economics</h1><p>Explore the cost of each Codex project and the value of the work it saves.</p></div><a href="#activity" class="mini-activity"><span id="mini-grid" aria-hidden="true"></span>Recent activity ↗</a></header>
+      <nav class="section-nav" aria-label="Dashboard sections"><a href="#projects">Project ledger</a><a href="#scenario">ROI worksheet</a><a href="#github">GitHub</a><a href="#activity">Codex activity</a><a href="#model-usage">Models</a><a href="#methodology">About the data</a></nav>
+      <header class="intro"><div><p class="eyebrow">Sales leaders build, too.</p><h1>Project economics</h1><p>Explore the cost of each Codex project and the value of the work it saves.</p></div><a href="#github" class="mini-activity" id="github-preview" hidden><span id="mini-grid" aria-hidden="true"></span>GitHub activity ↓</a></header>
+      <section class="panel github-card" id="github" aria-labelledby="github-title">
+        <div class="github-heading"><div><p class="eyebrow">GitHub activity</p><h2 id="github-title">GitHub contributions</h2></div><a class="github-profile" href="https://github.com/kjmcawesome" target="_blank" rel="noopener noreferrer">@kjmcawesome <span aria-hidden="true">↗</span></a></div>
+        <p id="github-period" class="github-period">Real daily contributions from the public @kjmcawesome profile.</p>
+        <div id="github-calendar" hidden>
+          <p class="sr-only" id="github-instructions">Select a square for its contribution count. Use arrow keys to move between dates, or Home and End to reach the first and last day.</p>
+          <div class="github-board"><div class="github-weekdays" aria-hidden="true"><span>Mon</span><span>Wed</span><span>Fri</span></div>
+            <div class="github-scroll" id="github-scroll"><div class="github-sheet"><div id="github-months" class="github-months" aria-hidden="true"></div><div id="github-days" class="github-days" role="group" aria-label="Daily GitHub contributions" aria-describedby="github-instructions"></div></div></div>
+          </div>
+          <div class="github-caption"><span id="github-day-detail" aria-live="polite"></span><div class="github-key" aria-label="GitHub contribution intensity, from less to more"><span>Less</span><i data-level="0"></i><i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i><span>More</span></div></div>
+        </div>
+        <p id="github-status" class="github-status" role="status">Loading GitHub contributions…</p>
+      </section>
         <form class="filterbar" id="filters">
           <div class="range-controls" role="group" aria-label="Date range">
             <button type="button" data-days="7" aria-pressed="false">7d</button>
@@ -145,6 +157,6 @@
   </dialog>
   <noscript><p class="error-state">JavaScript is required to load this usage dashboard.</p></noscript>
   <script>if(location.protocol==="file:"){document.getElementById("error-state").hidden=false;document.getElementById("error-state").textContent="Open the hosted dashboard instead of this local file. Its data needs an HTTP connection.";}</script>
-  <script type="module" src="./app.js?v=economics-1"></script>
+  <script type="module" src="./app.js?v=github-1"></script>
 </body>
 </html>

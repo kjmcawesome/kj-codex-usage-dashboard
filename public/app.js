@@ -1,3 +1,4 @@
+import {connectGitHubCalendar} from './github-calendar.js?v=github-1';
 import {modelReturn, loadScenario, saveScenario} from './roi.js';
 import { createAnalytics, validDate, dayInZone } from "./analytics.js";
 import { PRICING } from "./pricing.js";
@@ -8,7 +9,8 @@ import { FILLS, tokens, exact, money, escape as e, dateLabel, rangeLabel,
   renderTokenMix, renderDirectHelper } from "./view.js?v=economics-1";
 
 const $ = (id) => document.getElementById(id);
-const RELEASE = "economics-1";
+const RELEASE = "github-1";
+const loadGitHubCalendar = connectGitHubCalendar(document);
 const state = {
   snapshot: null, analysis: null, report: null, params: readUrl(), sort: "cost",
   search: "", limit: 8, selectedDay: null, detailStack: [], boardKey: null,
@@ -92,7 +94,7 @@ function render() {
   $('sync-status').textContent = syncedAt ? 'Saved to cloud ' + new Date(syncedAt).toLocaleString('en-US',{timeZone:report.timezone,month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : 'Published snapshot · not yet synced to cloud storage';
   $('sync-button').disabled = demo;
   $('demo-label').hidden = !demo;
-  if (demo) $('sync-status').textContent = 'Synthetic demo data. No account or local logs were read.';
+  if (demo) $('sync-status').textContent = 'Sample Codex usage. No private account data or local logs were read.';
   $('presentation-toggle').checked = state.presentation;
   $('presentation-note').textContent = state.presentation ? 'Presentation view · descriptive project labels; customer names and workspace names are hidden.' : 'Personal view · original project names are visible.';
   $("coverage-note").textContent = "Available since " + dateLabel(report.available_range.start_date, { year: "numeric" }) + " · " + report.timezone;
@@ -114,7 +116,6 @@ function render() {
   if (boardKey !== state.boardKey) {
     state.boardKey = boardKey;
     const board = report.habit_board;
-    $("mini-grid").innerHTML = board.days.slice(-98).map(day => '<i style="background:' + (day.in_range ? FILLS[day.level] : 'transparent') + '"></i>').join('');
     $("board-range").textContent = "365 days · " + rangeLabel(board);
     $("heatmap-legend").innerHTML = '<span>Less</span>' + FILLS.map((fill) => '<i style="--level-fill:' + fill + '"></i>').join("") + "<span>More</span>";
     $("heatmap-legend").title = "Intensity is relative to active days, so a single spike does not wash out normal work. Exact counts are unchanged.";
@@ -278,6 +279,7 @@ async function refresh(syncMac = false) {
   if (syncMac && (!state.snapshot || state.snapshot.source?.is_demo)) { notice("Synthetic demo: local collection and cloud sync are disabled."); return; }
   if (state.refreshing) return;
   state.refreshing = true;
+  const githubRefresh = loadGitHubCalendar();
   $("refresh-button").disabled = true;
   $('sync-button').disabled = true;
   hideError();
@@ -293,6 +295,7 @@ async function refresh(syncMac = false) {
     showError(new Error("Refresh did not complete. " + error.message));
     notice("Your previous data has not been replaced.", true);
   } finally {
+    await githubRefresh;
     state.refreshing = false;
     $("refresh-button").disabled = false;
     $('sync-button').disabled = !state.snapshot || Boolean(state.snapshot.source?.is_demo);
@@ -398,4 +401,4 @@ async function boot() {
   }
 }
 
-if (location.protocol !== "file:") boot();
+if (location.protocol !== "file:") { void loadGitHubCalendar(); void boot(); }

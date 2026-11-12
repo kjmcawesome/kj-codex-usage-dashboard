@@ -1,3 +1,4 @@
+import {refreshCalendarBackup} from './collect-github-calendar.js';
 import {cp, mkdir, readFile, rm, writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
@@ -26,10 +27,12 @@ export async function buildDemoSite({now = new Date()} = {}) {
   snapshot.earliest_date = snapshot.sessions.flatMap(row=>row.events.map(event=>event.date)).sort()[0];
   snapshot.latest_event_at = snapshot.sessions.flatMap(row=>row.events.map(event=>event.last_timestamp)).sort().at(-1);
   snapshot.source = {...snapshot.source,is_demo:true,storage:'demo',local_recorded_sessions:snapshot.sessions.length};
+  const backup = await refreshCalendarBackup();
   await rm(new URL('demo-dist/',root),{recursive:true,force:true});
   const privateData = fileURLToPath(new URL('public/data',root));
   await cp(new URL('public/',root),new URL('demo-dist/',root),{recursive:true,filter:source=>source !== privateData});
   await mkdir(new URL('demo-dist/data/',root),{recursive:true});
+  if (backup.calendar) await json('demo-dist/data/github-contributions-backup.json',backup.calendar);
   await json('demo-dist/data/usage-snapshot.json',snapshot);
   await cp(new URL('config/project-impact.json',root),new URL('demo-dist/data/project-impact.json',root));
   await json('demo-dist/data/build-info.json',{release:'project-roi-demo',counting_version:3,generated_at:snapshot.generated_at,is_demo:true,

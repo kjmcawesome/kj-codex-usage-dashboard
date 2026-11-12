@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { CALENDAR_ROUTE,BACKUP_ROUTE,createCalendarReader } from './lib/github-contributions.js';
 import { createUsageService } from "./lib/usage-data.js";
 
 const port = Number(process.env.PORT || 3184);
@@ -30,10 +31,10 @@ function sendBody(res, method, statusCode, body, headers = {}) {
   res.end(body);
 }
 
-function sendJson(res, method, statusCode, payload) {
+function sendJson(res, method, statusCode, payload, headers={}) {
   const body = JSON.stringify(payload);
   sendBody(res, method, statusCode, body, {
-    "Content-Type": "application/json; charset=utf-8"
+    "Content-Type": "application/json; charset=utf-8", ...headers
   });
 }
 
@@ -107,11 +108,19 @@ export function createAppServer({
   usageService = createUsageService(),
   staticRoot = join(process.cwd(), "public")
 } = {}) {
+  const readCalendar=createCalendarReader();
   return createServer(async (req, res) => {
     try {
       const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
       const isReadMethod = req.method === "GET" || req.method === "HEAD";
 
+      if (isReadMethod && url.pathname === CALENDAR_ROUTE) {
+        try {
+          const data=await readCalendar({loadBackup:async()=>JSON.parse(await readFile(join(staticRoot,BACKUP_ROUTE),'utf8'))});
+          sendJson(res,req.method,200,data,{'Cache-Control':'no-store'});
+        } catch { sendJson(res,req.method,503,{error:'GitHub contributions are temporarily unavailable.'}); }
+        return;
+      }
       if (isReadMethod && url.pathname === "/api/dashboard") {
         sendJson(res, req.method, 200, await usageService.getDashboard(parseDashboardParams(url)));
         return;

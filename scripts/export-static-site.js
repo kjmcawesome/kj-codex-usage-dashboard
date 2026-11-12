@@ -6,6 +6,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
 import { createPublicSnapshot, loadUsageIndex } from "../lib/usage-data.js";
+import { refreshCalendarBackup } from './collect-github-calendar.js';
 import { PRICING } from "../public/pricing.js";
 import { mergeRecordedHistory, readHistoryBaseline, readPreviousSnapshot } from "../lib/history.js";
 
@@ -55,6 +56,7 @@ async function exportUnlocked(options = {}) {
   });
 
   await rm(distRoot, { recursive: true, force: true });
+  await refreshCalendarBackup();
   await cp(publicRoot, distRoot, { recursive: true });
   await writeJson(distSnapshotPath, snapshot);
   await write404Page(distRoot);
