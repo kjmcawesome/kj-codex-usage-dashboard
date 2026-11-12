@@ -279,7 +279,7 @@ async function refresh(syncMac = false) {
   if (syncMac && (!state.snapshot || state.snapshot.source?.is_demo)) { notice("Synthetic demo: local collection and cloud sync are disabled."); return; }
   if (state.refreshing) return;
   state.refreshing = true;
-  const githubRefresh = loadGitHubCalendar();
+  const githubRefresh = syncMac ? null : loadGitHubCalendar();
   $("refresh-button").disabled = true;
   $('sync-button').disabled = true;
   hideError();
@@ -295,7 +295,7 @@ async function refresh(syncMac = false) {
     showError(new Error("Refresh did not complete. " + error.message));
     notice("Your previous data has not been replaced.", true);
   } finally {
-    await githubRefresh;
+    await (githubRefresh || loadGitHubCalendar());
     state.refreshing = false;
     $("refresh-button").disabled = false;
     $('sync-button').disabled = !state.snapshot || Boolean(state.snapshot.source?.is_demo);

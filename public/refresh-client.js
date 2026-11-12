@@ -1,7 +1,7 @@
 export const HELPER_URL = "http://127.0.0.1:3185";
 
 export async function refreshCloudUsage({fetchFn=fetch,minimumGeneratedAt=null,onProgress=()=>{},syncMac=false}={}) {
-  let syncedGeneration = null;
+  let syncedGeneration = null, githubUnavailable = false;
   if (syncMac) {
     onProgress('Collecting and syncing this Mac...');
     let response;
@@ -11,12 +11,13 @@ export async function refreshCloudUsage({fetchFn=fetch,minimumGeneratedAt=null,o
     if (!response.ok || result.ok !== true) throw new Error(result.detail || result.error || 'Sync did not finish. Cloud history was kept.');
     if (!Number.isFinite(Date.parse(result.generated_at))) throw new Error('Sync did not confirm a collection date.');
     syncedGeneration = result.generated_at;
+    githubUnavailable = result.github_calendar?.ok === false;
   }
   onProgress('Refreshing cloud history...');
   const snapshot = await loadPublishedSnapshot({fetchFn});
   if (syncedGeneration && Date.parse(snapshot.generated_at) < Date.parse(syncedGeneration)) throw new Error('The cloud has not returned the newly synced collection. Refresh again; your previous view was kept.');
   if (minimumGeneratedAt && Date.parse(snapshot.generated_at) < Date.parse(minimumGeneratedAt)) throw new Error('The cloud returned older data. Your newer view has been kept.');
-  return {snapshot,source:'cloud',rebuilt:syncMac,message:syncMac ? 'New activity synced to the cloud. Ready to present.' : 'Latest saved history loaded. Sync this Mac to add new local activity.'};
+  return {snapshot,source:'cloud',rebuilt:syncMac,message:syncMac ? (githubUnavailable ? 'Codex activity synced. GitHub could not be updated; its last saved calendar was kept.' : 'New activity synced to the cloud. Ready to present.') : 'Latest saved history loaded. Sync this Mac to add new local activity.'};
 }
 
 async function jsonRequest(url, { fetchFn, timeout = 12000, method = "GET" } = {}) {

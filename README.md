@@ -56,6 +56,8 @@ The source includes a generic object-storage runtime and authenticated sync endp
 
 Set `USAGE_DASHBOARD_URL` to your HTTPS dashboard origin before starting the collector with `npm run collector:start`. Only that configured origin and loopback origins may call it. Cloud configuration is saved locally under the ignored `.cloud-sync` directory. The configuration accepts `url`, a sync `token` of at least 32 characters, and an optional `site_access_token` when the chosen host requires one. Supply configuration privately on standard input to `node scripts/configure-cloud-sync.js`.
 
+A configured Mac can refresh just the public contribution calendar with `node lib/cloud-sync.js --github-only`. The hosted dashboard reads the last verified calendar when its own GitHub request is unavailable. The local demo does not enable cloud sync.
+
 If an interrupted export leaves `.usage-export.lock`, stop all collector and build processes before clearing the lock. The exporter fails closed rather than deleting a lock another process might own.
 
 ## Implementation

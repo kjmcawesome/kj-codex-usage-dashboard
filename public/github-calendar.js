@@ -13,7 +13,7 @@ const line = day => fullDate.format(stamp(day.date)) + ' · ' + contributions(da
 
 function validated(value) {
   if (value?.login !== account || value.profile_url !== profile || !Number.isFinite(Date.parse(value.fetched_at)) ||
-      !Array.isArray(value.days) || value.days.length === 0 || value.days.length > 371) throw Error('Invalid GitHub calendar');
+      !Array.isArray(value.days) || value.days.length === 0 || value.days.length > 373) throw Error('Invalid GitHub calendar');
   const days = [...value.days].sort((a,b) => String(a.date).localeCompare(String(b.date)));
   let sum = 0;
   for (let i = 0; i < days.length; i++) {
