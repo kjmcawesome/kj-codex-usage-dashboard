@@ -1,5 +1,8 @@
 # Project Economics Dashboard
 
+**[Browse my Codex project index →](./PROJECTS.md)**
+
+
 A dependency-free local dashboard for exploring Codex token activity, estimated API-equivalent cost, and project ROI scenarios. The Codex usage in the demo is synthetic. The separate GitHub calendar shows real contributions visible on [@kjmcawesome’s public profile](https://github.com/kjmcawesome). It contains no personal usage history, customer annotations, credentials, or production deployment bindings.
 
 ## Run the demo
