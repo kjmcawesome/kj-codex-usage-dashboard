@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
@@ -7,6 +7,9 @@ import { promisify } from "node:util";
 
 import { createPublicSnapshot, loadUsageIndex } from "../lib/usage-data.js";
 import { PRICING } from "../public/pricing.js";
+import { mergeRecordedHistory, readHistoryBaseline, readPreviousSnapshot } from "../lib/history.js";
+
+import { withSnapshotLock } from "../lib/snapshot-lock.js";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "..");
@@ -18,7 +21,11 @@ const execFileAsync = promisify(execFile);
 
 async function writeJson(filePath, payload) {
   await mkdir(dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+  const temporary = `${filePath}.${process.pid}.tmp`;
+  try {
+    await writeFile(temporary, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+    await rename(temporary, filePath);
+  } finally { await rm(temporary, { force: true }); }
 }
 
 async function write404Page(distDir) {
@@ -27,15 +34,21 @@ async function write404Page(distDir) {
 }
 
 export async function exportStaticSite(options = {}) {
-  const index = await loadUsageIndex(options);
-  const snapshot = createPublicSnapshot(index);
+  return withSnapshotLock(join(repoRoot, ".usage-export.lock"), () => exportUnlocked(options));
+}
+
+async function exportUnlocked(options = {}) {
+  const baseline = await readHistoryBaseline(options.historyFilePath);
+  const previous = await readPreviousSnapshot(options.previousSnapshotPath);
+  const index = await loadUsageIndex({...options, timezone: baseline?.timezone || previous?.timezone || options.timezone});
+  const snapshot = mergeRecordedHistory(createPublicSnapshot(index), baseline, previous);
 
   await mkdir(join(publicRoot, "data"), { recursive: true });
   await cp(join(repoRoot, "config", "project-impact.json"), join(publicRoot, "data", "project-impact.json"));
   await writeJson(localSnapshotPath, snapshot);
   const { stdout: sourceCommit } = await execFileAsync("git", ["rev-parse", "HEAD"], { cwd: repoRoot });
   await writeJson(join(publicRoot, "data", "build-info.json"), {
-    release: "work-cost-3-models-2", counting_version: snapshot.counting_version,
+    release: "economics-1", counting_version: snapshot.counting_version,
     source_commit: sourceCommit.trim(),
     generated_at: snapshot.generated_at, pricing_checked_at: PRICING.checked_at,
     snapshot_sha256: createHash("sha256").update(await readFile(localSnapshotPath)).digest("hex")

@@ -1,6 +1,6 @@
 // Standard API token rates, USD per 1M tokens. Checked against the linked source.
 export const PRICING = Object.freeze({
-  checked_at: "2026-08-26",
+  checked_at: "2026-11-12",
   source: "https://developers.openai.com/api/docs/pricing",
   basis: "Current Standard API rates, not historical invoices or Codex plan charges",
   proxy: "gpt-5.6-sol",
@@ -12,10 +12,14 @@ const rate = (input, cached, output, write = input, long = false) => Object.free
 });
 
 export const RATES = Object.freeze({
+  "gpt-6.1-sol": rate(2, 0.1, 10, 2.5, true),
+  "gpt-6.1-terra": rate(1, 0.05, 5, 1.25, true),
+  "gpt-6-astra": rate(10, 1, 50, 12.5, true),
+  "gpt-6-sol": rate(2, 0.2, 10, 2.5, true),
+  "gpt-6-luna": rate(0.1, 0.01, 0.5, 0.125, true),
   "gpt-5.6-sol": rate(4, 0.4, 20, 5, true),
   "gpt-5.6-terra": rate(2, 0.2, 12, 2.5, true),
   "gpt-5.6-luna": rate(0.2, 0.02, 1.2, 0.25, true),
-  "gpt-5.6-cyber": rate(12.5, 1.25, 75, 15.625),
   "gpt-5.5": rate(5, 0.5, 30, 5, true),
   "gpt-5.5-pro": rate(30, null, 180, 30, true),
   "gpt-5.4": rate(2.5, 0.25, 15, 2.5, true),
@@ -23,6 +27,7 @@ export const RATES = Object.freeze({
   "gpt-5.4-mini": rate(0.75, 0.075, 4.5),
   "gpt-5.4-nano": rate(0.2, 0.02, 1.25),
   "gpt-5.3-codex": rate(1.75, 0.175, 14),
+  // Legacy public rate: https://developers.openai.com/api/docs/models/gpt-5.2-codex.md
   "gpt-5.2-codex": rate(1.75, 0.175, 14),
   "gpt-5.2": rate(1.75, 0.175, 14),
   "gpt-5.2-pro": rate(21, null, 168),
@@ -33,26 +38,18 @@ export const RATES = Object.freeze({
   "gpt-5-pro": rate(15, null, 120),
   "gpt-4.1": rate(2, 0.5, 8),
   "gpt-4.1-mini": rate(0.4, 0.1, 1.6),
-  "gpt-4.1-nano": rate(0.1, 0.025, 0.4),
   "gpt-4o": rate(2.5, 1.25, 10),
   "gpt-4o-mini": rate(0.15, 0.075, 0.6),
-  "gpt-4o-2024-05-13": rate(5, null, 15),
-  o1: rate(15, 7.5, 60),
-  "o1-pro": rate(150, null, 600),
   o3: rate(2, 0.5, 8),
   "o3-pro": rate(20, null, 80),
-  "o3-mini": rate(1.1, 0.55, 4.4),
-  "o4-mini": rate(1.1, 0.275, 4.4),
   "chat-latest": rate(5, 0.5, 30)
 });
 
 const ALIASES = Object.freeze({
-  arcanine: "gpt-5.5",
   "gpt-5.6": "gpt-5.6-sol",
   sol: "gpt-5.6-sol",
   terra: "gpt-5.6-terra",
   luna: "gpt-5.6-luna",
-  "codex-auto-review": "gpt-5.3-codex"
 });
 
 export function resolveModel(value, explicitlyProxy = false) {

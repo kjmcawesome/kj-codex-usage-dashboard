@@ -1,0 +1,132 @@
+{
+  "snapshot_version": 3,
+  "counting_version": 3,
+  "generated_at": "2026-03-25T20:00:00.000Z",
+  "timezone": "America/Los_Angeles",
+  "earliest_date": "2026-03-22",
+  "latest_event_at": "2026-03-24T12:00:00.000Z",
+  "quality": {},
+  "source": {
+    "is_demo": true,
+    "log_files": 0,
+    "recorded_sessions": 3,
+    "historical_sessions_preserved": 0,
+    "historical_generated_at": null
+  },
+  "workspaces": [
+    {
+      "workspace_key": "ws_demo",
+      "workspace_label": "Demo workspace"
+    }
+  ],
+  "sessions": [
+    {
+      "session_id": "demo-dashboard",
+      "parent_session_id": null,
+      "thread_name": "Demo dashboard",
+      "parent_thread_name": null,
+      "session_started_at": "2026-03-22T12:00:00.000Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_demo",
+      "workspace_label": "Demo workspace",
+      "collected_at": "2026-03-25T20:00:00.000Z",
+      "total_tokens": 1200000,
+      "input_tokens": 1080000,
+      "cached_input_tokens": 720000,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 120000,
+      "reasoning_output_tokens": 60000,
+      "events": [
+        {
+          "date": "2026-03-22",
+          "timestamp": "2026-03-22T12:00:00.000Z",
+          "last_timestamp": "2026-03-22T12:00:00.000Z",
+          "model": "gpt-5.4",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 2,
+          "total_tokens": 1200000,
+          "input_tokens": 1080000,
+          "cached_input_tokens": 720000,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 120000,
+          "reasoning_output_tokens": 60000
+        }
+      ]
+    },
+    {
+      "session_id": "demo-helper",
+      "parent_session_id": "demo-dashboard",
+      "thread_name": "Demo helper",
+      "parent_thread_name": "Demo dashboard",
+      "session_started_at": "2026-03-23T12:00:00.000Z",
+      "is_subagent": true,
+      "is_fork": false,
+      "agent_nickname": "Example helper",
+      "workspace_key": "ws_demo",
+      "workspace_label": "Demo workspace",
+      "collected_at": "2026-03-25T20:00:00.000Z",
+      "total_tokens": 300000,
+      "input_tokens": 270000,
+      "cached_input_tokens": 180000,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 30000,
+      "reasoning_output_tokens": 15000,
+      "events": [
+        {
+          "date": "2026-03-23",
+          "timestamp": "2026-03-23T12:00:00.000Z",
+          "last_timestamp": "2026-03-23T12:00:00.000Z",
+          "model": "gpt-5.4",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 2,
+          "total_tokens": 300000,
+          "input_tokens": 270000,
+          "cached_input_tokens": 180000,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 30000,
+          "reasoning_output_tokens": 15000
+        }
+      ]
+    },
+    {
+      "session_id": "demo-analysis",
+      "parent_session_id": null,
+      "thread_name": "Demo analysis",
+      "parent_thread_name": null,
+      "session_started_at": "2026-03-24T12:00:00.000Z",
+      "is_subagent": false,
+      "is_fork": false,
+      "agent_nickname": null,
+      "workspace_key": "ws_demo",
+      "workspace_label": "Demo workspace",
+      "collected_at": "2026-03-25T20:00:00.000Z",
+      "total_tokens": 600000,
+      "input_tokens": 540000,
+      "cached_input_tokens": 360000,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 60000,
+      "reasoning_output_tokens": 30000,
+      "events": [
+        {
+          "date": "2026-03-24",
+          "timestamp": "2026-03-24T12:00:00.000Z",
+          "last_timestamp": "2026-03-24T12:00:00.000Z",
+          "model": "gpt-5.4",
+          "is_proxy": false,
+          "pricing_context": "short",
+          "request_count": 2,
+          "total_tokens": 600000,
+          "input_tokens": 540000,
+          "cached_input_tokens": 360000,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 60000,
+          "reasoning_output_tokens": 30000
+        }
+      ]
+    }
+  ]
+}

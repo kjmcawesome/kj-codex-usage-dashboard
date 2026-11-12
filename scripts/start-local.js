@@ -5,7 +5,7 @@ import { startRefreshHelper } from "../refresh-helper.js";
 
 const refreshHelperUrl = `http://${process.env.REFRESH_HELPER_HOST || "127.0.0.1"}:${process.env.REFRESH_HELPER_PORT || "3185"}`;
 const redirectPort = Number(process.env.PORT || 3184);
-const publicDashboardUrl = process.env.PUBLIC_DASHBOARD_URL || "https://kjmcawesome.github.io/kj-codex-usage-dashboard/";
+const publicDashboardUrl = process.env.PUBLIC_DASHBOARD_URL || process.env.USAGE_DASHBOARD_URL || "https://dashboard.example.com/";
 
 function closeServer(server) {
   return new Promise((resolvePromise, rejectPromise) => {
@@ -99,7 +99,7 @@ export function startPublicRedirectServer({
 } = {}) {
   const server = createPublicRedirectServer({ dashboardUrl });
   server.listen(portOverride, () => {
-    console.log(`KJ Codex Usage Dashboard local shim redirecting on http://localhost:${portOverride}`);
+    console.log(`Codex Usage Dashboard local shim redirecting on http://localhost:${portOverride}`);
     console.log(`Public dashboard: ${dashboardUrl}`);
   });
   return server;

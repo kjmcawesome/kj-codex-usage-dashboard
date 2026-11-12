@@ -1,5 +1,24 @@
 export const HELPER_URL = "http://127.0.0.1:3185";
 
+export async function refreshCloudUsage({fetchFn=fetch,minimumGeneratedAt=null,onProgress=()=>{},syncMac=false}={}) {
+  let syncedGeneration = null;
+  if (syncMac) {
+    onProgress('Collecting and syncing this Mac...');
+    let response;
+    try { response = await fetchFn(`${HELPER_URL}/sync-cloud`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(300000)}); }
+    catch { throw new Error('This Mac’s collector is unavailable. Open the dashboard on your configured Mac to sync new activity. Cloud history is unchanged.'); }
+    const result = await response.json();
+    if (!response.ok || result.ok !== true) throw new Error(result.detail || result.error || 'Sync did not finish. Cloud history was kept.');
+    if (!Number.isFinite(Date.parse(result.generated_at))) throw new Error('Sync did not confirm a collection date.');
+    syncedGeneration = result.generated_at;
+  }
+  onProgress('Refreshing cloud history...');
+  const snapshot = await loadPublishedSnapshot({fetchFn});
+  if (syncedGeneration && Date.parse(snapshot.generated_at) < Date.parse(syncedGeneration)) throw new Error('The cloud has not returned the newly synced collection. Refresh again; your previous view was kept.');
+  if (minimumGeneratedAt && Date.parse(snapshot.generated_at) < Date.parse(minimumGeneratedAt)) throw new Error('The cloud returned older data. Your newer view has been kept.');
+  return {snapshot,source:'cloud',rebuilt:syncMac,message:syncMac ? 'New activity synced to the cloud. Ready to present.' : 'Latest saved history loaded. Sync this Mac to add new local activity.'};
+}
+
 async function jsonRequest(url, { fetchFn, timeout = 12000, method = "GET" } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
@@ -27,13 +46,15 @@ export async function loadPublishedSnapshot({ fetchFn = fetch, snapshotUrl = "./
 
 export async function refreshUsage({ fetchFn = fetch, snapshotUrl = "./data/usage-snapshot.json",
   helperUrl = HELPER_URL, publish = false, onProgress = () => {}, now = Date.now,
-  minimumGeneratedAt = null } = {}) {
+  minimumGeneratedAt = null, minimumCollectionRevision = 0 } = {}) {
   let reachable = false;
   let collectorVersion = null;
+  let collectionRevision = 0;
   try {
     const status = await jsonRequest(`${helperUrl}/status?t=${now()}`, { fetchFn, timeout: 2500 });
     reachable = status.ok === true;
     collectorVersion = status.counting_version;
+    collectionRevision = status.collection_revision || 0;
   } catch { /* Hosted viewers may not have the local collector. Never imply their logs were read. */ }
   if (!reachable) {
     onProgress("Checking published data...");
@@ -45,6 +66,7 @@ export async function refreshUsage({ fetchFn = fetch, snapshotUrl = "./data/usag
       message: "Latest published data loaded. The local collector is unavailable, so no new logs were collected." };
   }
   if (collectorVersion !== 3) throw new Error("The local collector needs the counting update. It has not been used to overwrite your data.");
+  if (collectionRevision < minimumCollectionRevision) throw new Error("Restart the local collector to enable GPT-6 pricing and preserved history. Your current data has been kept.");
   onProgress(publish ? "Recounting and publishing..." : "Recounting usage...");
   const result = await jsonRequest(`${helperUrl}/refresh?publish=${publish ? 1 : 0}`, { fetchFn, method: "POST", timeout: 300000 });
   if (result.ok !== true) throw new Error(result.detail || "The refresh did not finish. The last good view has been kept.");

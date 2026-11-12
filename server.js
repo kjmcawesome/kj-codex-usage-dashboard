@@ -167,7 +167,7 @@ export function startServer({
 } = {}) {
   const server = createAppServer({ usageService, staticRoot });
   server.listen(portOverride, () => {
-    console.log(`KJ Codex Usage Dashboard listening on http://localhost:${portOverride}`);
+    console.log(`Codex Usage Dashboard listening on http://localhost:${portOverride}`);
   });
   return server;
 }

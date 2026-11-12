@@ -37,7 +37,7 @@ export function resolveRange(params, today, earliest) {
     return { mode: "custom", start_date: start, end_date: end, label: `${start} to ${end}` };
   }
   const days = params.days == null ? 30 : params.days;
-  if (days === "all") return { mode: "preset", days: "all", start_date: earliest || today, end_date: today, label: "All recorded history" };
+  if (days === "all") return { mode: "preset", days: "all", start_date: earliest || today, end_date: today, label: "Available local history" };
   if (!Number.isInteger(Number(days)) || Number(days) < 1 || Number(days) > 3660) throw new RangeError("Choose a valid day range.");
   return { mode: "preset", days: Number(days), start_date: shiftDay(today, 1 - Number(days)), end_date: today, label: `Last ${days} days` };
 }
@@ -251,8 +251,9 @@ export function createAnalytics(snapshot, { annotations = {} } = {}) {
     const range = rangeFor(params);
     const selected = all.filter((row) => inRange(row, range));
     const board = buildBoard(all, today);
+    board.coverage_start_date = snapshot.earliest_date || today;
     return {
-      schema_version: 3, generated_at: snapshot.generated_at, timezone: snapshot.timezone, today,
+      schema_version: 3, generated_at: snapshot.generated_at, timezone: snapshot.timezone, today, source: snapshot.source || {},
       available_range: { start_date: snapshot.earliest_date || today, end_date: today },
       selection: range, summary: summarize(selected), projects: groupProjects(selected, all),
       models: groupModels(selected), habit_board: board, quality: snapshot.quality || {}, pricing: PRICING,

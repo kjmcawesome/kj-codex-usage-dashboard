@@ -4,12 +4,12 @@ import { fileURLToPath } from "node:url";
 
 import { exportStaticSite } from "./scripts/export-static-site.js";
 import { publishPages } from "./scripts/publish-pages.js";
+import { syncSnapshotToCloud } from "./lib/cloud-sync.js";
 
 const port = Number(process.env.REFRESH_HELPER_PORT || 3185);
 const host = process.env.REFRESH_HELPER_HOST || "127.0.0.1";
+const configuredOrigin = process.env.USAGE_DASHBOARD_URL ? new URL(process.env.USAGE_DASHBOARD_URL).origin : null;
 const allowedOriginPatterns = [
-  /^https:\/\/kjmcawesome\.github\.io$/,
-  /^https:\/\/kj-codex-usage-dashboard\.openai\.chatgpt\.site$/,
   /^http:\/\/localhost(?::\d+)?$/,
   /^http:\/\/127\.0\.0\.1(?::\d+)?$/
 ];
@@ -17,7 +17,7 @@ const allowedOriginPatterns = [
 class ForbiddenError extends Error {}
 
 function isAllowedOrigin(origin) {
-  return allowedOriginPatterns.some((pattern) => pattern.test(origin));
+  return origin === configuredOrigin || allowedOriginPatterns.some((pattern) => pattern.test(origin));
 }
 
 function parseBooleanFlag(value, defaultValue = true) {
@@ -89,7 +89,7 @@ function sanitizeRefreshResult(result, publish) {
 
 function normalizeBridgeReturnTo(value) {
   if (!value) {
-    return "https://kjmcawesome.github.io/kj-codex-usage-dashboard/";
+    return configuredOrigin || "http://127.0.0.1:3184/";
   }
 
   try {
@@ -101,7 +101,7 @@ function normalizeBridgeReturnTo(value) {
     // Fall through to the public dashboard URL.
   }
 
-  return "https://kjmcawesome.github.io/kj-codex-usage-dashboard/";
+  return configuredOrigin || "http://127.0.0.1:3184/";
 }
 
 function renderBridgePage(returnTo) {
@@ -112,7 +112,7 @@ function renderBridgePage(returnTo) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KJ Codex Usage Dashboard Refresh</title>
+    <title>Codex Usage Dashboard Refresh</title>
     <style>
       :root {
         color-scheme: light;
@@ -222,6 +222,7 @@ function renderBridgePage(returnTo) {
 }
 
 export function createRefreshHelperServer({
+  syncFn = syncSnapshotToCloud,
   refreshFn = async ({ publish }) => {
     if (publish) {
       return publishPages({ forceReparse: true });
@@ -254,6 +255,7 @@ export function createRefreshHelperServer({
   return createServer(async (req, res) => {
     try {
       const url = new URL(req.url || "/", `http://${req.headers.host || "127.0.0.1"}`);
+      if (!['127.0.0.1','localhost','[::1]'].includes(url.hostname)) throw new ForbiddenError('Local collector only');
       const corsHeaders = buildCorsHeaders(req);
       const isReadMethod = req.method === "GET" || req.method === "HEAD";
 
@@ -266,6 +268,7 @@ export function createRefreshHelperServer({
         sendJson(res, req.method, 200, {
           ok: true,
           counting_version: 3,
+          collection_revision: 4,
           busy: Boolean(currentRefreshPromise),
           last_result: lastResult
         }, corsHeaders);
@@ -301,6 +304,14 @@ export function createRefreshHelperServer({
         return;
       }
 
+      if (req.method === 'POST' && url.pathname === '/sync-cloud') {
+        if (!req.headers.origin || !isAllowedOrigin(req.headers.origin) || !req.headers['content-type']?.startsWith('application/json')) throw new ForbiddenError('Use the dashboard to sync this Mac');
+        await runRefresh({publish:false});
+        const result = await syncFn(await snapshotFn());
+        sendJson(res,req.method,200,result,corsHeaders);
+        return;
+      }
+
       sendJson(res, req.method || "GET", 404, {
         error: "Not found"
       }, corsHeaders);
@@ -327,7 +338,7 @@ export function startRefreshHelper({
 } = {}) {
   const server = createRefreshHelperServer();
   server.listen(portOverride, hostOverride, () => {
-    console.log(`KJ Codex Usage Dashboard refresh helper listening on http://${hostOverride}:${portOverride}`);
+    console.log(`Codex Usage Dashboard refresh helper listening on http://${hostOverride}:${portOverride}`);
   });
   return server;
 }

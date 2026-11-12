@@ -1,15 +1,18 @@
+import {modelReturn, loadScenario, saveScenario} from './roi.js';
 import { createAnalytics, validDate, dayInZone } from "./analytics.js";
 import { PRICING } from "./pricing.js";
-import { loadPublishedSnapshot, refreshUsage } from "./refresh-client.js";
+import { loadPublishedSnapshot, refreshCloudUsage } from "./refresh-client.js?v=cloud-6";
+import { presentationSnapshot } from './presentation.js?v=cloud-7';
 import { FILLS, tokens, exact, money, escape as e, dateLabel, rangeLabel,
-  renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderModelUsage, renderBreakdown } from "./view.js?v=work-cost-3-models-2";
+  renderFixedMetrics, renderBoard, renderRecent, projectRows, renderModels, renderModelUsage, renderBreakdown,
+  renderTokenMix, renderDirectHelper } from "./view.js?v=economics-1";
 
 const $ = (id) => document.getElementById(id);
-const RELEASE = "work-cost-3-models-2";
+const RELEASE = "economics-1";
 const state = {
   snapshot: null, analysis: null, report: null, params: readUrl(), sort: "cost",
-  search: "", limit: 12, selectedDay: null, detailStack: [], boardKey: null,
-  returnFocus: null, refreshing: false, source: "published", annotations: {}
+  search: "", limit: 8, selectedDay: null, detailStack: [], boardKey: null,
+  returnFocus: null, refreshing: false, source: "cloud", annotations: {}, presentation: new URLSearchParams(location.search).get('present') !== '0'
 };
 
 function readUrl() {
@@ -30,6 +33,7 @@ function writeUrl() {
   } else url.searchParams.set("days", state.params.days);
   url.searchParams.set("workspace", state.params.workspace);
   url.searchParams.set("include_subagents", state.params.includeSubagents ? "1" : "0");
+  url.searchParams.set('present',state.presentation ? '1' : '0');
   history.replaceState(null, "", url);
 }
 
@@ -46,7 +50,7 @@ function showError(error) {
 function hideError() { $("error-state").hidden = true; }
 
 function applySnapshot(snapshot, source = "published") {
-  const analysis = createAnalytics(snapshot, { annotations: state.annotations });
+  const analysis = createAnalytics(state.presentation ? presentationSnapshot(snapshot, state.annotations) : snapshot, { annotations: state.presentation ? {} : state.annotations });
   let report;
   try { report = analysis.dashboard(state.params); }
   catch {
@@ -54,6 +58,8 @@ function applySnapshot(snapshot, source = "published") {
     report = analysis.dashboard(state.params);
     notice("The saved range was invalid. Showing the last 30 days instead.", true);
   }
+  const lifetime = analysis.dashboard({days:"all", includeSubagents:true}).projects;
+  state.lifetime = new Map(lifetime.map(project => [project.id, project]));
   Object.assign(state, { snapshot, analysis, report, source });
   $("workspace").innerHTML = '<option value="all">All workspaces</option>' + report.workspaces.map((workspace) =>
     '<option value="' + e(workspace.workspace_key) + '">' + e(workspace.workspace_label) + '</option>').join("");
@@ -80,8 +86,21 @@ function render() {
   $("updated-at").dateTime = report.generated_at;
   $("updated-at").textContent = time.toLocaleString("en-US", { timeZone: report.timezone, month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" });
   const staleDay = dayInZone(new Date(), report.timezone) !== report.today;
-  $("freshness-label").textContent = staleDay ? "Data as of" : state.source === "collector" ? "Collected on this Mac" : "Snapshot collected";
-  $("coverage-note").textContent = "History since " + dateLabel(report.available_range.start_date, { year: "numeric" }) + " · " + report.timezone;
+  $("freshness-label").textContent = staleDay ? "Usage collected" : 'Cloud history · collected';
+  const syncedAt = state.snapshot.source?.cloud_synced_at;
+  const demo = state.snapshot.source?.is_demo === true;
+  $('sync-status').textContent = syncedAt ? 'Saved to cloud ' + new Date(syncedAt).toLocaleString('en-US',{timeZone:report.timezone,month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : 'Published snapshot · not yet synced to cloud storage';
+  $('sync-button').disabled = demo;
+  $('demo-label').hidden = !demo;
+  if (demo) $('sync-status').textContent = 'Synthetic demo data. No account or local logs were read.';
+  $('presentation-toggle').checked = state.presentation;
+  $('presentation-note').textContent = state.presentation ? 'Presentation view · descriptive project labels; customer names and workspace names are hidden.' : 'Personal view · original project names are visible.';
+  $("coverage-note").textContent = "Available since " + dateLabel(report.available_range.start_date, { year: "numeric" }) + " · " + report.timezone;
+  const source = report.source;
+  $("data-coverage").textContent = source.historical_sessions_preserved
+    ? "History preserved since " + dateLabel(report.available_range.start_date, { year: "numeric" }) + " · " + exact(source.local_recorded_sessions) + " runs freshly collected + " + exact(source.historical_sessions_preserved) + " preserved runs. Oldest saved capture: " + dateLabel(dayInZone(source.historical_generated_at, report.timezone), { year: "numeric" }) + ". Saved history has not been recounted. Other devices and unrecorded work may be missing."
+    : "Available local history · " + exact(source.recorded_sessions ?? state.snapshot.sessions.length) + " recorded runs since " + dateLabel(report.available_range.start_date, { year: "numeric" }) + ". " +
+      (source.named_tasks_without_logs > 0 ? exact(source.named_tasks_without_logs) + " named tasks have no local logs, so this is a partial view of your usage." : "Usage on other devices or without local logs is not included.");
   if (staleDay && !$("notice").textContent) notice("This snapshot is from " + dateLabel(report.today, { year: "numeric" }) + ". Refresh to check for newer usage.", true);
 
   $("fixed-metrics").innerHTML = renderFixedMetrics(report, staleDay);
@@ -95,6 +114,7 @@ function render() {
   if (boardKey !== state.boardKey) {
     state.boardKey = boardKey;
     const board = report.habit_board;
+    $("mini-grid").innerHTML = board.days.slice(-98).map(day => '<i style="background:' + (day.in_range ? FILLS[day.level] : 'transparent') + '"></i>').join('');
     $("board-range").textContent = "365 days · " + rangeLabel(board);
     $("heatmap-legend").innerHTML = '<span>Less</span>' + FILLS.map((fill) => '<i style="--level-fill:' + fill + '"></i>').join("") + "<span>More</span>";
     $("heatmap-legend").title = "Intensity is relative to active days, so a single spike does not wash out normal work. Exact counts are unchanged.";
@@ -110,25 +130,29 @@ function render() {
 
   $("period-label").textContent = report.selection.mode === "custom" ? "Selected dates" : report.selection.label;
   $("period-cost").textContent = money(report.summary.estimated_cost_usd);
+  $("direct-helper-split").innerHTML = renderDirectHelper(report.summary, state.params.includeSubagents);
+  $("token-mix").innerHTML = renderTokenMix(report.summary);
   $("period-tokens").textContent = tokens(report.summary.total_tokens) + " tokens";
-  $("period-work").textContent = report.summary.project_count + " projects · " + report.summary.workflow_count + " contributing runs";
+  $("active-projects").textContent = exact(report.summary.project_count);
+  $("period-work").textContent = exact(report.summary.workflow_count) + " contributing runs";
   $("period-dates").textContent = rangeLabel(report.selection);
   $("project-count").textContent = report.summary.project_count + " projects in this period";
-  $("period-note").textContent = state.params.includeSubagents
-    ? "Includes direct work + " + money(report.summary.helper_cost_usd) + " of additional helper work. Replayed history is counted once."
-    : "Direct work only. Additional helper usage is excluded by your filter.";
+  $("period-note").textContent = "USD estimates use published API token rates. " +
+    (report.summary.proxy_tokens ? Math.round(report.summary.proxy_tokens / report.summary.total_tokens * 100) + "% of tokens use your GPT-5.6 Sol pricing assumption for Unreleased models. " : "") +
+    (report.summary.unallocated_tokens ? exact(report.summary.unallocated_tokens) + " tokens cannot be priced and are excluded from cost. " : "") +
+    (state.params.includeSubagents ? "Copied helper history is counted once." : "Helper usage is excluded.");
   renderProjects();
 
   $("model-usage-scope").textContent = rangeLabel(report.selection);
   $("model-usage-list").innerHTML = renderModelUsage(report.models);
   $("model-usage-note").textContent = "Follows the date, workspace, and helper filters above; project search only filters the project list." +
-    (report.summary.proxy_tokens ? " Unreleased or unidentified usage stays separate and is priced at your Sol-rate assumption." : "");
+    (report.summary.proxy_tokens ? " Unreleased or unidentified usage stays separate and is priced at your GPT-5.6 Sol-rate assumption." : "");
 
-  $("pricing-note").textContent = "Rates checked " + dateLabel(PRICING.checked_at, { year: "numeric" }) +
+  $("pricing-note").textContent = "Base rate card checked " + dateLabel(PRICING.checked_at, { year: "numeric" }) + ". GPT-6.1 Sol and Terra rates checked November 12, 2026" +
     ". Fresh input, reused input, cache writes, and output are priced separately. Reasoning is already included in output." +
-    (report.summary.proxy_tokens ? " " + tokens(report.summary.proxy_tokens) + " tokens in this period use your Sol-rate assumption for unreleased or unidentified models." : "");
+    (report.summary.proxy_tokens ? " " + tokens(report.summary.proxy_tokens) + " tokens in this period use your GPT-5.6 Sol-rate assumption for unreleased or unidentified models." : "");
   const quality = report.quality;
-  $("quality-note").textContent = exact(quality.inherited_tokens_removed) + " replayed tokens excluded across the recorded history. " +
+  $("quality-note").textContent = "In the current local collection: " + exact(quality.inherited_tokens_removed) + " replayed tokens excluded. " +
     exact(quality.duplicate_snapshots) + " repeated snapshots ignored. " +
     (quality.invalid_records ? exact(quality.invalid_records) + " malformed log records were skipped; local logs are not a billing ledger. " : "") +
     (report.summary.unallocated_tokens ? exact(report.summary.unallocated_tokens) + " tokens lack a priceable input/output split. Their cost is excluded. " : "") +
@@ -148,12 +172,69 @@ function renderProjects() {
     return b.estimated_cost_usd - a.estimated_cost_usd || b.total_tokens - a.total_tokens || a.name.localeCompare(b.name);
   });
   const shown = projects.slice(0, state.limit);
-  $("project-list").innerHTML = shown.length ? projectRows(shown) :
+  if (!shown.some(project => project.id === state.selectedProject)) state.selectedProject = shown[0]?.id;
+  $("project-list").innerHTML = shown.length ? projectRows(shown, state.selectedProject, scenarioLabel) :
     '<div class="empty-state">' + (query ? "No projects match that name." : "No usage recorded in this period and these filters.") + "</div>";
   $("list-count").textContent = "Showing " + shown.length + " of " + projects.length + " projects" + (query ? " matching your search" : "");
   $("show-more").hidden = shown.length >= projects.length;
   $("show-more").textContent = "Show all " + projects.length + " projects";
+  renderWorksheet();
+
 }
+
+const scenarioFields = ['hours', 'rate', 'benefit', 'cost'];
+const scenarios = new Map();
+const percentage = new Intl.NumberFormat('en-US',{style:'percent',maximumFractionDigits:1});
+function assumptions(id) {
+  if (!scenarios.has(id)) scenarios.set(id, loadScenario(id));
+  return scenarios.get(id);
+}
+
+function scenarioLabel(id) {
+  const result = modelReturn(state.lifetime.get(id), assumptions(id));
+  return result.roi == null ? '—' : percentage.format(result.roi);
+}
+
+function renderWorksheet() {
+  const project = state.lifetime.get(state.selectedProject);
+  $("worksheet-title").textContent = project?.name || 'Select a project';
+  $("scenario-controls").hidden = !project;
+  if (!project) return;
+  const values = assumptions(project.id);
+  for (const field of scenarioFields) $('roi-' + field).value = values[field] ?? '';
+  $("basis-cost").textContent = money(project.estimated_cost_usd);
+  updateReturn();
+}
+
+function updateReturn() {
+  const project = state.lifetime.get(state.selectedProject);
+  const result = modelReturn(project, assumptions(project.id));
+  const invalid = scenarioFields.some(field => !$('roi-' + field).validity.valid);
+  const format = n => !invalid && n != null ? money(n) : '—';
+  $("roi-investment").textContent = format(result.investment);
+  $("roi-value").textContent = format(result.value);
+  $("roi-net").textContent = format(result.net);
+  $("roi-result").textContent = !invalid && result.roi != null ? percentage.format(result.roi) : '—';
+  $("roi-breakeven").textContent = !invalid && result.breakEvenHours != null ? result.breakEvenHours.toLocaleString('en-US',{maximumFractionDigits:2}) + ' h' : '—';
+  $("roi-message").textContent = invalid ? 'Enter a valid nonnegative number.' : result.error || (result.partial ? 'Some usage has no price. Return is unavailable.' : result.value == null ? 'Enter hours and an hourly value, or a dollar benefit.' : result.investment === 0 ? 'A positive investment is needed for a percentage.' : 'Net value divided by total investment.');
+}
+
+function editScenario() {
+  if (!state.selectedProject) return;
+  const values = Object.fromEntries(scenarioFields.map(key => [key, $('roi-' + key).value]));
+  const invalid = scenarioFields.some(key => !$('roi-' + key).validity.valid);
+  scenarios.set(state.selectedProject, values);
+  updateReturn();
+  const cell = document.querySelector('.project-row[aria-pressed="true"] .roi-percent');
+  if (cell) cell.textContent = invalid ? '—' : scenarioLabel(state.selectedProject);
+  $("roi-save-note").textContent = invalid ? 'Fix the input to save this scenario.' : saveScenario(state.selectedProject,values) ? 'Assumptions saved in this browser.' : 'Browser storage unavailable. Kept for this visit.';
+}
+for (const field of scenarioFields) $('roi-' + field).addEventListener('input',editScenario);
+$("reset-roi").addEventListener('click',() => {
+  for (const field of scenarioFields) $('roi-' + field).value = '';
+  editScenario();
+});
+$("cost-detail").addEventListener('click',() => openBreakdown("project",state.selectedProject,null,true));
 
 function syncSelection() {
   document.querySelectorAll("[data-date]").forEach((node) => {
@@ -163,14 +244,14 @@ function syncSelection() {
   });
 }
 
-function openBreakdown(type, id, scopeDate = null) {
+function openBreakdown(type, id, scopeDate = null, lifetime = false) {
   if (!state.analysis) return;
   if (type === "day") { state.selectedDay = id; syncSelection(); }
   if (!$("breakdown-drawer").open) {
     state.detailStack = [];
     state.returnFocus = document.activeElement;
   }
-  state.detailStack.push({ type, id, scopeDate });
+  state.detailStack.push({ type, id, scopeDate, lifetime });
   renderDrawer();
   if (!$("breakdown-drawer").open) $("breakdown-drawer").showModal();
 }
@@ -178,7 +259,7 @@ function openBreakdown(type, id, scopeDate = null) {
 function renderDrawer() {
   const target = state.detailStack.at(-1);
   if (!target) return;
-  const params = { ...state.params };
+  const params = target.lifetime ? {days:"all",includeSubagents:true} : { ...state.params };
   if (target.scopeDate) { params.startDate = target.scopeDate; params.endDate = target.scopeDate; }
   const detail = state.analysis.breakdown(target.type, target.id, params);
   $("drawer-kicker").textContent = target.type === "day" ? "Day breakdown" : "Project breakdown";
@@ -189,29 +270,32 @@ function renderDrawer() {
 
 function updateParams(changes) {
   Object.assign(state.params, changes);
-  state.limit = 12;
+  state.limit = 8;
   try { render(); hideError(); } catch (error) { showError(error); }
 }
 
-async function refresh() {
+async function refresh(syncMac = false) {
+  if (syncMac && (!state.snapshot || state.snapshot.source?.is_demo)) { notice("Synthetic demo: local collection and cloud sync are disabled."); return; }
   if (state.refreshing) return;
   state.refreshing = true;
   $("refresh-button").disabled = true;
+  $('sync-button').disabled = true;
   hideError();
   try {
-    const result = await refreshUsage({
-      publish: location.hostname === "kjmcawesome.github.io",
+    const result = await refreshCloudUsage({
+      syncMac,
       minimumGeneratedAt: state.snapshot?.generated_at,
       onProgress: (message) => { $("refresh-label").textContent = message; notice(message); }
     });
     applySnapshot(result.snapshot, result.source);
-    notice(result.message, !result.rebuilt);
+    notice(result.message);
   } catch (error) {
     showError(new Error("Refresh did not complete. " + error.message));
     notice("Your previous data has not been replaced.", true);
   } finally {
     state.refreshing = false;
     $("refresh-button").disabled = false;
+    $('sync-button').disabled = !state.snapshot || Boolean(state.snapshot.source?.is_demo);
     $("refresh-label").textContent = "Refresh";
   }
 }
@@ -239,11 +323,17 @@ $("apply-range").addEventListener("click", () => {
 $("workspace").addEventListener("change", (event) => updateParams({ workspace: event.target.value }));
 $("include-helpers").addEventListener("change", (event) => updateParams({ includeSubagents: event.target.checked }));
 $("project-sort").addEventListener("change", (event) => { state.sort = event.target.value; renderProjects(); });
-$("project-search").addEventListener("input", (event) => { state.search = event.target.value; state.limit = 12; renderProjects(); });
+$("project-search").addEventListener("input", (event) => { state.search = event.target.value; state.limit = 8; renderProjects(); });
 $("show-more").addEventListener("click", () => { state.limit = Infinity; renderProjects(); });
 $("project-list").addEventListener("click", (event) => {
   const project = event.target.closest("[data-project-id]");
-  if (project) openBreakdown("project", project.dataset.projectId);
+  if (project) {
+    state.selectedProject = project.dataset.projectId;
+    for (const row of $("project-list").children) row.setAttribute('aria-pressed', String(row === project));
+    renderWorksheet();
+    $("worksheet-title").focus({preventScroll:true});
+    if (matchMedia('(max-width: 900px)').matches) $("scenario").scrollIntoView({block:'start'});
+  }
 });
 for (const id of ["heatmap-grid", "recent-days"]) $(id).addEventListener("click", (event) => {
   const day = event.target.closest("[data-date]");
@@ -281,7 +371,12 @@ $("breakdown-drawer").addEventListener("close", () => {
 $("methodology").addEventListener("toggle", () => {
   if ($("methodology").open && state.report) $("model-breakdown").innerHTML = renderModels(state.report.models);
 });
-$("refresh-button").addEventListener("click", refresh);
+$('presentation-toggle').addEventListener('change',event => { state.presentation=event.target.checked; state.search=''; $('project-search').value=''; state.boardKey=null; applySnapshot(state.snapshot,state.source); });
+$("refresh-button").addEventListener("click", () => refresh());
+$('sync-button').addEventListener('click',() => refresh(true));
+new ResizeObserver(() => {
+  $("heatmap-scroll").scrollLeft = $("heatmap-scroll").scrollWidth;
+}).observe($("heatmap-scroll"));
 window.addEventListener("popstate", () => { state.params = readUrl(); if (state.analysis) render(); });
 
 async function boot() {
@@ -295,6 +390,7 @@ async function boot() {
     notice();
     applySnapshot(snapshot);
     document.documentElement.dataset.release = RELEASE;
+    // Cloud reads work without a local collector. Collection is an explicit action.
   } catch (error) {
     notice();
     $("dashboard").setAttribute("aria-busy", "false");

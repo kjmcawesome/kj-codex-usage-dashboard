@@ -1,6 +1,6 @@
-import { modelDisplayName, summarizeModelUsage } from "./model-usage.js?v=work-cost-3-models-2";
+import { modelDisplayName, summarizeModelUsage } from "./model-usage.js?v=usage-rebuild-4";
 
-export const FILLS = ["#222637", "#414b7f", "#5565ad", "#647be0", "#7b78f2", "#9681fa", "#b394ff", "#d0b3ff"];
+export const FILLS = ["#eef2f7", "#d8e9ff", "#b3d4ff", "#87b8ff", "#5898ec", "#3675d6", "#254fb1", "#172f7c"];
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
 const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 export const tokens = (value) => compact.format(value || 0);
@@ -14,6 +14,24 @@ export function dateLabel(date, options = {}) {
 }
 export const rangeLabel = (range) => `${dateLabel(range.start_date, { year: "numeric" })} - ${dateLabel(range.end_date, { year: "numeric" })}`;
 export const dayTitle = (day) => `${dateLabel(day.date, { weekday: "long", year: "numeric" })}: ${exact(day.total_tokens)} tokens, ${money(day.estimated_cost_usd)} estimated API cost`;
+
+export function renderTokenMix(summary) {
+  const buckets = [
+    ["Reused input", summary.cached_input_tokens, "cached"],
+    ["Fresh input", summary.fresh_input_tokens, "fresh"],
+    ["Cache writes", summary.cache_write_input_tokens, "writes"],
+    ["Output", summary.output_tokens, "output"],
+    ["Unclassified", summary.unallocated_tokens, "unknown"]
+  ].filter(([, value]) => value > 0);
+  if (!summary.total_tokens) return '<p class="quiet">No tokens recorded in this period.</p>';
+  return `<div class="token-mix-bar" aria-hidden="true">${buckets.map(([label, value, kind]) => `<span class="mix-${kind}" style="flex:${value}" title="${e(label)}: ${exact(value)}"></span>`).join("")}</div>
+    <div class="token-mix-labels">${buckets.map(([label, value, kind]) => `<span><i class="mix-${kind}" aria-hidden="true"></i>${e(label)} <strong title="${exact(value)} tokens">${tokens(value)}</strong></span>`).join("")}</div>`;
+}
+
+export function renderDirectHelper(summary, includeHelpers) {
+  return `<div><span>Direct work</span><strong>${e(money(summary.direct_cost_usd))}</strong><small>${tokens(summary.direct_tokens)} tokens</small></div>
+    <div><span>Helper agents</span><strong>${includeHelpers ? e(money(summary.helper_cost_usd)) : "Excluded"}</strong><small>${includeHelpers ? tokens(summary.helper_tokens) + " additional tokens" : "Change the filter to include"}</small></div>`;
+}
 
 export function renderFixedMetrics(report, staleDay = false) {
   const windows = report.snapshot_windows;
@@ -29,8 +47,8 @@ export function renderFixedMetrics(report, staleDay = false) {
 }
 
 export function renderBoard(board, selected) {
-  return board.days.map((day) => `<button type="button" class="day-cell${day.in_range ? "" : " is-padding"}${day.is_today ? " is-today" : ""}${day.date === selected ? " is-selected" : ""}"
-    style="--level-fill:${FILLS[day.level]}" data-date="${day.date}" title="${e(dayTitle(day))}" aria-label="${e(dayTitle(day))}"
+  return board.days.map((day) => `<button type="button" class="day-cell${day.in_range ? "" : " is-padding"}${day.date < board.coverage_start_date ? " is-unrecorded" : ""}${day.is_today ? " is-today" : ""}${day.date === selected ? " is-selected" : ""}"
+    style="--level-fill:${FILLS[day.level]}" data-date="${day.date}" title="${e(day.date < board.coverage_start_date ? dateLabel(day.date) + ': Before available history' : dayTitle(day))}" aria-label="${e(day.date < board.coverage_start_date ? dateLabel(day.date) + ': Before available history' : dayTitle(day))}"
     aria-pressed="${day.date === selected}" ${day.is_today ? 'aria-current="date"' : ""}
     tabindex="${day.is_today ? "0" : "-1"}" ${day.in_range ? "" : "disabled"}></button>`).join("");
 }
@@ -44,15 +62,15 @@ export function renderRecent(days, selected) {
   </button>`).join("");
 }
 
-export function projectRows(projects) {
-  return projects.map((project) => `<button type="button" class="project-row" data-project-id="${e(project.id)}"
+export function projectRows(projects, selected = null, scenarioLabel = () => '—') {
+  return projects.map((project) => `<button type="button" class="project-row" aria-pressed="${project.id === selected}" data-project-id="${e(project.id)}"
     title="${e(`${project.name}: ${exact(project.total_tokens)} tokens, ${money(project.estimated_cost_usd)} estimated cost`)}">
     <span class="project-info"><span class="project-title">${e(project.name)}</span>
       <span class="project-foot"><span>${project.active_days} active ${project.active_days === 1 ? "day" : "days"}</span><span aria-hidden="true">·</span><span>${project.workflow_count} contributing ${project.workflow_count === 1 ? "run" : "runs"}</span>${project.impact_label ? `<span class="badge">${e(project.impact_label)}</span>` : ""}</span>
       <span class="project-bar" aria-hidden="true"><span style="--share:${Math.max(0, Math.min(100, project.cost_share * 100)).toFixed(3)}%"></span></span>
     </span>
-    <span class="project-number"><strong>${tokens(project.total_tokens)}</strong><small>tokens · ${e(share(project.token_share))} of total</small></span>
-    <span class="project-number cost"><strong>${e(money(project.estimated_cost_usd))}</strong><small>${e(share(project.cost_share))} of cost${project.unallocated_tokens ? " · partial" : ""}</small></span>
+    <span class="project-number cost"><strong>${e(money(project.estimated_cost_usd))}</strong><small>${e(share(project.cost_share))} of cost${project.unallocated_tokens ? ' · partial' : ''}</small></span>
+    <span class="project-number"><strong class="roi-percent">${e(scenarioLabel(project.id))}</strong></span>
     <span class="row-arrow" aria-hidden="true">&#8250;</span>
   </button>`).join("");
 }
@@ -73,7 +91,7 @@ export function renderModels(models) {
     <span>${e(modelDisplayName(model))}<small>${tokens(model.total_tokens)} tokens · ${e(share(model.cost_share))} of cost${model.context === "long" ? " · long context" : model.context === "unknown" ? " · short-context assumption" : ""}</small></span>
     <strong>${e(money(model.estimated_cost_usd))}</strong>
     <span class="project-bar" aria-hidden="true"><span style="--share:${(model.cost_share * 100).toFixed(3)}%"></span></span>
-    </summary><div class="model-formula">${modelFormula(model)}<p>Reasoning is included in output, not charged again.${model.is_proxy ? " This is the Sol proxy you selected for unreleased or unidentified models." : ""}</p></div></details>`).join("");
+    </summary><div class="model-formula">${modelFormula(model)}<p>Reasoning is included in output, not charged again.${model.is_proxy ? " This is the GPT-5.6 Sol proxy you selected for unreleased or unidentified models." : ""}</p></div></details>`).join("");
 }
 
 export function renderModelUsage(models, { compact = false } = {}) {
@@ -90,7 +108,7 @@ export function renderModelUsage(models, { compact = false } = {}) {
     </summary>
     <div class="model-usage-details">
       <div class="model-token-split"><span>Input<strong>${tokens(group.input_tokens)} tokens</strong></span><span>Output<strong>${tokens(group.output_tokens)} tokens</strong></span></div>
-      <p>Reused input is part of input. Reasoning is part of output, not an extra charge.${group.is_proxy ? " The Unreleased group uses your Sol-rate assumption for unreleased or unidentified usage; it is not a single confirmed model. Internal names are omitted." : ""}${group.unallocated_tokens ? ` ${exact(group.unallocated_tokens)} tokens lack an input/output split and are excluded from cost.` : ""}</p>
+      <p>Reused input is part of input. Reasoning is part of output, not an extra charge.${group.is_proxy ? " The Unreleased group uses your GPT-5.6 Sol-rate assumption for unreleased or unidentified usage; it is not a single confirmed model. Internal names are omitted." : ""}${group.unallocated_tokens ? ` ${exact(group.unallocated_tokens)} tokens lack an input/output split and are excluded from cost.` : ""}</p>
       ${group.variants.map((model) => `<section class="model-rate-tier"><h4>${context(model)}<span>${tokens(model.total_tokens)} tokens · ${e(money(model.estimated_cost_usd))}</span></h4>${model.context === "unknown" ? '<p>Short-context rates assumed.</p>' : ""}${modelFormula(model)}</section>`).join("")}
     </div>
   </details>`).join("")}</div>`;
@@ -117,8 +135,8 @@ export function renderBreakdown(detail, timezone) {
     ${detail.type === "project" ? `<p class="drawer-recorded">Total recorded for this project: <strong>${e(money(detail.recorded.estimated_cost_usd))}</strong> · ${tokens(detail.recorded.total_tokens)} tokens<br>${e(rangeLabel(detail.recorded))}</p>` : ""}
     ${detail.outcome ? `<p class="outcome"><span class="eyebrow">Recorded outcome</span><br>${e(detail.outcome)}</p>` : ""}
     ${totals.total_tokens ? `<div class="drawer-split"><div><span>Direct work</span><strong>${e(money(totals.direct_cost_usd))}</strong><span>${tokens(totals.direct_tokens)} tokens</span></div><div><span>Additional helper work</span><strong>${e(money(totals.helper_cost_usd))}</strong><span>${tokens(totals.helper_tokens)} tokens</span></div></div>` : '<div class="empty-state">No usage recorded for this day and these filters.</div>'}
-    ${detail.type === "day" && detail.projects.length ? `<section class="drawer-section"><h3>What I worked on</h3>${detail.projects.map((project) => `<button class="drawer-project" type="button" data-open-project="${e(project.id)}" data-scope-date="${detail.id}"><span>${e(project.name)}<small>${tokens(project.total_tokens)} tokens · ${e(share(project.cost_share))} of the day</small></span><strong>${e(money(project.estimated_cost_usd))}</strong></button>`).join("")}</section>` : ""}
+    ${detail.type === "day" && detail.projects.length ? `<section class="drawer-section"><h3>What I worked on</h3>${detail.projects.map((project) => `<button class="drawer-project" type="button" data-open-project="${e(project.id)}" data-scope-date="${detail.id}"><span>${e(project.name)}<small>${tokens(project.total_tokens)} tokens · ${e(share(project.cost_share))} of the day’s cost</small></span><strong>${e(money(project.estimated_cost_usd))}</strong></button>`).join("")}</section>` : ""}
     ${detail.models.length ? `<section class="drawer-section"><h3>Model usage</h3><p class="model-usage-helper">Tokens and cost for this breakdown. Expand a model for its rates.</p>${renderModelUsage(detail.models, { compact: true })}</section>` : ""}
     ${detail.workflows.length ? `<section class="drawer-section"><h3>Contributing runs</h3>${workflowRows(detail.workflows, timezone)}</section>` : ""}
-    <p class="drawer-caveat">Current Standard API prices, not billed spend. Parent history replayed in helpers is excluded.${totals.proxy_tokens ? ` ${tokens(totals.proxy_tokens)} tokens use the Sol proxy for unreleased or unidentified models.` : ""}${totals.unallocated_tokens ? ` ${exact(totals.unallocated_tokens)} tokens have no input/output split; their cost is not included.` : ""} Usage alone cannot establish whether an outcome shipped.</p>`;
+    <p class="drawer-caveat">Estimated using Standard API token prices. Parent history replayed in helpers is excluded.${totals.proxy_tokens ? ` ${tokens(totals.proxy_tokens)} tokens use the GPT-5.6 Sol proxy for unreleased or unidentified models.` : ""}${totals.unallocated_tokens ? ` ${exact(totals.unallocated_tokens)} tokens have no input/output split; their cost is not included.` : ""} Usage alone cannot establish whether an outcome shipped.</p>`;
 }

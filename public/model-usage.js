@@ -1,9 +1,14 @@
 import { TOTAL_FIELDS } from "./analytics.js";
 
 const names = {
-  "gpt-5.6-sol": "Sol",
-  "gpt-5.6-terra": "Terra",
-  "gpt-5.6-luna": "Luna"
+  "gpt-6.1-sol": "GPT-6.1 Sol",
+  "gpt-6.1-terra": "GPT-6.1 Terra",
+  "gpt-6-astra": "GPT-6 Astra",
+  "gpt-6-sol": "GPT-6 Sol",
+  "gpt-6-luna": "GPT-6 Luna",
+  "gpt-5.6-sol": "GPT-5.6 Sol",
+  "gpt-5.6-terra": "GPT-5.6 Terra",
+  "gpt-5.6-luna": "GPT-5.6 Luna"
 };
 
 export function modelDisplayName(model) {

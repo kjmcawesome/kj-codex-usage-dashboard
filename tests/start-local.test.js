@@ -87,12 +87,12 @@ test("ensureRefreshHelper starts a local helper when no healthy helper is alread
 test("buildPublicDashboardUrl preserves query string and public base path", () => {
   assert.equal(
     buildPublicDashboardUrl("/?days=30&workspace=all"),
-    "https://kjmcawesome.github.io/kj-codex-usage-dashboard/?days=30&workspace=all"
+    "https://dashboard.example.com/?days=30&workspace=all"
   );
 
   assert.equal(
     buildPublicDashboardUrl("/index.html?days=90"),
-    "https://kjmcawesome.github.io/kj-codex-usage-dashboard/?days=90"
+    "https://dashboard.example.com/?days=90"
   );
 });
 
@@ -109,7 +109,7 @@ test("public redirect server sends browser traffic to the live dashboard", async
     assert.equal(response.status, 302);
     assert.equal(
       response.headers.get("location"),
-      "https://kjmcawesome.github.io/kj-codex-usage-dashboard/?days=30&workspace=all"
+      "https://dashboard.example.com/?days=30&workspace=all"
     );
   } finally {
     await new Promise((resolvePromise, rejectPromise) =>

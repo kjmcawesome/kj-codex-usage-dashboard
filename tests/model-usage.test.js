@@ -20,7 +20,7 @@ test("Model overview combines context tiers without merging confirmed models and
   const unchanged = structuredClone(rows);
   const groups = summarizeModelUsage(rows);
   assert.equal(groups.length, 3);
-  const sol = groups.find((group) => group.name === "Sol");
+  const sol = groups.find((group) => group.name === "GPT-5.6 Sol");
   assert.equal(sol.total_tokens, 300);
   assert.equal(sol.estimated_cost_usd, 8);
   assert.equal(sol.variants.length, 2);
@@ -35,7 +35,7 @@ test("Model overview combines context tiers without merging confirmed models and
 
 test("Model usage order follows tokens, not prices", () => {
   const groups = summarizeModelUsage([row("gpt-5.5", "short", 10, 100), row("gpt-5.6-luna", "short", 1000, 1)]);
-  assert.equal(groups[0].name, "Luna");
+  assert.equal(groups[0].name, "GPT-5.6 Luna");
   close(groups[0].token_share, 1000 / 1010);
   close(groups[0].cost_share, 1 / 101);
 });
@@ -112,6 +112,6 @@ test("Model shares reconcile to each range, workspace, helper setting, project, 
   }
   const project = summarizeModelUsage(engine.breakdown("project", "p", { days: 1 }).models);
   assert.equal(project.length, 2);
-  close(project.find((group) => group.name === "Sol").token_share, .8);
-  assert.equal(summarizeModelUsage(engine.breakdown("day", "2026-08-01", { days: 1 }).models)[0].name, "Terra");
+  close(project.find((group) => group.name === "GPT-5.6 Sol").token_share, .8);
+  assert.equal(summarizeModelUsage(engine.breakdown("day", "2026-08-01", { days: 1 }).models)[0].name, "GPT-5.6 Terra");
 });

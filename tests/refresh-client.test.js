@@ -92,3 +92,11 @@ test("Initial loading bypasses the cache and validates the counting schema", asy
   assert.equal(loaded.counting_version, 3);
   assert.throws(() => validateSnapshot({ generated_at: date, sessions: [] }), /corrected counting update/);
 });
+
+test('an older collector cannot replace preserved history or misclassify GPT-6', async () => {
+  const calls = [];
+  await assert.rejects(refreshUsage({ minimumCollectionRevision: 4, fetchFn: async (url) => {
+    calls.push(url); return response({ ok: true, counting_version: 3 });
+  } }), /Restart the local collector/);
+  assert.equal(calls.length, 1);
+});

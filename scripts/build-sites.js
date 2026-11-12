@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
@@ -43,7 +43,8 @@ async function collectAssets(directory, assets = {}) {
 }
 
 function buildWorkerSource(assets) {
-  return `const ASSETS = ${JSON.stringify(assets)};
+  return `import { cloudFetch } from './cloud-runtime.js';
+const ASSETS = ${JSON.stringify(assets)};
 
 function decodeBase64(value) {
   const binary = atob(value);
@@ -54,8 +55,7 @@ function decodeBase64(value) {
   return bytes;
 }
 
-export default {
-  async fetch(request) {
+async function serveAsset(request) {
     if (request.method !== "GET" && request.method !== "HEAD") {
       return new Response("Method not allowed", { status: 405, headers: { Allow: "GET, HEAD" } });
     }
@@ -78,16 +78,17 @@ export default {
         "cache-control": pathname.includes("/data/") ? "no-store, max-age=0" : "public, max-age=120"
       }
     });
-  }
-};
+}
+export default { fetch(request, env) { return cloudFetch(request,env,serveAsset); } };
 `;
 }
 
-export async function buildSitesDeployment() {
-  const result = await exportStaticSite();
+export async function buildSitesDeployment(options = {}) {
+  const result = await exportStaticSite(options);
   const assets = await collectAssets(distRoot);
   const workerDirectory = join(distRoot, "server");
   await mkdir(workerDirectory, { recursive: true });
+  for (const file of ['cloud-runtime.js','cloud-snapshot.js']) await cp(join(repoRoot,'lib',file),join(workerDirectory,file));
   await writeFile(join(workerDirectory, "index.js"), buildWorkerSource(assets), "utf8");
 
   return {

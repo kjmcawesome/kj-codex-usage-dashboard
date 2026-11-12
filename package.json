@@ -1,17 +1,19 @@
 {
-  "name": "codex-usage-dashboard",
+  "name": "project-economics-dashboard",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "build:site": "node scripts/export-static-site.js",
+    "build:site": "node scripts/build-demo.js",
     "build:sites": "node scripts/build-sites.js",
-    "start": "node scripts/start-local.js",
+    "start": "node scripts/start-demo.js",
     "helper:start": "node refresh-helper.js",
     "helper:install": "node scripts/install-refresh-helper-launch-agent.js",
     "publish:pages": "node scripts/publish-pages.js",
-    "schedule:install": "node scripts/install-launch-agent.js",
-    "test": "TZ=UTC node --test",
-    "verify:snapshot": "node scripts/verify-snapshot.js"
+    "test": "USAGE_DASHBOARD_URL=https://dashboard.example.com TZ=UTC node --test",
+    "verify:snapshot": "node scripts/verify-snapshot.js demo-dist/data/usage-snapshot.json",
+    "demo": "node scripts/build-demo.js",
+    "collect:local": "node scripts/export-static-site.js",
+    "collector:start": "node refresh-helper.js"
   }
 }

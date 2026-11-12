@@ -25,7 +25,7 @@ const snapshot = (sessions, generated = "2026-08-26T20:00:00Z") => ({
   earliest_date: "2026-01-01", sessions, workspaces: [{ workspace_key: "ws_a", workspace_label: "Workspace A" }, { workspace_key: "ws_b", workspace_label: "Workspace B" }], quality: {}
 });
 async function fixtures() {
-  const dir = await mkdtemp(join(os.tmpdir(), "kj-usage-fixtures-"));
+  const dir = await mkdtemp(join(os.tmpdir(), "usage-usage-fixtures-"));
   return loadUsageIndex({ codexRoot: fixtureRoot, cacheFilePath: join(dir, "cache.json") });
 }
 
@@ -55,7 +55,7 @@ test("a helper is attributed to its parent, but a user fork is not labeled a hel
   assert.equal(helper.is_subagent, true);
   assert.equal(helper.parent_session_id, "session-multiday");
   assert.equal(helper.agent_nickname, "Lovelace");
-  const temp = await mkdtemp(join(os.tmpdir(), "kj-fork-"));
+  const temp = await mkdtemp(join(os.tmpdir(), "usage-fork-"));
   const file = join(temp, "fork.jsonl");
   await writeFile(file, JSON.stringify({ type: "session_meta", timestamp: "2026-03-24T12:00:00Z",
     payload: { id: "fork", forked_from_id: "parent", source: "vscode", timestamp: "2026-03-24T12:00:00Z" } }) + "\n");
@@ -131,7 +131,7 @@ test("missing parents and lineage cycles do not hang or silently lose usage", ()
 });
 
 test("cache warm loads, forced loads, removed files, and corrupted caches are safe", async () => {
-  const temp = await mkdtemp(join(os.tmpdir(), "kj-cache-"));
+  const temp = await mkdtemp(join(os.tmpdir(), "usage-cache-"));
   const root = join(temp, "codex");
   await cp(fixtureRoot, root, { recursive: true });
   const options = { codexRoot: root, cacheFilePath: join(temp, "cache.json") };
@@ -314,7 +314,7 @@ test("current Sol pricing splits cache writes, reused input, fresh input, and ou
     total_tokens: 1100000, context_input_tokens: 200000 });
   close(priced.estimated_cost_usd, 1.2 + .2 + 1 + 2);
   assert.equal(priced.fresh_input_tokens, 300000);
-  assert.equal(PRICING.checked_at, "2026-08-26");
+  assert.equal(PRICING.checked_at, "2026-11-12");
 });
 
 test("long-context premium applies per request, not to cumulative daily input", () => {
@@ -328,8 +328,8 @@ test("long-context premium applies per request, not to cumulative daily input", 
   assert.equal(unknown.rates.input, 4);
 });
 
-test("Arcanine, dated models, old model pricing, and unreleased Sol proxies resolve explicitly", () => {
-  assert.equal(resolveModel("arcanine").model, "gpt-5.5");
+test("Published aliases, dated models, older public pricing, and unreleased Sol proxies resolve explicitly", () => {
+  assert.equal(resolveModel("gpt-5.6").model, "gpt-5.6-sol");
   assert.equal(resolveModel("gpt-5.4-2026-03-05").model, "gpt-5.4");
   assert.equal(resolveModel("unreleased-model").proxy, true);
   assert.equal(resolveModel("gpt-5.4-secret-experiment").proxy, true);
@@ -351,8 +351,9 @@ test("old uncorrected snapshots cannot silently populate the rebuilt dashboard",
 });
 
 async function withServer(callback) {
-  const temp = await mkdtemp(join(os.tmpdir(), "kj-server-"));
+  const temp = await mkdtemp(join(os.tmpdir(), "usage-server-"));
   const server = createAppServer({ usageService: createUsageService({
+    historyFilePath: null, previousSnapshotPath: null,
     codexRoot: fixtureRoot, cacheFilePath: join(temp, "cache.json"), nowProvider: fixedNow
   }), staticRoot: publicRoot });
   await new Promise((done) => server.listen(0, "127.0.0.1", done));
@@ -395,4 +396,56 @@ test("API rejects invalid ranges and unsupported methods with useful JSON", asyn
     assert.equal(data.selection.mode, "custom");
     assert.equal(data.summary.total_tokens, 600);
   });
+});
+
+
+test("a reset in a new turn can reuse older counters without counting replay twice", async () => {
+  const temp = await mkdtemp(join(os.tmpdir(), "usage-counter-epochs-"));
+  const file = join(temp, "session.jsonl");
+  const rows = [{ type: "session_meta", timestamp: "2026-09-22T12:00:00Z",
+    payload: { id: "counter-epochs", timestamp: "2026-09-22T12:00:00Z" } }];
+  const turn = (id) => rows.push({ type: "turn_context", payload: { turn_id: id, model: "gpt-5.4" } });
+  const counter = (total, last) => rows.push({ type: "event_msg",
+    timestamp: new Date(Date.UTC(2026, 8, 22, 12, rows.length)).toISOString(),
+    payload: { type: "token_count", info: { total_token_usage: counts(total), last_token_usage: counts(last) } } });
+  turn("original"); counter(100, 100); counter(200, 100);
+  turn("original"); counter(100, 100); counter(200, 100); // Replayed history keeps its identity.
+  turn("after-reset"); counter(100, 100); counter(100, 0); counter(150, 50);
+  await writeFile(file, rows.map(JSON.stringify).join("\n"));
+  const parsed = await parseSessionLog(file);
+  assert.equal(parsed.total_tokens, 350);
+  assert.deepEqual(parsed.events.map((row) => row.total_tokens), [100, 100, 100, 50]);
+  assert.equal(parsed.quality.duplicate_snapshots, 3);
+  assert.equal(parsed.quality.counter_resets, 1);
+});
+
+test("the private cache reparses when timezone or parser revision changes", async () => {
+  const temp = await mkdtemp(join(os.tmpdir(), "usage-cache-zone-"));
+  const root = join(temp, "codex");
+  await cp(fixtureRoot, root, { recursive: true });
+  const options = { codexRoot: root, cacheFilePath: join(temp, "cache.json") };
+  const originalZone = process.env.TZ;
+  try {
+    process.env.TZ = "UTC";
+    const utc = await loadUsageIndex(options);
+    const cache = JSON.parse(await readFile(options.cacheFilePath, "utf8"));
+    assert.equal(cache.timezone, "UTC");
+    assert.ok(Number.isInteger(cache.parser_revision));
+    // A private cache created by the older parser must be recounted once.
+    delete cache.parser_revision;
+    await writeFile(options.cacheFilePath, JSON.stringify(cache));
+    assert.equal((await loadUsageIndex(options)).source.reparsed_files, 6);
+    process.env.TZ = "Pacific/Auckland";
+    const local = await loadUsageIndex(options);
+    assert.equal(local.timezone, "Pacific/Auckland");
+    assert.equal(local.source.reparsed_files, 6);
+    assert.equal(local.source.reused_files, 0);
+    const utcDate = utc.sessions.find((row) => row.session_id === "session-one").events[0].date;
+    const localDate = local.sessions.find((row) => row.session_id === "session-one").events[0].date;
+    assert.notEqual(localDate, utcDate, "cached event dates must be recalculated in the new zone");
+    assert.equal((await loadUsageIndex(options)).source.reused_files, 6);
+  } finally {
+    if (originalZone == null) delete process.env.TZ;
+    else process.env.TZ = originalZone;
+  }
 });

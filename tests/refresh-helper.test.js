@@ -39,12 +39,12 @@ test("refresh helper exposes status with allowed CORS origin", async () => {
   await withRefreshHelper(async ({ baseUrl }) => {
     const response = await fetch(`${baseUrl}/status`, {
       headers: {
-        Origin: "https://kjmcawesome.github.io"
+        Origin: "https://dashboard.example.com"
       }
     });
 
     assert.equal(response.status, 200);
-    assert.equal(response.headers.get("access-control-allow-origin"), "https://kjmcawesome.github.io");
+    assert.equal(response.headers.get("access-control-allow-origin"), "https://dashboard.example.com");
     const payload = await response.json();
     assert.equal(payload.ok, true);
     assert.equal(payload.busy, false);
@@ -52,9 +52,9 @@ test("refresh helper exposes status with allowed CORS origin", async () => {
   });
 });
 
-test("refresh helper allows the hosted OpenAI Sites dashboard", async () => {
+test("refresh helper allows the configured hosted dashboard", async () => {
   await withRefreshHelper(async ({ baseUrl }) => {
-    const origin = "https://kj-codex-usage-dashboard.openai.chatgpt.site";
+    const origin = "https://dashboard.example.com";
     const response = await fetch(`${baseUrl}/status`, {
       headers: { Origin: origin }
     });
@@ -66,7 +66,7 @@ test("refresh helper allows the hosted OpenAI Sites dashboard", async () => {
 
 test("refresh helper returns the latest local snapshot to the hosted dashboard", async () => {
   await withRefreshHelper(async ({ baseUrl, calls }) => {
-    const origin = "https://kj-codex-usage-dashboard.openai.chatgpt.site";
+    const origin = "https://dashboard.example.com";
     const refreshResponse = await fetch(`${baseUrl}/refresh?publish=0`, {
       method: "POST",
       headers: { Origin: origin }
@@ -94,14 +94,14 @@ test("refresh helper handles private network preflight", async () => {
     const response = await fetch(`${baseUrl}/refresh`, {
       method: "OPTIONS",
       headers: {
-        Origin: "https://kjmcawesome.github.io",
+        Origin: "https://dashboard.example.com",
         "Access-Control-Request-Method": "POST",
         "Access-Control-Request-Private-Network": "true"
       }
     });
 
     assert.equal(response.status, 204);
-    assert.equal(response.headers.get("access-control-allow-origin"), "https://kjmcawesome.github.io");
+    assert.equal(response.headers.get("access-control-allow-origin"), "https://dashboard.example.com");
     assert.equal(response.headers.get("access-control-allow-private-network"), "true");
   });
 });
@@ -109,14 +109,14 @@ test("refresh helper handles private network preflight", async () => {
 test("refresh helper serves a localhost bridge page for public-site refreshes", async () => {
   await withRefreshHelper(async ({ baseUrl }) => {
     const response = await fetch(
-      `${baseUrl}/bridge?return_to=${encodeURIComponent("https://kjmcawesome.github.io/kj-codex-usage-dashboard/?days=365")}`
+      `${baseUrl}/bridge?return_to=${encodeURIComponent("https://dashboard.example.com/usage-dashboard/?days=365")}`
     );
 
     assert.equal(response.status, 200);
     assert.match(response.headers.get("content-type") || "", /text\/html/);
     const html = await response.text();
     assert.match(html, /Updating the dashboard/);
-    assert.match(html, /https:\/\/kjmcawesome\.github\.io\/kjmcawesome\.github\.io|kj-codex-usage-dashboard/);
+    assert.match(html, /dashboard\.example\.com/);
   });
 });
 

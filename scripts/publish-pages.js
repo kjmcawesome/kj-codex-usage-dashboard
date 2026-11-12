@@ -112,7 +112,8 @@ async function cleanupWorktree() {
   }
 }
 
-export async function publishPages({ prepared = false, ...options } = {}) {
+export async function publishPages({ prepared = false, allowLegacyPublicPublish = false, ...options } = {}) {
+  if (!allowLegacyPublicPublish) throw new Error("Legacy public GitHub publication is disabled. Configure deployment separately.");
   const { stdout: dirtySource } = await runGit(["status", "--porcelain", "--untracked-files=no"]);
   const { stdout: newSource } = await runGit(["ls-files", "--others", "--exclude-standard", "--", "lib", "public", "scripts", "config"]);
   if (dirtySource.trim() || newSource.trim()) {

@@ -8,7 +8,7 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, "..");
-const label = "com.kj.codex-usage-dashboard-pages";
+const label = "com.example.codex-usage-dashboard-pages";
 const launchAgentsDir = join(os.homedir(), "Library", "LaunchAgents");
 const plistPath = join(launchAgentsDir, `${label}.plist`);
 const nodePath = process.execPath;

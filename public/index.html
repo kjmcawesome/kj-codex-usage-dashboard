@@ -3,27 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="KJ's Codex work, token activity, and transparent project cost estimates.">
-  <meta property="og:title" content="KJ Codex Usage Dashboard">
+  <meta name="description" content="Example Codex work, token activity, and transparent project cost estimates.">
+  <meta property="og:title" content="Project Economics | Demo">
   <meta property="og:description" content="The work. The tokens. The cost.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://kjmcawesome.github.io/kj-codex-usage-dashboard/og.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="KJ Codex Usage Dashboard">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Project Economics | Demo">
   <meta name="twitter:description" content="The work. The tokens. The cost.">
-  <meta name="twitter:image" content="https://kjmcawesome.github.io/kj-codex-usage-dashboard/og.png">
   <meta name="reporting-schema" content="3">
-  <meta name="theme-color" content="#0b0d14">
-  <title>KJ Codex Usage Dashboard</title>
-  <link rel="stylesheet" href="./styles.css?v=work-cost-3-models-2">
+  <meta name="theme-color" content="#ffffff">
+  <title>Project Economics | Demo</title>
+  <link rel="stylesheet" href="./styles.css?v=economics-1">
 </head>
 <body>
   <a class="skip-link" href="#projects">Skip to project costs</a>
   <div class="app-shell">
     <header class="topbar">
       <div class="identity">
-        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-        <div><h1>KJ Codex Usage Dashboard</h1><p>What I'm working on. What it costs.</p></div>
+        <span class="brand-mark" aria-hidden="true">PE</span>
+        <div class="masthead"><strong>Project Economics</strong><p>Builder notebook <span id="demo-label" hidden>· Synthetic demo</span></p></div>
       </div>
       <div class="refresh-area">
         <div class="freshness"><span id="freshness-label">Loading usage</span><time id="updated-at"></time></div>
@@ -33,11 +31,78 @@
 
     <p id="notice" class="notice" role="status" aria-live="polite">Loading the latest usage snapshot...</p>
     <div id="error-state" class="error-state" role="alert" hidden></div>
+    <div class="presentation-bar"><p id="presentation-note"></p><label class="checkbox"><input id="presentation-toggle" type="checkbox" checked>Presentation view</label></div>
 
     <main id="dashboard" aria-busy="true">
-      <section class="momentum" aria-labelledby="momentum-title">
+      <nav class="section-nav" aria-label="Dashboard sections"><a href="#projects">Project ledger</a><a href="#scenario">ROI worksheet</a><a href="#activity">Activity</a><a href="#model-usage">Models</a><a href="#methodology">About the data</a></nav>
+      <header class="intro"><div><p class="eyebrow">Sales leaders build, too.</p><h1>Project economics</h1><p>Explore the cost of each Codex project and the value of the work it saves.</p></div><a href="#activity" class="mini-activity"><span id="mini-grid" aria-hidden="true"></span>Recent activity ↗</a></header>
+        <form class="filterbar" id="filters">
+          <div class="range-controls" role="group" aria-label="Date range">
+            <button type="button" data-days="7" aria-pressed="false">7d</button>
+            <button type="button" data-days="30" aria-pressed="true">30d</button>
+            <button type="button" data-days="90" aria-pressed="false">90d</button>
+            <button type="button" data-days="all" aria-pressed="false">Available history</button>
+            <button type="button" id="custom-toggle" aria-expanded="false" aria-controls="custom-range">Custom</button>
+          </div>
+          <div class="filter-options">
+            <label class="workspace-label"><span class="sr-only">Workspace</span><select id="workspace"><option value="all">All workspaces</option></select></label>
+            <label class="checkbox"><input type="checkbox" id="include-helpers" checked>Include helpers</label>
+          </div>
+          <div id="custom-range" class="custom-range" hidden><label>From <input type="date" id="start-date" required></label><label>To <input type="date" id="end-date" required></label><button type="button" id="apply-range" class="button">Apply range</button></div>
+        </form>
+
+        <div class="overview-grid">
+          <section class="cost-overview panel" aria-label="Estimated cost for selected period">
+            <div class="summary-label"><span>Estimated API cost</span><span class="estimate-tag" id="period-label">Last 30 days</span></div>
+            <strong id="period-cost" class="hero-amount">-</strong>
+            <p id="period-dates" class="quiet"></p>
+
+          </section>
+          <section class="panel stat-card"><span class="summary-label">Active projects</span><strong id="active-projects" class="hero-amount">…</strong><p id="period-work" class="quiet"></p></section>
+          <section class="token-overview panel" aria-label="Tokens for selected period">
+            <span class="summary-label">Token usage</span><strong id="period-tokens" class="token-total">-</strong>
+            <div id="token-mix"></div>
+            </section>
+        </div>
+        <p class="estimate-explainer" id="period-note"></p>
+
+      <div class="work-grid">
+      <section class="work-section panel" id="projects" aria-labelledby="projects-title">
         <div class="section-heading">
-          <div><p class="eyebrow">Daily momentum</p><h2 id="momentum-title">Keep the squares lit.</h2></div>
+          <div><p class="eyebrow">Project ledger</p><h2 id="projects-title">Cost by project</h2></div>
+          <span id="project-count" class="quiet"></span>
+        </div>
+        <p class="section-help">Select a project to model its return. Costs in this list follow the filters above.</p><div class="list-toolbar">
+          <label class="search-field"><span class="sr-only">Find a project</span><input type="search" id="project-search" placeholder="Find a project..." autocomplete="off"></label>
+          <label class="sort-label">Sort by <select id="project-sort"><option value="cost">Cost</option><option value="tokens">Tokens</option><option value="recent">Recent activity</option></select></label>
+        </div>
+        <div class="project-columns" aria-hidden="true"><span>Project / work</span><span>Period cost</span><span>Project ROI¹</span><span></span></div>
+        <div id="project-list" class="project-list"></div>
+        <div class="list-footer"><span id="list-count"></span><button class="text-button" type="button" id="show-more" hidden>Show all projects</button></div><p class="ledger-note">¹ Modeled across the project’s recorded history. An empty value means there is no estimate yet.</p>
+      </section>
+
+      <section id="scenario" class="panel worksheet" aria-labelledby="worksheet-title">
+        <p class="eyebrow">ROI worksheet</p><h2 id="worksheet-title" tabindex="-1">Select a project</h2>
+        <div id="scenario-controls" hidden>
+          <p class="scope-note">All recorded usage, including helpers. Enter total benefits and costs over the same project history.</p>
+          <div class="worksheet-cost"><span>Estimated API cost</span><strong id="basis-cost"></strong></div>
+          <button id="cost-detail" type="button" class="text-button">See cost breakdown ↗</button>
+          <div class="scenario-inputs">
+            <label>Hours saved<input id="roi-hours" type="number" min="0" step="any" placeholder="Enter hours"></label>
+            <label>Value per hour ($)<input id="roi-rate" type="number" min="0" step="any" placeholder="Enter rate"></label>
+            <label>Other benefit ($)<input id="roi-benefit" type="number" min="0" step="any" placeholder="Optional"></label>
+            <label>Other costs ($)<input id="roi-cost" type="number" min="0" step="any" placeholder="Optional"></label>
+          </div>
+          <p class="scope-note">Include build time, maintenance and fees in other costs. Count each benefit once.</p>
+          <div class="result-box" aria-live="polite"><span>Modeled ROI</span><strong id="roi-result">—</strong><p id="roi-message"></p></div>
+          <dl class="result-detail"><div><dt>Total investment</dt><dd id="roi-investment">—</dd></div><div><dt>Estimated benefit</dt><dd id="roi-value">—</dd></div><div><dt>Net value</dt><dd id="roi-net">—</dd></div><div><dt>Hours to break even</dt><dd id="roi-breakeven">—</dd></div></dl>
+          <div class="scenario-footer"><small id="roi-save-note">Assumptions saved in this browser.</small><button type="button" id="reset-roi" class="text-button">Clear inputs</button></div>
+        </div>
+      </section>
+      </div>
+      <section class="momentum panel" id="activity" aria-labelledby="momentum-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Activity</p><h2 id="momentum-title">Your year in Codex</h2></div>
           <div class="cadence"><span id="streak-line">365 days of Codex</span><div class="month-cadence"><span id="month-cadence-label"></span><progress id="month-progress" max="100" value="0" aria-label="Active days this month"></progress></div></div>
         </div>
         <div id="fixed-metrics" class="fixed-metrics"></div>
@@ -54,57 +119,24 @@
         </details>
       </section>
 
-      <section class="work-section" id="projects" aria-labelledby="projects-title">
-        <div class="section-heading">
-          <div><p class="eyebrow">The work behind the numbers</p><h2 id="projects-title">Project costs</h2></div>
-          <span id="project-count" class="quiet"></span>
-        </div>
-        <form class="filterbar" id="filters">
-          <div class="range-controls" role="group" aria-label="Date range">
-            <button type="button" data-days="7" aria-pressed="false">7d</button>
-            <button type="button" data-days="30" aria-pressed="true">30d</button>
-            <button type="button" data-days="90" aria-pressed="false">90d</button>
-            <button type="button" data-days="all" aria-pressed="false">All history</button>
-            <button type="button" id="custom-toggle" aria-expanded="false" aria-controls="custom-range">Custom</button>
-          </div>
-          <div class="filter-options">
-            <label class="workspace-label"><span class="sr-only">Workspace</span><select id="workspace"><option value="all">All workspaces</option></select></label>
-            <label class="checkbox"><input type="checkbox" id="include-helpers" checked>Include helpers</label>
-          </div>
-          <div id="custom-range" class="custom-range" hidden><label>From <input type="date" id="start-date" required></label><label>To <input type="date" id="end-date" required></label><button type="button" id="apply-range" class="button">Apply range</button></div>
-        </form>
 
-        <div class="period-overview">
-          <div class="period-cost"><span id="period-label">Last 30 days</span><strong id="period-cost">-</strong><span>estimated API cost</span></div>
-          <div class="period-context"><strong id="period-tokens">-</strong><span id="period-work"></span><span id="period-dates"></span><a class="context-link" href="#model-usage">View model usage &#8595;</a></div>
-          <p class="period-note" id="period-note">One total for your work and its helper tasks. Replayed history is counted once.</p>
-        </div>
-
-        <div class="list-toolbar">
-          <label class="search-field"><span class="sr-only">Find a project</span><input type="search" id="project-search" placeholder="Find a project..." autocomplete="off"></label>
-          <label class="sort-label">Sort by <select id="project-sort"><option value="cost">Cost</option><option value="tokens">Tokens</option><option value="recent">Recent activity</option></select></label>
-        </div>
-        <div class="project-columns" aria-hidden="true"><span>Project / work</span><span>Tokens</span><span>Est. cost</span><span></span></div>
-        <div id="project-list" class="project-list"></div>
-        <div class="list-footer"><span id="list-count"></span><button class="text-button" type="button" id="show-more" hidden>Show all projects</button></div>
-      </section>
-
-      <section class="model-usage-section" id="model-usage" aria-labelledby="model-usage-title">
-        <div class="section-heading"><div><p class="eyebrow">Behind the work</p><h2 id="model-usage-title">Model usage</h2></div><span id="model-usage-scope" class="quiet"></span></div>
-        <p class="model-usage-helper">Token share and estimated cost share. Expand a model for input, output, and rates.</p>
+      <section class="model-usage-section panel" id="model-usage" aria-labelledby="model-usage-title">
+        <div class="section-heading"><div><p class="eyebrow">Cost detail</p><h2 id="model-usage-title">Model usage</h2></div><span id="model-usage-scope" class="quiet"></span></div>
+        <p class="model-usage-helper">Tokens and estimated dollars for the selected period.</p>
         <div id="model-usage-list"></div>
         <p id="model-usage-note" class="model-usage-note"></p>
       </section>
 
       <details class="methodology" id="methodology">
         <summary><span>How these numbers are calculated</span><span class="quiet">Pricing, attribution &amp; data coverage</span></summary>
-        <div class="method-content">
-          <div class="method-copy"><h3>Usage is measured. Dollars are estimated.</h3><p id="pricing-note"></p><p>These are current Standard API token-price estimates, not your Codex bill or OpenAI's internal operating cost. Subscription fees, tool fees, and special processing or regional adjustments are not included.</p><p>Projects are named root conversations. Only their own usage and new work by linked helpers or forks are added. Separate conversations are not merged just because they have similar titles.</p><p id="quality-note"></p><p><a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener">OpenAI API pricing</a></p></div>
+        <div class="method-content"><p class="coverage-banner" id="data-coverage"></p><div id="direct-helper-split" class="direct-helper-split"></div>
+          <div class="method-copy"><h3>Usage is measured. Dollars are estimated.</h3><p id="pricing-note"></p><p>Costs use a Standard API rate card. Your Codex invoice can differ. Cache writes use the 30-minute rate where retention is unknown. Subscription fees, tool fees, and special processing or regional adjustments are not included.</p><p>Projects are named root conversations. Only their own usage and new work by linked helpers or forks are added. Separate conversations are not merged just because they have similar titles.</p><p id="quality-note"></p><p><a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener">OpenAI API pricing</a></p></div>
           <div id="model-breakdown"></div>
         </div>
       </details>
     </main>
-    <footer class="site-footer"><span>Local Codex history. Current API price estimates. Not billed spend.</span><span id="coverage-note"></span></footer>
+    <footer class="site-footer"><span>Recorded Codex activity. API estimates, not billed spend.</span><span id="coverage-note"></span></footer>
+    <details class="sync-settings"><summary>Data &amp; refresh</summary><p id="sync-status"></p><p>Refresh loads saved cloud history from any device. To add new activity, sync from the Mac that recorded it. No conversation content is uploaded.</p><button id="sync-button" class="button" type="button" disabled>Sync this Mac</button><p>Presentation view hides names on screen. Underlying data access depends on your hosting configuration.</p></details>
   </div>
 
   <dialog class="breakdown-drawer" id="breakdown-drawer" aria-labelledby="drawer-title">
@@ -113,6 +145,6 @@
   </dialog>
   <noscript><p class="error-state">JavaScript is required to load this usage dashboard.</p></noscript>
   <script>if(location.protocol==="file:"){document.getElementById("error-state").hidden=false;document.getElementById("error-state").textContent="Open the hosted dashboard instead of this local file. Its data needs an HTTP connection.";}</script>
-  <script type="module" src="./app.js?v=work-cost-3-models-2"></script>
+  <script type="module" src="./app.js?v=economics-1"></script>
 </body>
 </html>
